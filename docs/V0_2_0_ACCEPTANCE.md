@@ -33,9 +33,3 @@ The owner's already committed v0.1.5a LH image replacement and existing inventor
 - Edge with an isolated synthetic profile: 375 / 390 / 430 / 768 / 1024 / 1440 / 1920 px in both Light and Dark (14 layouts). No horizontal overflow; brand, clock and Settings fit. Aircraft icon and radar center match the Hong Kong anchor within one CSS pixel. Representative desktop/mobile screenshots were visually reviewed.
 - Browser workflows: reduced-motion disables the sweep; batch overnight review/save works without hours acknowledgement; aircraft review leaves storage untouched until confirmation; safe refresh preserves custom aircraft/duty/journal rows and links, cancellation writes nothing and repeat refresh is a no-op. English and Traditional Chinese checked. No application runtime errors or external HTTP asset requests observed.
 - Browser checks use synthetic data only. Real iPhone/Safari, physical touch, screen readers and universal hardware performance require separate manual acceptance. This is not production deployment or authoritative radar/clock verification.
-
-## Recommended commit (not executed)
-
-v0.2.0 - Refined Pre-release UI and Fictional Sample Records
-
-Refine the local personal-tool presentation with a full-name header brand, quiet footer metadata and an original SVG East Asia radar map. Replace fresh showcase data with four fictional assignments covering core manual-test scenarios. Add reviewed, idempotent sample refresh while preserving custom records and blocking unsafe linked replacements. Remove repetitive DEMO labels and the batch hours acknowledgement while retaining Aircraft review, roster conflicts, privacy and Planned/Worked rules. Document actual checks and remaining device limitations. No backend, cloud service, deployment or automatic commit/push.
