@@ -1,0 +1,12 @@
+node_modules/
+.checkpoints/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+*.local
+test-results/
+.DS_Store

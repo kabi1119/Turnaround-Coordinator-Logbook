@@ -1,0 +1,238 @@
+.flight-visual {
+  --radar-size: clamp(250px, 29vw, 350px);
+  position: relative;
+  min-width: 0;
+  min-height: 330px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at center, #1c4a4c, #102f34 72%);
+  color: var(--on-dark-primary);
+  pointer-events: none;
+  user-select: none;
+}
+.radar-disc {
+  position: absolute;
+  width: var(--radar-size);
+  aspect-ratio: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  clip-path: circle(50%);
+  contain: paint;
+}
+.radar-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 31px, #b5e2cf0b 31px 32px),
+    repeating-linear-gradient(90deg, transparent 0 31px, #b5e2cf0b 31px 32px);
+  border-radius: inherit;
+}
+.radar-ring {
+  position: absolute;
+  border: 1px solid #b5e2cf38;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
+}
+.ring-one {
+  width: 32%;
+}
+.ring-two {
+  width: 64%;
+}
+.ring-three {
+  width: 98%;
+}
+.radar-axis {
+  position: absolute;
+  inset: 0;
+}
+.radar-axis::before,
+.radar-axis::after {
+  content: '';
+  position: absolute;
+  background: #b5e2cf4d;
+}
+.radar-axis::before {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+}
+.radar-axis::after {
+  height: 1px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+}
+.route-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px dashed #b5e2cf45;
+  transform: rotate(-20deg);
+}
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 1;
+  transform-origin: 50% 50%;
+  animation: radar-scan 6s linear infinite;
+}
+.radar-trail {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* A broad trailing fan ends at 0° (the beam). Both ends of the 360° seam are transparent. */
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 258deg,
+    #75d5b300 258deg,
+    #75d5b310 285deg,
+    #8ce6c33b 320deg,
+    #aaf5d66b 350deg,
+    #c6ffe397 358.8deg,
+    transparent 359.9deg 360deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 0 58%, #000b 66%, transparent 72%);
+  mask-image: radial-gradient(circle, #000 0 58%, #000b 66%, transparent 72%);
+}
+.radar-beam {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(0deg, #aaf5d655, #baf7dbea 65%, #d2ffe6);
+  box-shadow: 0 0 5px 1px #9ee6c97a;
+}
+.radar-beam::after {
+  content: '';
+  position: absolute;
+  inset: 0 -4px;
+  background: #9ee6c945;
+  filter: blur(4px);
+}
+.radar-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 58px;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #153d40 30%, #153d4000 72%);
+  z-index: 2;
+}
+.hero-plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(12deg);
+  z-index: 3;
+  width: 80px;
+  height: 80px;
+  color: #f7f5ed;
+  fill: #133d43;
+  filter: drop-shadow(0 3px 8px #061f2470);
+}
+.visual-origin,
+.visual-destination {
+  position: absolute;
+  z-index: 4;
+  top: 55%;
+  left: 6%;
+  font-size: 24px;
+  letter-spacing: 2px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--on-dark-primary);
+}
+.visual-destination {
+  left: auto;
+  right: 5%;
+  top: 28%;
+  font-size: 31px;
+}
+.visual-origin span,
+.visual-destination span {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.1px;
+  margin-top: 4px;
+  color: var(--on-dark-secondary);
+}
+.radar-caption,
+.coordinate {
+  position: absolute;
+  z-index: 4;
+  left: 20px;
+  top: 17px;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  color: var(--on-dark-muted);
+}
+.coordinate {
+  top: auto;
+  left: auto;
+  right: 20px;
+  bottom: 16px;
+}
+@keyframes radar-scan {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 767px) {
+  .flight-visual {
+    --radar-size: 220px;
+    min-height: 230px;
+    width: 100%;
+    margin: 0;
+  }
+  .hero-plane {
+    width: 65px;
+    height: 65px;
+  }
+  .visual-origin {
+    left: 6%;
+    font-size: 21px;
+  }
+  .visual-destination {
+    right: 5%;
+    font-size: 26px;
+  }
+  .visual-origin span,
+  .visual-destination span {
+    font-size: 7px;
+    letter-spacing: 0.5px;
+  }
+  .radar-caption,
+  .coordinate {
+    font-size: 7px;
+    letter-spacing: 0.6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep {
+    animation: none;
+    transform: rotate(24deg);
+  }
+}
+@media print {
+  .radar-sweep {
+    animation: none;
+  }
+}

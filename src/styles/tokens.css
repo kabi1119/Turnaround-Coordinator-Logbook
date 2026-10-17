@@ -1,0 +1,70 @@
+/* Foreground and interaction roles remain independent of accent/brand colors. */
+:root {
+  color-scheme: light;
+  --bg: #f5f6f3;
+  --panel: #ffffff;
+  --text: #1d3438;
+  --muted: #586c6f;
+  --line: #dce4df;
+  --teal: #174c53;
+  --teal-light: #eaf2ee;
+  --gold: #795b2d;
+  --amber: #765011;
+  --amber-bg: #fff5de;
+  --action-bg: #174c53;
+  --action-hover: #225b61;
+  --action-active: #123f46;
+  --on-action: #fffdf5;
+  --disabled-bg: #e4e9e6;
+  --disabled-fg: #536561;
+  --focus: #826329;
+  --shadow: 0 16px 60px #173b4312;
+  --dark-surface: #133d43;
+  --dark-raised: #1d4b50;
+  --dark-hover: #24545a;
+  --dark-border: #577c7d;
+  --on-dark-primary: #f7f5ed;
+  --on-dark-secondary: #dbe8e1;
+  --on-dark-muted: #b9cfc6;
+  --on-dark-accent: #b5e2cf;
+  --on-dark-focus: #efc887;
+  --chart: #507c6b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #10272c;
+    --panel: #173238;
+    --text: #f7f5ed;
+    --muted: #b9cfc6;
+    --line: #476466;
+    --teal: #b5e2cf;
+    --teal-light: #213f43;
+    --gold: #dfc18f;
+    --amber: #f4d79e;
+    --amber-bg: #493d29;
+    --action-bg: #295b55;
+    --action-hover: #32685f;
+    --action-active: #224f49;
+    --disabled-bg: #2a4346;
+    --disabled-fg: #b9cfc6;
+    --focus: #efc887;
+    --chart: #8bbca7;
+  }
+}
+/* Reusable dark context: descendants using theme roles get the correct foreground. */
+.surface-dark {
+  --bg: var(--dark-surface);
+  --panel: var(--dark-surface);
+  --text: var(--on-dark-primary);
+  --muted: var(--on-dark-muted);
+  --teal: var(--on-dark-accent);
+  --teal-light: var(--dark-raised);
+  --gold: var(--on-dark-accent);
+  --line: var(--dark-border);
+  --focus: var(--on-dark-focus);
+  --disabled-bg: var(--dark-raised);
+  --disabled-fg: var(--on-dark-muted);
+  color: var(--text);
+  background: var(--panel);
+}

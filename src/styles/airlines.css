@@ -1,0 +1,94 @@
+.airline-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.airline-logo {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--teal);
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  font-weight: 650;
+}
+.airline-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+/* A neutral light plate preserves the supplied logo's original colors in either theme. */
+.airline-logo.has-image {
+  background: #fff;
+}
+.airline-name {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  color: var(--text);
+}
+.airline-size-sm .airline-logo {
+  width: 40px;
+  height: 36px;
+  font-size: 12px;
+}
+.airline-size-lg .airline-logo {
+  width: 80px;
+  height: 56px;
+  font-size: 17px;
+}
+.airline-selection {
+  margin: -6px 0 18px;
+}
+.detail-airline {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 8px 0 10px;
+}
+.detail-airline .detail-title {
+  margin: 0;
+  min-width: 0;
+}
+.airline-library {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.airline-library-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .airline-logo {
+    width: 42px;
+    height: 42px;
+    font-size: 12px;
+  }
+  .detail-airline {
+    gap: 12px;
+  }
+  .airline-size-lg .airline-logo {
+    width: 64px;
+    height: 48px;
+  }
+}

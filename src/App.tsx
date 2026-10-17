@@ -1,0 +1,815 @@
+import { useEffect, useState } from 'react';
+import {
+  Plane,
+  Home,
+  BookOpen,
+  Plus,
+  ChartNoAxesCombined,
+  NotebookPen,
+  Settings as SettingsIcon,
+  ArrowRight,
+  ArrowUpRight,
+  CalendarDays,
+  Clock3,
+  MapPin,
+  MoreHorizontal,
+  Check,
+  Trash2,
+  Pencil,
+  History,
+  X,
+} from 'lucide-react';
+import type { Aircraft, Database } from './domain/model';
+import {
+  canRestore,
+  cardText,
+  hasArrival,
+  hasDeparture,
+  normalizeRegistration,
+  stats,
+  trashDuty,
+  visibleAircraft,
+} from './domain/selectors';
+import { LanguageContext, useLabel, useT } from './i18n';
+import { loadDatabase, writeDatabase } from './lib/storage';
+import { AircraftCard, Badge, Confirm, Empty, Metric, Modal, SectionTitle } from './components/ui';
+import AircraftEditor from './features/AircraftEditor';
+import DutyEditor from './features/DutyEditor';
+import Logbook from './features/Logbook';
+import Statistics from './features/Statistics';
+import { JournalEditor, JournalPage } from './features/Journal';
+import Settings, { ReportPreview } from './features/Settings';
+import Radar from './components/Radar';
+import AirlineLogo from './components/AirlineLogo';
+type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
+type Overlay =
+  | { type: 'add' }
+  | { type: 'aircraft'; id?: string; dutyId?: string }
+  | { type: 'detail'; id: string }
+  | { type: 'duty'; id?: string }
+  | { type: 'dutyDetail'; id: string }
+  | { type: 'journal'; id?: string }
+  | { type: 'report' }
+  | { type: 'history'; registration: string }
+  | null;
+export default function App() {
+  const [loaded] = useState(loadDatabase);
+  const [db, setDb] = useState(loaded.db);
+  return (
+    <LanguageContext.Provider value={db.settings.language}>
+      <Workspace db={db} setDb={setDb} loadError={loaded.error} />
+    </LanguageContext.Provider>
+  );
+}
+function Workspace({
+  db,
+  setDb,
+  loadError,
+}: {
+  db: Database;
+  setDb: (db: Database) => void;
+  loadError: string;
+}) {
+  const t = useT(),
+    l = useLabel();
+  const [page, setPage] = useState<Page>('home'),
+    [overlay, setOverlay] = useState<Overlay>(null),
+    [toast, setToast] = useState(''),
+    [storageError, setStorageError] = useState(loadError),
+    [pending, setPending] = useState<{
+      kind: 'aircraftTrash' | 'dutyTrash' | 'aircraftRestore';
+      id: string;
+    } | null>(null);
+  useEffect(() => {
+    document.documentElement.lang = db.settings.language;
+  }, [db.settings.language]);
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(''), 4500);
+    return () => clearTimeout(timer);
+  }, [toast]);
+  function commit(next: Database, explicitReset = false) {
+    if (loadError && storageError && !explicitReset) {
+      setStorageError(loadError);
+      return false;
+    }
+    if (!writeDatabase(next)) {
+      setStorageError(
+        t(
+          'Could not write browser storage. Changes have not been saved.',
+          '未能寫入瀏覽器儲存空間，修改尚未儲存。',
+        ),
+      );
+      return false;
+    }
+    setDb(next);
+    setStorageError('');
+    setToast(t('Saved on this device (prototype)', '已儲存在此裝置（原型）'));
+    return true;
+  }
+  const s = stats(db.aircraft, db.duties),
+    active = db.aircraft
+      .filter((a) => a.status !== 'Trashed')
+      .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
+  const recentDuty = db.duties
+    .filter((d) => d.status !== 'Trashed')
+    .sort((a, b) => b.date.localeCompare(a.date) || b.start.localeCompare(a.start))[0];
+  const close = () => setOverlay(null);
+  const openAircraft = (a: Aircraft) => setOverlay({ type: 'detail', id: a.id });
+  const detail =
+    overlay?.type === 'detail' ? db.aircraft.find((a) => a.id === overlay.id) : undefined;
+  const duty =
+    overlay?.type === 'dutyDetail' ? db.duties.find((d) => d.id === overlay.id) : undefined;
+  const nav = [
+    { key: 'home', en: 'Home', zh: '首頁', icon: Home },
+    { key: 'logbook', en: 'Logbook', zh: '紀錄簿', icon: BookOpen },
+    { key: 'add', en: 'Add', zh: '新增', icon: Plus },
+    { key: 'statistics', en: 'Statistics', zh: '統計', icon: ChartNoAxesCombined },
+    { key: 'journal', en: 'Journal', zh: '日誌', icon: NotebookPen },
+  ] as const;
+  function navigate(key: (typeof nav)[number]['key']) {
+    if (key === 'add') {
+      setOverlay({ type: 'add' });
+      return;
+    }
+    setOverlay(null);
+    setPage(key);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  return (
+    <div className="app-shell">
+      <header className="app-header">
+        <button className="brand" onClick={() => navigate('home')} aria-label="TCO Logbook Home">
+          <span className="app-mark">
+            <Plane size={23} strokeWidth={1.7} />
+          </span>
+          <span>
+            TCO <strong>Logbook</strong>
+            <small>PERSONAL AVIATION JOURNAL</small>
+          </span>
+        </button>
+        <div className="header-right">
+          <span className="header-date">
+            {new Intl.DateTimeFormat(t('en-HK', 'zh-HK'), {
+              timeZone: 'Asia/Hong_Kong',
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            }).format(new Date())}
+            <small>HONG KONG · UTC+08</small>
+          </span>
+          <button
+            className="icon-button"
+            aria-label={t('Settings', '設定')}
+            onClick={() => {
+              setPage('settings');
+              close();
+            }}
+          >
+            <SettingsIcon size={21} />
+          </button>
+        </div>
+      </header>
+      <div className="demo-strip">
+        <span className="live-dot" /> {t('PROTOTYPE v0.1.1', '原型 v0.1.1')}
+        <span>·</span>
+        {t('SYNTHETIC DEMO DATA', '合成示範資料')}
+        <span className="desktop-only">
+          · {t('DEVICE ONLY / NOT CLOUD SYNCED', '只存此裝置／無雲端同步')}
+        </span>
+      </div>
+      <main id="main-content">
+        {storageError && (
+          <div className="notice amber" role="alert">
+            {storageError}
+            <button onClick={() => setPage('settings')}>
+              {t('Open Settings to reset demo explicitly', '開啟設定以明確重設示範資料')}
+            </button>
+          </div>
+        )}
+        {page === 'home' && (
+          <>
+            <section className="home-intro">
+              <div>
+                <span className="eyebrow">YOUR JOURNEY / YOUR RECORD</span>
+                <h1>{t('A record of every\nturnaround.', '記下每一次\n過站歷程。')}</h1>
+                <p>
+                  {t(
+                    'Small details. Valuable experience. All in your logbook.',
+                    '每個細節，都是值得記下的經驗。',
+                  )}
+                </p>
+                <button className="primary" onClick={() => setOverlay({ type: 'aircraft' })}>
+                  <Plus size={18} />
+                  {t('Log an Aircraft', '新增航機紀錄')}
+                  <ArrowUpRight size={17} />
+                </button>
+              </div>
+              <Radar />
+            </section>
+            <div className="metrics surface-dark">
+              <Metric
+                value={s.logged}
+                label={t('Total Aircraft Logged', '航機記錄總數')}
+                detail={t('Every confirmed assignment', '每項已確認的處理紀錄')}
+              />
+              <Metric
+                value={s.handled}
+                label={t('Total Aircraft Handled', '航機處理總數')}
+                detail={t('Primary + Supporting', '主要協調 + 支援協調')}
+              />
+              <Metric
+                value={s.primary}
+                label={t('Primary Coordinator', '主要協調員')}
+                detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
+              />
+            </div>
+            <div className="home-columns">
+              <div>
+                <SectionTitle
+                  title={t('Most recent Duty', '最近更次')}
+                  action={
+                    <button className="text-button" onClick={() => setOverlay({ type: 'duty' })}>
+                      {t('New Duty', '新增更次')}
+                      <Plus size={16} />
+                    </button>
+                  }
+                />
+                {recentDuty ? (
+                  <section className="current-duty surface-dark">
+                    <div className="section-title">
+                      <Badge tone="light">{t('DEMO DUTY', '示範更次')}</Badge>
+                      <button
+                        className="icon-button"
+                        aria-label={t('Open recent Duty', '開啟最近更次')}
+                        onClick={() => setOverlay({ type: 'dutyDetail', id: recentDuty.id })}
+                      >
+                        <MoreHorizontal size={21} />
+                      </button>
+                    </div>
+                    <div className="duty-big-date">
+                      {recentDuty.date.slice(8)}
+                      <div>
+                        {new Intl.DateTimeFormat(t('en-HK', 'zh-HK'), {
+                          month: 'long',
+                          year: 'numeric',
+                          timeZone: 'Asia/Hong_Kong',
+                        }).format(new Date(`${recentDuty.date}T12:00+08:00`))}
+                        <small>{l(recentDuty.status)}</small>
+                      </div>
+                    </div>
+                    <div className="duty-facts">
+                      <span>
+                        <Clock3 size={16} />
+                        {recentDuty.start || '—'} – {recentDuty.end || '—'}
+                        {recentDuty.start && recentDuty.end && recentDuty.end < recentDuty.start
+                          ? ' (+1)'
+                          : ''}
+                      </span>
+                      <span>
+                        <Plane size={16} />
+                        {
+                          db.aircraft.filter(
+                            (a) => a.dutyId === recentDuty.id && a.status !== 'Trashed',
+                          ).length
+                        }{' '}
+                        {t('records', '項紀錄')}
+                      </span>
+                    </div>
+                    <button
+                      className="duty-open"
+                      onClick={() => setOverlay({ type: 'dutyDetail', id: recentDuty.id })}
+                    >
+                      {t('View Duty', '查看更次')}
+                      <ArrowRight size={18} />
+                    </button>
+                  </section>
+                ) : (
+                  <Empty
+                    text={t(
+                      'Start with a Duty or an Aircraft assignment.',
+                      '先新增更次或航機處理紀錄。',
+                    )}
+                  />
+                )}
+                <section className="journal-teaser">
+                  <span className="eyebrow">BEYOND THE NUMBERS</span>
+                  <h2>{t('What did today\nteach you?', '今天學到了\n甚麼？')}</h2>
+                  <p>
+                    {t(
+                      'Keep the lessons that make you a better coordinator.',
+                      '留下每一份有助成長的經驗。',
+                    )}
+                  </p>
+                  <button className="text-button" onClick={() => setOverlay({ type: 'journal' })}>
+                    {t('Write a reflection', '寫下反思')}
+                    <ArrowUpRight size={17} />
+                  </button>
+                </section>
+              </div>
+              <section>
+                <SectionTitle
+                  title={t('Recent Aircraft', '最近航機紀錄')}
+                  action={
+                    <button className="text-button" onClick={() => navigate('logbook')}>
+                      {t('View all', '查看全部')}
+                      <ArrowRight size={16} />
+                    </button>
+                  }
+                />
+                <div className="panel records-panel">
+                  {active.slice(0, 5).map((a) => (
+                    <AircraftCard
+                      key={a.id}
+                      a={a}
+                      privacy={db.settings.privacy}
+                      onClick={() => openAircraft(a)}
+                    />
+                  ))}
+                  {!active.length && (
+                    <Empty
+                      text={t(
+                        'Your first assignment starts here.',
+                        '從這裡開始記錄第一項處理工作。',
+                      )}
+                    />
+                  )}
+                </div>
+                <div className="home-footnote">
+                  <span>
+                    <MapPin size={16} />
+                    Asia/Hong_Kong
+                  </span>
+                  <span>{t('All examples are fictional.', '所有例子均屬虛構。')}</span>
+                </div>
+              </section>
+            </div>
+          </>
+        )}
+        {page === 'logbook' && (
+          <Logbook
+            db={db}
+            onAircraft={openAircraft}
+            onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
+            onNew={() => setOverlay({ type: 'aircraft' })}
+          />
+        )}
+        {page === 'statistics' && (
+          <Statistics db={db} onReport={() => setOverlay({ type: 'report' })} />
+        )}
+        {page === 'journal' && (
+          <JournalPage
+            db={db}
+            onOpen={(j) => setOverlay({ type: 'journal', id: j.id })}
+            onNew={() => setOverlay({ type: 'journal' })}
+          />
+        )}
+        {page === 'settings' && (
+          <Settings
+            db={db}
+            commit={commit}
+            resetCommit={(next) => commit(next, true)}
+            onBack={() => navigate('home')}
+            onReport={() => setOverlay({ type: 'report' })}
+            onAircraftRestore={(id) => setPending({ kind: 'aircraftRestore', id })}
+          />
+        )}
+        <footer className="page-footer">
+          TCO LOGBOOK{' '}
+          <span>v0.1.1 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
+        </footer>
+      </main>
+      <nav className="app-navigation" aria-label={t('Main navigation', '主導覽')}>
+        <span className="nav-caption">{t('WORKSPACE', '工作區')}</span>
+        {nav.map(({ key, en, zh, icon: Icon }) => (
+          <button
+            key={key}
+            aria-current={page === key ? 'page' : undefined}
+            className={`${page === key ? 'active' : ''} ${key === 'add' ? 'nav-add' : ''}`}
+            onClick={() => navigate(key)}
+          >
+            <span>
+              <Icon size={key === 'add' ? 25 : 21} />
+            </span>
+            {t(en, zh)}
+          </button>
+        ))}
+        <div className="nav-context">
+          <Plane size={20} />
+          <strong>TCO / DEMO</strong>
+          <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
+          <small>HONG KONG · UTC+08</small>
+        </div>
+      </nav>
+      {toast && (
+        <div className="toast surface-dark" role="status">
+          <Check size={17} />
+          {toast}
+          <button aria-label={t('Dismiss', '關閉提示')} onClick={() => setToast('')}>
+            <X size={15} />
+          </button>
+        </div>
+      )}
+      {overlay?.type === 'add' && (
+        <Modal title={t('Add to your logbook', '新增至紀錄簿')} onClose={close}>
+          <p className="muted">
+            {t('What would you like to record? Synthetic data only.', '想記下甚麼？只限虛構資料。')}
+          </p>
+          {[
+            {
+              en: 'New Aircraft',
+              zh: '新增航機',
+              sub: t('One handling assignment', '一項處理紀錄'),
+              icon: Plane,
+              type: 'aircraft',
+            },
+            {
+              en: 'New Duty',
+              zh: '新增更次',
+              sub: t('A shift, including overnight', '工作更次，包括通宵更'),
+              icon: CalendarDays,
+              type: 'duty',
+            },
+            {
+              en: 'New Career Journal',
+              zh: '新增職涯日誌',
+              sub: t('A lesson or experience', '一份學習或經驗'),
+              icon: NotebookPen,
+              type: 'journal',
+            },
+          ].map((item) => (
+            <button
+              className="add-option"
+              key={item.type}
+              onClick={() => setOverlay({ type: item.type as 'aircraft' | 'duty' | 'journal' })}
+            >
+              <item.icon size={25} />
+              <span>
+                <strong>{t(item.en, item.zh)}</strong>
+                <small>{item.sub}</small>
+              </span>
+              <ArrowUpRight size={20} />
+            </button>
+          ))}
+        </Modal>
+      )}
+      {overlay?.type === 'aircraft' && (
+        <AircraftEditor
+          key={overlay.id || `new-${overlay.dutyId || ''}`}
+          db={db}
+          existing={db.aircraft.find((a) => a.id === overlay.id)}
+          dutyId={overlay.dutyId}
+          onClose={close}
+          commit={commit}
+          onSaved={() => setToast(t('Saved on this device (prototype)', '已儲存在此裝置（原型）'))}
+        />
+      )}
+      {overlay?.type === 'duty' && (
+        <DutyEditor
+          db={db}
+          existing={db.duties.find((d) => d.id === overlay.id)}
+          onClose={close}
+          commit={commit}
+        />
+      )}
+      {overlay?.type === 'journal' && (
+        <JournalEditor
+          db={db}
+          existing={db.journals.find((j) => j.id === overlay.id)}
+          onClose={close}
+          commit={commit}
+        />
+      )}
+      {overlay?.type === 'report' && <ReportPreview db={db} onClose={close} />}
+      {detail && (
+        <Modal title={t('Aircraft Record', '航機紀錄')} onClose={close} wide>
+          <AircraftSummary a={detail} db={db} />
+          <div className="actions">
+            <button onClick={() => setPending({ kind: 'aircraftTrash', id: detail.id })}>
+              <Trash2 size={16} />
+              {t('Move to Trash', '移至垃圾桶')}
+            </button>
+            {db.settings.privacy.registration && detail.registration && (
+              <button
+                onClick={() => setOverlay({ type: 'history', registration: detail.registration })}
+              >
+                <History size={16} />
+                {t('Aircraft History', '航機歷史')}
+              </button>
+            )}
+            <button
+              className="primary"
+              onClick={() => setOverlay({ type: 'aircraft', id: detail.id })}
+            >
+              <Pencil size={16} />
+              {t('Edit Record', '編輯紀錄')}
+            </button>
+          </div>
+          <details>
+            <summary>{t('Revision activity · demo metadata', '修改紀錄 · 示範摘要')}</summary>
+            {detail.revisions.length ? (
+              detail.revisions.map((r, i) => (
+                <p key={i}>
+                  {new Date(r.at).toLocaleString(t('en-HK', 'zh-HK'), {
+                    timeZone: 'Asia/Hong_Kong',
+                  })}{' '}
+                  · {r.summary}
+                </p>
+              ))
+            ) : (
+              <p>{t('Seeded synthetic record. No edits yet.', '預載合成紀錄，尚未修改。')}</p>
+            )}
+            <p className="muted">
+              {t(
+                'Metadata only in v0.1; no full version rollback or retention promise.',
+                'v0.1 僅提供修改摘要，沒有完整版本回復或保留期保證。',
+              )}
+            </p>
+          </details>
+        </Modal>
+      )}
+      {duty && (
+        <Modal title={`${t('Duty', '更次')} · ${duty.date}`} onClose={close} wide>
+          <div className="section-title">
+            <Badge tone="teal">{l(duty.status)}</Badge>
+            <span>
+              {duty.start || '—'} – {duty.end || '—'}
+              {duty.start && duty.end && duty.end < duty.start ? ' (+1)' : ''} · Asia/Hong_Kong
+            </span>
+          </div>
+          <p>{duty.notes}</p>
+          <div className="actions left">
+            <button
+              className="primary"
+              onClick={() => setOverlay({ type: 'aircraft', dutyId: duty.id })}
+            >
+              <Plus size={16} />
+              {t('Add Aircraft to this Duty', '新增航機至此更次')}
+            </button>
+            <button onClick={() => setOverlay({ type: 'duty', id: duty.id })}>
+              {t('Edit Duty', '編輯更次')}
+            </button>
+            <button onClick={() => setPending({ kind: 'dutyTrash', id: duty.id })}>
+              <Trash2 size={16} />
+              {t('Move Duty to Trash', '將更次移至垃圾桶')}
+            </button>
+          </div>
+          {db.aircraft
+            .filter((a) => a.dutyId === duty.id && a.status !== 'Trashed')
+            .map((a) => (
+              <AircraftCard
+                key={a.id}
+                a={a}
+                privacy={db.settings.privacy}
+                onClick={() => openAircraft(a)}
+              />
+            ))}
+          <SectionTitle title={t('Linked Journal', '連結日誌')} />
+          {db.journals
+            .filter((j) => j.dutyId === duty.id)
+            .map((j) => (
+              <button
+                className="add-option"
+                key={j.id}
+                onClick={() => setOverlay({ type: 'journal', id: j.id })}
+              >
+                {j.title}
+                <ArrowUpRight size={18} />
+              </button>
+            ))}
+        </Modal>
+      )}
+      {overlay?.type === 'history' && db.settings.privacy.registration && (
+        <Modal
+          title={`${t('Aircraft History', '航機歷史')} · ${overlay.registration}`}
+          onClose={close}
+          wide
+        >
+          <HistoryView db={db} registration={overlay.registration} onAircraft={openAircraft} />
+        </Modal>
+      )}
+      {pending && (
+        <Confirm
+          title={
+            pending.kind === 'aircraftRestore'
+              ? t('Review / Confirm Aircraft Restore', '覆核／確認還原航機')
+              : t('Move to demo Trash?', '移至示範垃圾桶？')
+          }
+          onClose={() => setPending(null)}
+          onConfirm={() => {
+            let next = db;
+            if (pending.kind === 'dutyTrash') next = trashDuty(db, pending.id);
+            else
+              next = {
+                ...db,
+                aircraft: db.aircraft.map((a) => {
+                  if (a.id !== pending.id) return a;
+                  if (pending.kind === 'aircraftRestore') {
+                    if (!canRestore(a.trashedAt)) return a;
+                    const validDuty = db.duties.some(
+                      (d) => d.id === a.dutyId && d.status !== 'Trashed',
+                    );
+                    return {
+                      ...a,
+                      status: a.previousStatus || 'Draft',
+                      trashedAt: undefined,
+                      dutyId: validDuty ? a.dutyId : '',
+                    };
+                  }
+                  return {
+                    ...a,
+                    previousStatus: a.status,
+                    status: 'Trashed',
+                    trashedAt: new Date().toISOString(),
+                  };
+                }),
+              };
+            if (commit(next)) {
+              setPending(null);
+              close();
+            }
+          }}
+        >
+          {pending.kind === 'dutyTrash' ? (
+            <>
+              <p>
+                {t(
+                  'Aircraft and Journal records will be preserved and unlinked. Confirmed Aircraft still count. Restore is available in Settings for 30 days, with a reconnection preview.',
+                  '會保留航機及日誌紀錄並解除連結；已確認航機仍計入統計。30 日內可在設定預覽並還原關聯。',
+                )}
+              </p>
+              <p>
+                {db.duties.find((d) => d.id === pending.id)?.date} ·{' '}
+                {db.aircraft.filter((a) => a.dutyId === pending.id).length} Aircraft ·{' '}
+                {db.journals.filter((j) => j.dutyId === pending.id).length} Journal
+              </p>
+            </>
+          ) : (
+            <>
+              <AircraftSummary a={db.aircraft.find((a) => a.id === pending.id)!} db={db} />
+              <p>
+                {pending.kind === 'aircraftRestore'
+                  ? t(
+                      'Restores the previous Draft/Confirmed state. Statistics will recalculate. Trashed Duties will not be reconnected automatically.',
+                      '將還原原有草稿／已確認狀態並重新計算統計，不會自動連結已刪除的更次。',
+                    )
+                  : t(
+                      'Excluded from statistics while in Trash. Restore within 30 days in Settings.',
+                      '在垃圾桶內不計統計；30 日內可在設定還原。',
+                    )}
+              </p>
+            </>
+          )}
+        </Confirm>
+      )}
+    </div>
+  );
+}
+function AircraftSummary({ a: raw, db }: { a: Aircraft; db: Database }) {
+  const p = db.settings.privacy,
+    a = visibleAircraft(raw, p),
+    t = useT(),
+    l = useLabel(),
+    c = cardText(a, p);
+  return (
+    <>
+      <span className="eyebrow">SYNTHETIC / DEMO ASSIGNMENT</span>
+      <div className="detail-airline">
+        <AirlineLogo airline={a.airline} size="lg" decorative />
+        <h2 className="detail-title">{c.title}</h2>
+      </div>
+      <p>
+        {l(a.role)} · {a.variant}
+        {p.registration && a.registration ? ` (${a.registration})` : ''}
+      </p>
+      <div className="tags">
+        <Badge tone="teal">{l(a.status)}</Badge>
+        <Badge>{l(a.handling)}</Badge>
+        {!a.dutyId && <Badge tone="amber">{t('Unlinked', '未連結')}</Badge>}
+      </div>
+      <dl className="review-list">
+        <dt>{t('Handling Date', '處理日期')}</dt>
+        <dd>{a.date} · Asia/Hong_Kong</dd>
+        <dt>{t('Duty', '更次')}</dt>
+        <dd>
+          {db.duties.find((d) => d.id === a.dutyId)?.date || t('Unlinked', '未連結')} ·{' '}
+          {db.duties.find((d) => d.id === a.dutyId)?.start || '—'}
+        </dd>
+        <dt>{t('Aircraft Family / ICAO', '航機系列／ICAO')}</dt>
+        <dd>
+          {a.family} / {a.icao}
+        </dd>
+        {p.bay && (
+          <>
+            <dt>{t('Parking Bay', '停機位')}</dt>
+            <dd>{a.bay || '—'}</dd>
+          </>
+        )}
+        {(['arrival', 'departure'] as const)
+          .filter((key) => (key === 'arrival' ? hasArrival(a) : hasDeparture(a)))
+          .map((key) => (
+            <div className="review-leg" key={key}>
+              {p.statuses && (
+                <>
+                  <dt>
+                    {key === 'arrival'
+                      ? t('Arrival Status', '抵港狀態')
+                      : t('Departure Status', '離港狀態')}
+                  </dt>
+                  <dd>
+                    {l(a[key].status)} · {l(a[key].origin)}
+                  </dd>
+                </>
+              )}
+              {p.gateTimes && (
+                <>
+                  <dt>{key === 'arrival' ? 'SIBT → AIBT' : 'SOBT → AOBT'}</dt>
+                  <dd>
+                    {a[key].scheduled || '—'} → {a[key].actual || '—'} (+08:00)
+                  </dd>
+                </>
+              )}
+            </div>
+          ))}
+        <dt>{t('Disruption', '異常')}</dt>
+        <dd>
+          {l(a.disruption)} · {a.events.length} {t('events', '事件')}
+        </dd>
+        <dt>{t('Notes', '筆記')}</dt>
+        <dd>{a.notes || '—'}</dd>
+      </dl>
+      {a.disruption === 'Normal' && a.events.length > 0 && (
+        <p className="notice amber">
+          {t(
+            'Inconsistent: events recorded while status is Normal.',
+            '不一致：已記錄事件但狀態為正常。',
+          )}
+        </p>
+      )}
+      {a.events.map((e) => (
+        <section className="inset" key={e.id}>
+          <h3>{l(e.category)}</h3>
+          <p>
+            {l(e.involvement)} · {l(e.impact)} · {l(e.resolution)}
+          </p>
+          {p.disruptionNotes && <p>{e.notes}</p>}
+          {e.journalId && (
+            <p>
+              {t('Journal', '日誌')}: {db.journals.find((j) => j.id === e.journalId)?.title || '—'}
+            </p>
+          )}
+        </section>
+      ))}
+    </>
+  );
+}
+function HistoryView({
+  db,
+  registration,
+  onAircraft,
+}: {
+  db: Database;
+  registration: string;
+  onAircraft: (a: Aircraft) => void;
+}) {
+  const t = useT();
+  const rows = db.aircraft
+    .filter(
+      (a) =>
+        a.status !== 'Trashed' &&
+        normalizeRegistration(a.registration) === normalizeRegistration(registration),
+    )
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const s = stats(rows),
+    confirmed = rows.filter((a) => a.status === 'Confirmed');
+  return (
+    <>
+      <div className="mini-metrics">
+        <div>
+          <strong>{s.logged}</strong>
+          {t('Logged', '記錄')}
+        </div>
+        <div>
+          <strong>{s.handled}</strong>
+          {t('Handled', '處理')}
+        </div>
+        <div>
+          <strong>{s.primary}</strong>
+          {t('Primary', '主要')}
+        </div>
+      </div>
+      <p>
+        {t('First / Last confirmed encounter', '首次／最近已確認接觸')}:{' '}
+        {confirmed.at(-1)?.date || '—'} / {confirmed[0]?.date || '—'}
+      </p>
+      {rows.map((a) => (
+        <AircraftCard
+          key={a.id}
+          a={a}
+          privacy={db.settings.privacy}
+          onClick={() => onAircraft(a)}
+        />
+      ))}
+    </>
+  );
+}

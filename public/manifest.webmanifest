@@ -1,0 +1,9 @@
+{
+  "name": "TCO Logbook Prototype",
+  "short_name": "TCO Demo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f6f3",
+  "theme_color": "#123f46",
+  "icons": [{ "src": "/airplane.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

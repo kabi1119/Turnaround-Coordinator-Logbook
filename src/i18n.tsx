@@ -1,0 +1,60 @@
+import { createContext, useContext } from 'react';
+export type Translate = (en: string, zh: string) => string;
+export const LanguageContext = createContext<'en' | 'zh-HK'>('en');
+export function useT(): Translate {
+  const lang = useContext(LanguageContext);
+  return (en, zh) => (lang === 'en' ? en : zh);
+}
+export const labels: Record<string, string> = {
+  'Full Turnaround': '完整過站',
+  'Departure Only': '僅離港',
+  'Arrival Only': '僅抵港',
+  'Primary Coordinator': '主要協調員',
+  'Supporting Coordinator': '支援協調員',
+  'Training / Observation': '訓練／觀察',
+  Draft: '草稿',
+  Confirmed: '已確認',
+  Trashed: '垃圾桶',
+  'Not Recorded': '未記錄',
+  Early: '提早',
+  'On Time': '準點',
+  Delayed: '延誤',
+  Cancelled: '取消',
+  Other: '其他',
+  Unknown: '未知',
+  Normal: '正常',
+  Disrupted: '有異常',
+  'Self-reported': '自行申報',
+  'Confirmed mock gate suggestion': '已確認模擬停機位時間建議',
+  Weather: '天氣',
+  'ATC Restrictions': '空管限制',
+  'Late Inbound': '來機延誤',
+  'Aircraft Technical': '航機技術',
+  'Baggage/Loading': '行李／裝載',
+  'Passenger/Boarding': '旅客／登機',
+  'Ground Handling': '地勤',
+  'Other Operational': '其他營運',
+  Observed: '觀察',
+  Assisted: '協助',
+  Coordinated: '協調',
+  Escalated: '上報',
+  Minor: '輕微',
+  Moderate: '中等',
+  Major: '重大',
+  Resolved: '已解決',
+  'Handed Over': '已交接',
+  'Problem-solving': '解難',
+  'Decision-making': '決策',
+  Leadership: '領導',
+  Communication: '溝通',
+  Organising: '組織',
+  'Safety Awareness': '安全意識',
+  'Stakeholder Coordination': '持份者協調',
+  'Time Management': '時間管理',
+  'Customer Service': '客戶服務',
+  'Continuous Improvement': '持續改善',
+};
+export function useLabel() {
+  const t = useT();
+  return (s: string) => t(s, labels[s] || s);
+}
