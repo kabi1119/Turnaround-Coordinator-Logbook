@@ -64,8 +64,9 @@ describe('v0.1.4 image combobox', () => {
     expect(input).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByRole('dialog', { name: 'Review / Double-check' })).toBeNull();
   });
-  it('ArrowUp starts at last option; Escape closes suggestions while retaining the editor', () => {
+  it('ArrowUp scrolls the last mounted option into view; Escape retains the editor', () => {
     const close = vi.fn();
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
     render(
       <AircraftEditor db={seedDatabase()} commit={() => true} onClose={close} onSaved={() => {}} />,
     );
@@ -74,6 +75,10 @@ describe('v0.1.4 image combobox', () => {
     expect(
       document.getElementById(input.getAttribute('aria-activedescendant')!)!,
     ).toHaveTextContent('Philippines AirAsia');
+    expect(scroll).toHaveBeenLastCalledWith({ block: 'nearest' });
+    expect(scroll.mock.contexts.at(-1)).toBe(
+      document.getElementById(input.getAttribute('aria-activedescendant')!),
+    );
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(input).toHaveAttribute('aria-expanded', 'false');
     expect(close).not.toHaveBeenCalled();
@@ -247,6 +252,40 @@ describe('v0.1.4 deterministic synthetic data and reviewed refresh', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirm 24-airline demo refresh' }));
     expect(screen.getByRole('alert')).toHaveTextContent('No refresh was applied');
   });
+  it.each(['en', 'zh-HK'] as const)(
+    'An edited current demo is blocked without a false up-to-date claim in %s',
+    (language) => {
+      const db = seedDatabase(),
+        commit = vi.fn(() => true);
+      db.aircraft[0].notes = 'User-edited synthetic example';
+      const before = structuredClone(db);
+      expect(demoDatasetPlan(db).generate).toHaveLength(0);
+      expect(demoDatasetPlan(db).blocked).toEqual(['a1']);
+      render(
+        <LanguageContext.Provider value={language}>
+          <DemoAirlineRefresh db={db} commit={commit} onClose={() => {}} />
+        </LanguageContext.Provider>,
+      );
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        language === 'en' ? 'Refresh blocked' : '無法更新',
+      );
+      expect(
+        screen.queryByText(
+          language === 'en'
+            ? 'The 24-airline dataset is already current. No refresh is needed.'
+            : '24 家航空公司示範資料已是最新，毋須更新。',
+        ),
+      ).toBeNull();
+      fireEvent.click(screen.getByRole('checkbox'));
+      const confirm = screen.getByRole('button', {
+        name: language === 'en' ? 'Confirm 24-airline demo refresh' : '確認更新 24 家航空公司示範',
+      });
+      expect(confirm).toBeDisabled();
+      fireEvent.click(confirm);
+      expect(commit).not.toHaveBeenCalled();
+      expect(db).toEqual(before);
+    },
+  );
   it('A changed database cannot reuse an already approved preview', () => {
     const db = legacySeedDatabase(),
       commit = vi.fn(() => true);

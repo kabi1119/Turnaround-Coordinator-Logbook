@@ -72,6 +72,10 @@
   text-align: left;
   flex-wrap: wrap;
 }
+.airline-option.highlighted,
+.airline-option[aria-selected='true'] {
+  outline-color: var(--focus);
+}
 .duty-history-row > span:first-child {
   flex: 1;
   min-width: 150px;

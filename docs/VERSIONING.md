@@ -39,7 +39,7 @@ Do not prefix release titles with `feat:` or `fix:`. This policy applies to futu
 
 Retain a detailed English body: short release summary, delivered features, bugs fixed, UX improvements, data compatibility and actual test/verification results. Omit claims about unfinished work. Scale detail to the release while keeping meaningful technical information.
 
-The exact authorized v0.1.4 title is:
+The agreed v0.1.4 title is (this does not authorize executing a commit):
 
 ```text
 v0.1.4 - Enhanced Airline Selection, Demo Records and Dashboard UX
@@ -47,6 +47,6 @@ v0.1.4 - Enhanced Airline Selection, Demo Records and Dashboard UX
 
 ## Authorization and verification
 
-Version agreement does not itself authorize commits, pushes, deployment, visibility changes or history rewriting. Follow the active owner's request. For v0.1.4, one new **local** release commit is explicitly authorized after successful checks; **no push** is authorized. Preserve the independently committed v0.1.3 baseline.
+Version agreement does not itself authorize commits, pushes, deployment, visibility changes or history rewriting. Follow the active owner's request. The original v0.1.4 task authorized a local release commit, but the subsequent **interrupted implementation recovery request supersedes that authorization**: complete verification, report readiness, then **wait for explicit owner approval before committing or pushing**. Preserve the independently committed v0.1.3 baseline and existing staged/unstaged work; do not amend or rewrite history.
 
 Before a release commit, verify path/branch/history and review intended staged changes. Exclude secrets, workplace information, browser profiles and generated artifacts. Run tests, lint, build, formatting and npm audit; fix failures and describe unresolved verification limits accurately. Preserve the opening independent-project disclaimer, source-available/non-open-source position and unresolved third-party logo permissions.

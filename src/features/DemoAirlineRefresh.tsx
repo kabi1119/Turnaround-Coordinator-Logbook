@@ -54,7 +54,7 @@ export default function DemoAirlineRefresh({
       {plan.blocked.length > 0 && (
         <p role="alert" className="notice amber">
           {t(
-            'Refresh blocked: edited or unrecognized records occupy required IDs. They will not be overwritten. Export your data for review; no automatic cleanup is safe.',
+            'Refresh blocked: edited or unrecognized records occupy required IDs. They will not be overwritten. Review the listed records; no automatic cleanup is safe.',
             '無法更新：必要 ID 已被修改過或無法辨認的紀錄佔用，不會覆寫。無法安全自動清理，請先檢查紀錄。',
           )}{' '}
           {plan.blocked.join(', ')}
@@ -77,7 +77,7 @@ export default function DemoAirlineRefresh({
           </p>
         ))}
       </details>
-      {!plan.generate.length && (
+      {!plan.generate.length && !plan.blocked.length && (
         <p>
           {t(
             'The 24-airline dataset is already current. No refresh is needed.',

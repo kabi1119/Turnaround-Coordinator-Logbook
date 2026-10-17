@@ -1,8 +1,20 @@
 # Prototype v0.1.4 status
 
-## v0.1.4 implementation — 2026-10-17 (Hong Kong)
+## Interrupted implementation recovery — 2026-10-17 (Hong Kong)
 
-Built on the clean, committed v0.1.3 baseline 4e607f4 on main. Current owner request authorizes a new local v0.1.4 commit after checks; no push, amend, history rewrite, visibility change or deployment. Work is exclusively in Turnaround-Coordinator-Logbook.
+Recovery started with HEAD 4e607f4417ee4a4c3ce23c9abfa84c2c611116e4 on main (v0.1.3): 33 files already staged, five files with unstaged edits, 34 distinct changed paths and no untracked files. No v0.1.4 commit existed. Existing implementation and the index were preserved; no add/reset/commit/push/history rewrite was performed during recovery.
+
+- Audited all six v0.1.4 requirements against actual source, UI integration and tests. The catalogue/combobox, 24-record seed, reviewed refresh, clock, previous-duty navigation and version convention were already present. Recovery did not rebuild them.
+- Fixed one misleading refresh state: an edited current demo could be blocked while also showing the dataset as current. That success message now requires zero blockers; confirmation remains disabled and user edits stay intact. English guidance no longer suggests a full-data export that the prototype does not provide. Added two EN/zh-HK regression cases.
+- Fixed the literal newline escape joining two README bullets. Updated AGENTS and VERSIONING to the latest recovery instruction: wait for explicit owner approval before any commit or push. The earlier automatic-commit authorization is superseded.
+- Final recovery tests: **120 passed / 12 files**, lint zero warnings, TypeScript/Vite build passed, formatting passed and npm audit **0 vulnerabilities**. The 24 source PNGs and build copies match HEAD byte-for-byte; opening disclaimer, PRD/brief, third-party notices, provenance/rights inventory, historical seed body and dependency content are unchanged.
+- Repeated Edge QA in a new isolated synthetic profile: seven widths in both themes; 24 loaded option logos; name/code search; native mouse/keyboard and emulated touch selection; safe cancel/refresh/retry with custom examples preserved; history/detail navigation; future Planned exclusion; overnight batch persistence; stable detail scroll through clock ticks; blocked preview without a false current-data claim. No app runtime errors or external HTTP asset requests. Physical iPhone/Safari and screen-reader acceptance remain pending.
+
+The **working tree** is verified for owner manual acceptance. Existing staging is deliberately unchanged and does not contain all final fixes: review/include the remaining unstaged edits before any later approved commit. Full checklist, file lists, limitations and Windows acceptance steps: docs/V0_1_4_ACCEPTANCE.md. No automatic commit or push.
+
+## Original v0.1.4 implementation — 2026-10-17 (Hong Kong)
+
+Built on the clean, committed v0.1.3 baseline 4e607f4 on main. The original implementation task authorized a local release commit, but it was interrupted before a commit occurred. The subsequent recovery request requires verification and explicit owner approval before any commit or push. No amend, history rewrite, visibility change or deployment is authorized. Work is exclusively in Turnaround-Coordinator-Logbook.
 
 - AirlineCombobox replaces native datalist: exactly 24 local image/name/IATA options; searchable name/code/aliases; editable historical/custom text; arrows, Enter, Escape, mouse/touch and focus behavior. AirlineLogo retains code fallback and separate unresolved legal status.
 - seedDatabase now generates exactly 24 Confirmed synthetic assignments, one per catalogue airline, on 24 distinct fixed HK dates (12 August–16 October 2026). Flights, registrations and bays are explicitly DEMO; selected gate times and independent statuses demonstrate existing features. Appropriate type illustrations include B737-800 and A330-300F entry options. Original eight variant choices are frozen in legacySeed to preserve recognition fingerprints.
@@ -15,7 +27,7 @@ Built on the clean, committed v0.1.3 baseline 4e607f4 on main. Current owner req
 
 Executed verification: **118 tests passed across 12 files**; lint zero warnings, TypeScript/Vite build passed, format:check passed, npm audit **0 vulnerabilities**. Isolated Windows headless Edge passed seven widths in both themes, keyboard/emulated-touch logo selection, cancellation and reviewed legacy refresh with custom records preserved, idempotency, duty-history ordering/detail access, overnight batch save/reload and stable detail scroll through clock updates. No runtime exception or external HTTP asset request. Representative screenshots were visually inspected; QA artifacts remain ignored under .checkpoints. Full results: docs/V0_1_4_ACCEPTANCE.md.
 
-Real iPhone/Safari and physical touch remain untested. Ambiguous required IDs deliberately block refresh rather than overwrite potential user edits; fixed synthetic dates do not roll forward automatically. Legacy Draft duties without work progress show Not Recorded in the new history instead of inferring completed work. No automatic storage migration, browser-data reset or deployment runs. The v0.1.4 local commit is created only after final staging review and successful checks; its hash/body are reported in delivery, without pushing.
+Real iPhone/Safari and physical touch remain untested. Ambiguous required IDs deliberately block refresh rather than overwrite potential user edits; fixed synthetic dates do not roll forward automatically. Legacy Draft duties without work progress show Not Recorded in the new history instead of inferring completed work. No automatic storage migration, browser-data reset or deployment runs. No v0.1.4 commit exists at recovery start; approval is required before any future commit or push. Recovery findings and final verification are recorded below and in docs/V0_1_4_ACCEPTANCE.md.
 
 ## Historical v0.1.3 status
 

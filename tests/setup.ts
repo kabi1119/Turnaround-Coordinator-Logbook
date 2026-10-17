@@ -19,3 +19,5 @@ Object.defineProperty(HTMLDialogElement.prototype, 'close', {
   },
 });
 Object.defineProperty(window, 'scrollTo', { configurable: true, value: () => {} });
+// jsdom has no layout/scroll implementation; individual tests can observe requests.
+Object.defineProperty(Element.prototype, 'scrollIntoView', { configurable: true, value: () => {} });

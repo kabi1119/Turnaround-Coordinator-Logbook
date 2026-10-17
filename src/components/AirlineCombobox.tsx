@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import AirlineLogo from './AirlineLogo';
 import { searchAirlines } from '../data/airlineCatalogue';
@@ -19,6 +19,11 @@ export default function AirlineCombobox({
     [search, setSearch] = useState(false),
     [active, setActive] = useState(-1);
   const options = searchAirlines(search ? value : '');
+  const activeId =
+    open && active >= 0 && options[active] ? `${id}-${options[active].iata}` : undefined;
+  useEffect(() => {
+    if (activeId) document.getElementById(activeId)?.scrollIntoView?.({ block: 'nearest' });
+  }, [activeId]);
   const choose = (name: string) => {
     onChange(name);
     setOpen(false);
@@ -45,9 +50,7 @@ export default function AirlineCombobox({
           aria-autocomplete="list"
           aria-expanded={open}
           aria-controls={`${id}-list`}
-          aria-activedescendant={
-            open && active >= 0 && options[active] ? `${id}-${options[active].iata}` : undefined
-          }
+          aria-activedescendant={activeId}
           aria-describedby={`${id}-hint`}
           autoComplete="off"
           value={value}
@@ -75,10 +78,6 @@ export default function AirlineCombobox({
                   : (active + (e.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length
                 : -1;
               setActive(next);
-              if (next >= 0)
-                document
-                  .getElementById(`${id}-${options[next].iata}`)
-                  ?.scrollIntoView?.({ block: 'nearest' });
             } else if (e.key === 'Enter' && open) {
               e.preventDefault();
               if (active >= 0 && options[active]) choose(options[active].name);
