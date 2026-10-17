@@ -6,6 +6,9 @@ export function useT(): Translate {
   return (en, zh) => (lang === 'en' ? en : zh);
 }
 export const labels: Record<string, string> = {
+  Legacy: '舊版未記錄',
+  'None / Below threshold': '無／低於門檻',
+  Undetermined: '未能判定',
   Planned: '計劃中',
   Worked: '已工作',
   Day: '日更',

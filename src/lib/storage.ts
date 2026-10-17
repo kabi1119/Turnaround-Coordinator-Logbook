@@ -66,7 +66,12 @@ function validDatabase(value: unknown): value is Database {
         a.events.every(
           (e) =>
             object(e) &&
-            strings(e, ['id', 'category', 'involvement', 'impact', 'resolution', 'notes']),
+            strings(e, ['id', 'category', 'involvement', 'resolution', 'notes']) &&
+            (e.impact === undefined || ['Minor', 'Moderate', 'Major'].includes(String(e.impact))) &&
+            (e.delayMinutes === undefined ||
+              (typeof e.delayMinutes === 'number' &&
+                Number.isSafeInteger(e.delayMinutes) &&
+                e.delayMinutes >= 0)),
         ) &&
         Array.isArray(a.revisions) &&
         a.revisions.every((r) => object(r) && strings(r, ['at', 'summary'])),
@@ -103,7 +108,12 @@ function validDatabase(value: unknown): value is Database {
 export function loadDatabase(): { db: Database; error: string } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { db: seedDatabase(), error: '' };
+    if (!raw) {
+      const db = seedDatabase();
+      for (const key of Object.keys(db.settings.privacy) as (keyof typeof db.settings.privacy)[])
+        db.settings.privacy[key] = true;
+      return { db, error: '' };
+    }
     const value = JSON.parse(raw);
     if (!validDatabase(value)) throw new Error('Unsupported local data');
     return { db: value, error: '' };

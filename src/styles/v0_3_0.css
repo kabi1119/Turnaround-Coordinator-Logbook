@@ -1,0 +1,114 @@
+/* Size the controls and tracks themselves; keep overflow visible for focus rings/popovers. */
+dialog,
+dialog.wide {
+  max-width: calc(100vw - 16px - env(safe-area-inset-left) - env(safe-area-inset-right));
+}
+.modal-body,
+.modal-head > div,
+.details-content,
+.inset,
+.review-list > *,
+.modal-body form {
+  min-width: 0;
+}
+.modal-body {
+  overflow-wrap: anywhere;
+}
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.modal-body input[type='date'],
+.modal-body input[type='time'],
+.modal-body input[type='datetime-local'] {
+  appearance: none;
+  width: 100%;
+  min-inline-size: 0;
+}
+.modal-body input::-webkit-date-and-time-value {
+  min-width: 0;
+  text-align: left;
+}
+.duty-picker {
+  position: relative;
+}
+.duty-picker > button {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.duty-options {
+  position: relative;
+  width: 100%;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.duty-options [role='option'] {
+  padding: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.duty-options .highlighted,
+.duty-options [aria-selected='true'] {
+  background: var(--teal-light);
+  box-shadow: inset 3px 0 var(--teal);
+}
+.journal-filters {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+}
+.backup-records {
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .modal-body .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .journal-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .journal-filters input {
+    font-size: 16px;
+    padding-inline: 8px;
+  }
+  .modal-head {
+    gap: 8px;
+  }
+  .modal-head h2 {
+    overflow-wrap: anywhere;
+    font-size: 20px;
+  }
+  .modal-head > button {
+    flex: 0 0 44px;
+    padding: 8px;
+  }
+  .modal-body .actions > button {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .modal-body .sticky-actions {
+    grid-template-columns: minmax(0, 1fr);
+    position: static;
+  }
+  .modal-body .airline-option {
+    gap: 6px;
+  }
+  .modal-body .airline-option .airline-logo {
+    --logo-width: 72px;
+    --logo-height: 40px;
+  }
+}

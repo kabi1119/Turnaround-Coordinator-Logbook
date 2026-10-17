@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Plus, Trash2, Search, ShieldCheck } from 'lucide-react';
-import type { Aircraft, Database, Disruption, Duty, Leg } from '../domain/model';
+import type { Aircraft, Database, Disruption, Leg } from '../domain/model';
 import {
   disruptionCategories,
   emptyAircraft,
@@ -21,11 +21,16 @@ import {
   saveAircraft,
   visibleAircraft,
 } from '../domain/selectors';
-import { demoBays, variants } from '../data/reference';
+import { demoBays } from '../data/reference';
 import { Confirm, Field, Modal, Select, TextArea, Badge } from '../components/ui';
 import { useLabel, useT } from '../i18n';
 import AirlineLogo from '../components/AirlineLogo';
 import AirlineCombobox from '../components/AirlineCombobox';
+import DutyPicker from '../components/DutyPicker';
+import { dutyOptionText } from '../domain/roster';
+import AircraftTypeFields from '../components/AircraftTypeFields';
+import { aircraftModel } from '../data/aircraftCatalogue';
+import { delaySeverity } from '../domain/delaySeverity';
 export interface EditorProps {
   db: Database;
   existing?: Aircraft;
@@ -60,7 +65,7 @@ export default function AircraftEditor({
     [discard, setDiscard] = useState(false);
   const saving = useRef(false);
   const patch = (part: Partial<Aircraft>) => setA((prev) => ({ ...prev, ...part }));
-  const applicableDuties = db.duties.filter((d) => d.status !== 'Trashed');
+  const applicableDuties = db.duties.filter((d) => d.status !== 'Trashed' || d.id === a.dutyId);
   const suggested = resolveDuty(a.date, db.duties);
   const matches = duplicates(a, db.aircraft, p);
   const history =
@@ -85,15 +90,6 @@ export default function AircraftEditor({
       );
       return;
     }
-    if (!a.dutyId && (mode !== 'draft' || a.date)) {
-      setError(
-        t(
-          'Choose a Duty. Multiple candidate shifts must be selected explicitly.',
-          '請選擇更次；有多個候選時必須明確選擇。',
-        ),
-      );
-      return;
-    }
     if (mode !== 'draft' && !isComplete(a)) {
       setError(
         t(
@@ -111,22 +107,11 @@ export default function AircraftEditor({
     if (saving.current || !review || (matches.length > 0 && !keep)) return;
     saving.current = true;
     const now = new Date().toISOString();
-    const newDuty: Duty | undefined =
-      a.dutyId === 'new' && a.date
-        ? {
-            id: id(),
-            date: a.date,
-            start: '',
-            end: '',
-            status: 'Draft',
-            notes: 'Created at Aircraft confirmation',
-          }
-        : undefined;
     // Disabled values remain archived on edits; only enabled fields accept new values.
     const base = existing || emptyAircraft(a.date);
     const record: Aircraft = {
       ...a,
-      dutyId: newDuty?.id || (a.dutyId === 'new' ? '' : a.dutyId),
+      dutyId: a.dutyId,
       registration: p.registration ? a.registration.trim() : base.registration,
       bay: p.bay ? a.bay.trim().toUpperCase() : base.bay,
       arrival: {
@@ -161,7 +146,7 @@ export default function AircraftEditor({
         },
       ],
     };
-    if (!commit(saveAircraft(db, record, newDuty))) {
+    if (!commit(saveAircraft(db, record))) {
       saving.current = false;
       setError(t('Storage is unavailable. Nothing was saved.', '儲存空間無法使用，尚未儲存。'));
       return;
@@ -262,7 +247,6 @@ export default function AircraftEditor({
           id: id(),
           category: 'Weather',
           involvement: 'Observed',
-          impact: 'Minor',
           resolution: 'Handed Over',
           notes: '',
         },
@@ -278,12 +262,9 @@ export default function AircraftEditor({
           'Unlinked Draft · no date; no Duty will be created',
           '未連結草稿 · 未定日期，不會建立更次',
         )
-      : a.dutyId === 'new'
-        ? t(
-            `New Draft Duty · ${a.date} (created only after confirmation)`,
-            `新草稿更次 · ${a.date}（確認後才建立）`,
-          )
-        : `${selectedDuty?.date || ''} · ${selectedDuty?.start || '—'}–${selectedDuty?.end || '—'} · ${l(selectedDuty?.status || '')}`;
+      : selectedDuty
+        ? dutyOptionText(selectedDuty, l)
+        : t('Unlinked · no Duty will be created', '未連結 · 不會建立更次');
   return (
     <>
       <Modal
@@ -313,23 +294,10 @@ export default function AircraftEditor({
                 patch({ date, dutyId: resolveDuty(date, db.duties).selected });
               }}
             />
-            <Select
-              label={t('Duty / Shift', '所屬更次')}
+            <DutyPicker
               value={a.dutyId}
-              placeholder={t('Choose a Duty explicitly', '請明確選擇更次')}
-              options={[
-                ...applicableDuties.map((d) => ({
-                  value: d.id,
-                  label: `${d.date} · ${d.start || '—'}–${d.end || '—'} · ${l(d.status)} · ${d.id.slice(0, 5)}`,
-                })),
-                {
-                  value: 'new',
-                  label: a.date
-                    ? t('Create a new Draft Duty at confirmation', '確認時建立新的草稿更次')
-                    : t('Undated Draft · no new Duty', '未定日期草稿 · 不新增更次'),
-                },
-              ]}
-              onChange={(e) => patch({ dutyId: e.target.value })}
+              duties={applicableDuties}
+              onChange={(dutyId) => patch({ dutyId })}
             />
           </div>
           {suggested.ambiguous && !a.dutyId && (
@@ -356,16 +324,7 @@ export default function AircraftEditor({
               )}
             </div>
           )}
-          <Select
-            label={t('Aircraft Type / Variant *', '航機型號／子型號 *')}
-            options={variants.map((v) => v.name)}
-            placeholder={t('Select variant', '選擇子型號')}
-            value={a.variant}
-            onChange={(e) => {
-              const v = variants.find((v) => v.name === e.target.value);
-              patch({ variant: v?.name || '', family: v?.family || '', icao: v?.icao || '' });
-            }}
-          />
+          <AircraftTypeFields a={a} onChange={patch} />
           <div className="form-grid">
             <Select
               label={t('Handling Type *', '處理類型 *')}
@@ -513,13 +472,21 @@ export default function AircraftEditor({
                         })
                       }
                     />
-                    <Select
-                      label={t('Impact · subjective', '影響 · 主觀分類')}
-                      options={['Minor', 'Moderate', 'Major']}
-                      value={event.impact}
-                      onChange={(e) =>
-                        updateEvent(event.id, { impact: e.target.value as Disruption['impact'] })
-                      }
+                    <Field
+                      label={t(
+                        'Disruption delay · whole minutes (optional)',
+                        '異常延誤 · 整數分鐘（選填）',
+                      )}
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={event.delayMinutes ?? ''}
+                      onChange={(e) => {
+                        const n = e.target.valueAsNumber;
+                        updateEvent(event.id, {
+                          delayMinutes: Number.isSafeInteger(n) && n >= 0 ? n : undefined,
+                        });
+                      }}
                     />
                     <Select
                       label={t('Resolution', '結果')}
@@ -532,6 +499,22 @@ export default function AircraftEditor({
                       }
                     />
                   </div>
+                  <p aria-live="polite">
+                    {t('Calculated Delay Severity', '計算延誤嚴重程度')}:{' '}
+                    <strong>{l(delaySeverity(event.delayMinutes))}</strong>
+                  </p>
+                  <small>
+                    {t(
+                      'Source: your entered disruption duration, independent of flight times. Personal thresholds; no causation or official standard implied.',
+                      '來源：自行輸入的異常持續時間，與航班時間獨立。個人門檻，不推斷因果或代表官方標準。',
+                    )}
+                  </small>
+                  {event.impact && (
+                    <p>
+                      {t('Historical operational impact (preserved)', '歷史營運影響（保留原值）')}:{' '}
+                      {l(event.impact)}
+                    </p>
+                  )}
                   {p.disruptionNotes && (
                     <TextArea
                       label={t('Event notes', '事件筆記')}
@@ -608,7 +591,7 @@ export default function AircraftEditor({
             </dd>
             <dt>{t('Aircraft Type + Registration', '航機型號及機身註冊')}</dt>
             <dd>
-              {a.variant || '—'}
+              {aircraftModel(a) || '—'} · {a.variant || '—'}
               {p.registration && a.registration ? ` (${a.registration})` : ''}
             </dd>
             <dt>{t('My Role / Handling Type', '本人角色／處理類型')}</dt>
@@ -652,7 +635,10 @@ export default function AircraftEditor({
               {l(a.disruption)} · {a.events.length} {t('events', '事件')}
               {a.events.map((e) => (
                 <p key={e.id}>
-                  {l(e.category)} · {l(e.involvement)} · {l(e.impact)} · {l(e.resolution)}
+                  {l(e.category)} · {l(e.involvement)} · {l(e.resolution)}
+                  {e.impact ? ` · ${t('Historical impact', '歷史影響')}: ${l(e.impact)}` : ''}
+                  {` · ${t('Calculated Delay Severity', '計算延誤嚴重程度')}: ${l(delaySeverity(e.delayMinutes))}`}
+                  {e.delayMinutes !== undefined ? ` (${e.delayMinutes} min)` : ''}
                   {p.disruptionNotes && e.notes ? ` · ${e.notes}` : ''}
                   {e.journalId
                     ? ` · Journal: ${db.journals.find((j) => j.id === e.journalId)?.title || '—'}`

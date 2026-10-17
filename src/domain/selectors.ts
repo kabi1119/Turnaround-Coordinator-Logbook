@@ -1,5 +1,6 @@
 import { flightStatuses, handlingTypes, roles } from './model';
 import { completedDuty } from './roster';
+import { validAircraftIdentity, aircraftModel } from '../data/aircraftCatalogue';
 import type { Aircraft, Database, Filters, Privacy, PrivacyKey, Duty, Journal } from './model';
 export const normalizeRegistration = (v: string) => v.trim().toUpperCase();
 export const hasArrival = (a: Aircraft) =>
@@ -121,7 +122,7 @@ export function stats(records: Aircraft[], duties: Duty[] = []) {
 }
 export function ranking(
   records: Aircraft[],
-  key: 'airline' | 'variant' | 'family' | 'registration' | 'month',
+  key: 'airline' | 'aircraftType' | 'variant' | 'family' | 'registration' | 'month',
 ) {
   const counts = new Map<string, number>();
   records
@@ -130,15 +131,25 @@ export function ranking(
       const value =
         key === 'month'
           ? a.date.slice(0, 7)
-          : key === 'registration'
-            ? normalizeRegistration(a.registration)
-            : a[key];
+          : key === 'aircraftType'
+            ? aircraftModel(a)
+            : key === 'registration'
+              ? normalizeRegistration(a.registration)
+              : a[key];
       if (value) counts.set(value, (counts.get(value) || 0) + 1);
     });
   return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 }
 export const isComplete = (a: Aircraft) =>
-  Boolean(a.date && a.airline.trim() && a.variant && a.handling && a.role && a.actualHandling);
+  Boolean(
+    a.date &&
+    a.airline.trim() &&
+    a.variant &&
+    a.handling &&
+    a.role &&
+    a.actualHandling &&
+    validAircraftIdentity(a),
+  );
 export function duplicates(a: Aircraft, records: Aircraft[], p: Privacy) {
   return records.filter(
     (b) =>
@@ -161,7 +172,7 @@ export function resolveDuty(date: string, duties: Duty[]) {
   const options = duties.filter((d) => d.status !== 'Trashed' && d.date === date);
   return {
     options,
-    selected: options.length === 1 ? options[0].id : options.length === 0 ? 'new' : '',
+    selected: options.length === 1 ? options[0].id : '',
     ambiguous: options.length > 1,
   };
 }

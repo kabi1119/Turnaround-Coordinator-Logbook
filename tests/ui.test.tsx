@@ -19,7 +19,8 @@ function setupEditor(db = seedDatabase(), existing?: Database['aircraft'][number
 }
 async function core(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('Airline *'), 'Cathay Pacific');
-  await user.selectOptions(screen.getByLabelText('Aircraft Type / Variant *'), 'A350-1000');
+  await user.selectOptions(screen.getByLabelText('Aircraft Type *'), 'A350');
+  await user.selectOptions(screen.getByLabelText('Aircraft Variant *'), 'A350-1000');
 }
 describe('Mandatory Aircraft Review Sheet', () => {
   it('An undated incomplete Draft requires review and never creates an undated Duty', async () => {
@@ -45,7 +46,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(commit).not.toHaveBeenCalled();
     const review = screen.getByRole('dialog', { name: 'Review / Double-check' });
-    expect(within(review).getByText(/New Draft Duty/)).toBeInTheDocument();
+    expect(within(review).getByText(/Unlinked · no Duty will be created/)).toBeInTheDocument();
     await user.click(within(review).getByRole('button', { name: 'Back to Edit' }));
     expect(screen.getByLabelText('Airline *')).toHaveValue('Cathay Pacific');
     expect(commit).not.toHaveBeenCalled();
@@ -67,7 +68,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     expect(saved).toHaveBeenCalledTimes(1);
     const value = commit.mock.calls[0] as unknown as [Database];
     expect(value[0].aircraft[0].status).toBe('Confirmed');
-    expect(value[0].duties).toHaveLength(7);
+    expect(value[0].duties).toHaveLength(6);
   });
   it('Closing editor discards without creating Aircraft or Draft Duty', async () => {
     const user = userEvent.setup(),
@@ -82,14 +83,17 @@ describe('Mandatory Aircraft Review Sheet', () => {
     const user = userEvent.setup(),
       { commit, close } = setupEditor();
     await core(user);
-    await user.selectOptions(screen.getByLabelText('Duty / Shift'), 'd3');
+    await user.click(screen.getByRole('combobox', { name: 'Duty / Shift' }));
+    await user.click(screen.getByRole('option', { name: /2026-Oct-15 22:00/ }));
     await user.click(screen.getByRole('button', { name: 'Save & Add Next' }));
     expect(commit).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(commit).toHaveBeenCalledTimes(1);
     expect(close).not.toHaveBeenCalled();
     expect(screen.getByLabelText('Airline *')).toHaveValue('');
-    expect(screen.getByLabelText('Duty / Shift')).toHaveValue('d3');
+    expect(screen.getByRole('combobox', { name: 'Duty / Shift' })).toHaveTextContent(
+      '2026-Oct-15 22:00',
+    );
   });
   it('Missing core fields cannot Confirm but Save Draft still requires review', async () => {
     const user = userEvent.setup(),
@@ -110,11 +114,17 @@ describe('Mandatory Aircraft Review Sheet', () => {
     fireEvent.change(screen.getByLabelText('Handling Date · Hong Kong'), {
       target: { value: '2026-10-16' },
     });
-    expect(screen.getByLabelText('Duty / Shift')).toHaveValue('');
+    expect(screen.getByRole('combobox', { name: 'Duty / Shift' })).toHaveTextContent(
+      'No linked Duty',
+    );
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('Choose a Duty');
+    expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).toHaveTextContent(
+      'Unlinked',
+    );
+    await user.click(screen.getByRole('button', { name: 'Back to Edit' }));
     expect(commit).not.toHaveBeenCalled();
-    await user.selectOptions(screen.getByLabelText('Duty / Shift'), 'd1');
+    await user.click(screen.getByRole('combobox', { name: 'Duty / Shift' }));
+    await user.click(screen.getByRole('option', { name: /2026-Oct-16 06:00/ }));
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).toBeInTheDocument();
   });

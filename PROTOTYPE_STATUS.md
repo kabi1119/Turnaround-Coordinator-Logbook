@@ -1,4 +1,14 @@
-# TCO Logbook v0.2.0d Pre-release status
+# TCO Logbook v0.3.0 Pre-release status
+
+## v0.3.0 Aircraft entry, mobile UX and data management — 2026-10-18 (Hong Kong)
+
+Started on clean main / 0582658 (committed v0.2.0d). All nine requested improvements are implemented locally: shrinkable mobile forms; wrapping Duty picker without implicit Duty creation; stacked dependent Airbus/Boeing identity fields; entered-duration delay severity preserving old impact; full-width mobile Journal search; Settings library removal; bilingual Coming Soon; validated full JSON export/replace restore; fresh-only enabled optional fields.
+
+Storage schema/key/IDs and old preferences remain. New aircraftType/delayMinutes are optional; no automatic migration or reset. The numeric package/UI version is 0.3.0. No new dependency, PNG modification, licensing change, backend, cloud, authentication, deployment, automatic commit or push.
+
+See docs/V0_3_0_ACCEPTANCE.md for execution results/limits, docs/JSON_BACKUP_RESTORE.md for strict format/safety rules and docs/AIRCRAFT_CATALOGUE.md for primary manufacturer references. Earlier sections below are historical; v0.3.0 supersedes their missing-backup/fresh-privacy/implicit-duty statements.
+
+Final checks: **190 tests passed / 15 files**, lint passed with zero warnings, TypeScript/Vite production build passed, format check passed, npm audit **0 vulnerabilities**. Isolated Windows Edge completed 39 layout/workflow checks at 320/375/390/393/414/430/1440 px, including Light/Dark expanded Aircraft/Duty controls, Journal search, bilingual backup dialogs and actual full JSON download/restore on LAN HTTP. No unintended page/dialog/control overflow or runtime exceptions observed. Physical iPhone Safari/Chrome acceptance remains pending. Opening README disclaimer, original logo assets/rights, frozen sample fingerprints and UUID utility are unchanged. All changes remain uncommitted and unstaged.
 
 ## v0.2.0d LAN HTTP compatibility — 2026-10-18 (Hong Kong)
 

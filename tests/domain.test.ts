@@ -226,11 +226,11 @@ describe('Composed search, privacy and report boundaries', () => {
   });
 });
 describe('Duty lifecycle and saving', () => {
-  it('Multiple same-day Duties require explicit choice; unique auto-selects; missing suggests a new Draft only', () => {
+  it('Multiple same-day Duties require explicit choice; unique auto-selects; missing remains unlinked without creating a Duty', () => {
     const db = seedDatabase();
     expect(resolveDuty('2026-10-16', db.duties)).toMatchObject({ ambiguous: true, selected: '' });
     expect(resolveDuty('2026-10-15', db.duties).selected).toBe('d3');
-    expect(resolveDuty('2026-10-17', db.duties).selected).toBe('new');
+    expect(resolveDuty('2026-10-17', db.duties).selected).toBe('');
     expect(db.duties).toHaveLength(6);
   });
   it('Cross-midnight record groups under HK shift start date while filters use handling date', () => {

@@ -13,10 +13,8 @@ import { canRestore, clearPrivateField, report, restoreDuty } from '../domain/se
 import { Badge, Confirm, Field, Modal, Select, SectionTitle } from '../components/ui';
 import { seedDatabase } from '../data/seed';
 import { useLabel, useT } from '../i18n';
-import { airlineRegistry, approvedLogoPath } from '../data/airlines';
-import AirlineLogo from '../components/AirlineLogo';
 import DemoAirlineRefresh from './DemoAirlineRefresh';
-import { localAirlineLogos, displayLogoPath } from '../data/localAirlineLogos';
+import BackupManager from './BackupManager';
 const privacyLabels: Record<PrivacyKey, [string, string]> = {
   registration: ['Registration', '機身註冊'],
   flights: ['Flight Number(s)', '航班編號'],
@@ -67,7 +65,6 @@ export default function Settings({
     [reconnect, setReconnect] = useState(true);
   const trashDuties = db.duties.filter((d) => d.status === 'Trashed'),
     trashAircraft = db.aircraft.filter((a) => a.status === 'Trashed');
-  const approvedCount = airlineRegistry.filter((entry) => approvedLogoPath(entry)).length;
   function resetData() {
     const next = seedDatabase();
     if (reset === 'empty') {
@@ -100,34 +97,6 @@ export default function Settings({
           </p>
         </div>
       </div>
-      <section className="panel">
-        <SectionTitle
-          title={t('Local airline library', '本機航空公司資料庫')}
-          subtitle={t(
-            'Owner-defined default catalogue. Historical references are retained separately; inclusion does not verify HAS handling affiliation or logo rights.',
-            '擁有人自訂的預設目錄；舊參考資料另行保留。收錄不代表已核實 HAS 地勤關係或標誌權利。',
-          )}
-        />
-        <p className="muted">
-          {t(
-            `${airlineRegistry.length} reference entries · ${localAirlineLogos.length} local logo mappings enabled · ${approvedCount} independently permission-approved references. Redistribution rights remain unverified; display is an owner decision, not legal authorization. This is not a HAS TCO customer list.`,
-            `${airlineRegistry.length} 項參考資料 · ${localAirlineLogos.length} 個本機標誌映射已啟用 · ${approvedCount} 項參考資料已核實授權。再散布權利仍未核實；顯示是擁有人決定，並非法律授權。這不是 HAS TCO 客戶名單。`,
-          )}
-        </p>
-        <div className="airline-library">
-          {airlineRegistry.map((entry) => (
-            <div className="airline-library-row" key={entry.iata}>
-              <AirlineLogo airline={entry.name} size="sm" showName />
-              <Badge>
-                {displayLogoPath(entry)
-                  ? t('Local display enabled · rights unverified', '本機顯示已啟用 · 權利未核實')
-                  : t('Code fallback · permission unverified', '代碼顯示 · 授權未核實')}
-              </Badge>
-              <small>{t('Ramp / TCO affiliation: unverified', 'Ramp／TCO 關係：未核實')}</small>
-            </div>
-          ))}
-        </div>
-      </section>
       <div className="two-col">
         <section className="panel">
           <SectionTitle title={t('Appearance & language', '外觀與語言')} />
@@ -176,12 +145,13 @@ export default function Settings({
           </p>
         </section>
       </div>
+      <BackupManager db={db} restore={resetCommit} />
       <section className="panel">
         <SectionTitle
           title={t('Optional field controls', '選填欄位控制')}
           subtitle={t(
-            'Off by default. Enable only to explore synthetic examples.',
-            '預設關閉，啟用僅供測試合成資料。',
+            'Enabled for fresh installations to explore fictional samples. Saved preferences are preserved. This is not permission to store workplace information.',
+            '新安裝預設啟用以測試虛構樣本；既有偏好維持不變。這並非儲存工作資料的許可。',
           )}
         />
         {(Object.keys(privacyLabels) as PrivacyKey[]).map((k) => (
@@ -281,17 +251,17 @@ export default function Settings({
         )}
       </section>
       <section className="panel">
-        <SectionTitle title={t('Future production', '未來正式版本')} />
+        <SectionTitle title={t('Future Protection — Coming Soon', '未來保護功能 — 即將推出')} />
         {[
-          'Authentication / Email OTP / Passkey',
-          'Cloud sync / Conflict resolution',
-          'Encrypted full backup / Import / Restore',
-          'Live public aircraft lookup',
+          t('Authentication / Email OTP / Passkey', '身份驗證／Email OTP／Passkey'),
+          t('Cloud sync / Conflict resolution', '雲端同步／衝突處理'),
+          t('Production encryption and cloud backup', '正式加密及雲端備份'),
+          t('Live public aircraft lookup', '即時公開航機查詢'),
         ].map((s) => (
           <div className="future-row" key={s}>
             <LockKeyhole size={18} />
             <span>{s}</span>
-            <Badge>{t('Not available in v0.1', 'v0.1 不提供')}</Badge>
+            <Badge>{t('Coming Soon · unavailable', '即將推出 · 尚未提供')}</Badge>
           </div>
         ))}
       </section>

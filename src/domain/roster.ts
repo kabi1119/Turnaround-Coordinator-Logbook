@@ -1,6 +1,29 @@
 import type { Database, Duty } from './model';
 import { hkToday } from './model';
 
+export function dutyOptionText(d: Duty, label: (value: string) => string = (value) => value) {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const [year, month, day] = d.date.split('-');
+  const date = months[Number(month) - 1]
+    ? `${year}-${months[Number(month) - 1]}-${day}`
+    : d.date || '—';
+  const overnight = d.start && d.end && d.end < d.start ? '(+1)' : '';
+  return `${date} ${d.start || '—'}–${d.end || '—'}${overnight} · ${label(d.status)}/${label(d.workState || 'Legacy')}`;
+}
+
 export function previousDuties(duties: Duty[], now = Date.now()) {
   const today = hkToday(new Date(now));
   return duties

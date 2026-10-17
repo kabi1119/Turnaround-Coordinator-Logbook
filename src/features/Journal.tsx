@@ -60,7 +60,7 @@ export function JournalPage({
           {t('New Journal', '新增日誌')}
         </button>
       </div>
-      <div className="panel filters">
+      <div className="panel filters journal-filters">
         <Field
           label={t('Search Journal', '搜尋日誌')}
           placeholder={t('Search stories or competencies', '搜尋故事或能力')}

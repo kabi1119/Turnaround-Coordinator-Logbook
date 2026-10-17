@@ -67,7 +67,10 @@ export interface Disruption {
   id: string;
   category: string;
   involvement: 'Observed' | 'Assisted' | 'Coordinated' | 'Escalated';
-  impact: 'Minor' | 'Moderate' | 'Major';
+  /** Historical operational impact, separate from calculated delay severity. */
+  impact?: 'Minor' | 'Moderate' | 'Major';
+  /** Explicit user-entered disruption duration, not derived from flight delay. */
+  delayMinutes?: number;
   resolution: 'Resolved' | 'Escalated' | 'Handed Over';
   notes: string;
   journalId?: string;
@@ -79,6 +82,8 @@ export interface Aircraft {
   originalDutyId?: string;
   airline: string;
   variant: string;
+  /** Optional for legacy snapshots; new structured selections persist the model. */
+  aircraftType?: string;
   family: string;
   icao: string;
   handling: HandlingType | '';

@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.2.0d Pre-release** runs locally with fictional sample records. This small compatibility fix supports secure UUID creation on LAN HTTP as well as localhost/HTTPS; existing records and storage remain unchanged.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.0 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -47,7 +47,20 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
 
-## v0.2.0 Pre-release
+## v0.3.0 Aircraft entry and local data management
+
+I keep this release local-only, with no backend, login, cloud sync or deployment. All included samples remain fictional; the opening independent-project and trademark notices still apply.
+
+- Aircraft dialogs use shrinkable controls/tracks and vertical mobile actions. Wrapping Duty choices show YYYY-MMM-DD, 24-hour times, overnight (+1) and actual record/work states (Legacy when absent). I removed implicit Draft Duty creation: an Aircraft may remain unlinked after review; use Add Duty separately and link it when needed.
+- Aircraft Type and Variant are stacked dependent fields. The curated Airbus/Boeing catalogue treats A321 as a separate model within A320 family. Changing model clears incompatible variants. Historical/custom snapshots remain readable/editable without automatic rewriting; model, variant and family rankings stay distinct. See [catalogue and primary references](docs/AIRCRAFT_CATALOGUE.md).
+- Calculated Delay Severity uses entered whole disruption minutes: 0–14 below threshold, 15–60 Minor, 61–180 Moderate, 181+ Major, unknown Undetermined. I preserve historical operational impact separately. These are personal thresholds, not official standards or proof of flight-delay causation; flight times/cancellations do not infer duration.
+- Journal search has a full mobile row above Competency. Settings removes the airline-library block only; all 24 PNGs, registry and rights/provenance records remain. Future Protection — Coming Soon clearly marks production security/cloud features unavailable.
+- **Settings → Export Full Backup (JSON) / Import Backup (JSON)** is separate from Privacy Preview reports. Versioned, unencrypted full JSON includes hidden fields, Trash, links and settings. Validate file/format/schema, supported fields, IDs and relationships before preview and explicit Restore / Replace. No merge/PDF import. Quota failures retain current data. Read [backup format and safeguards](docs/JSON_BACKUP_RESTORE.md) before replacing records.
+- Only fresh installations enable six optional fields. Saved preferences, disabled/deleted values and existing records remain unchanged; no load-time migration/reset. Field enablement is not permission to store confidential workplace/passenger data.
+
+See [v0.3.0 acceptance](docs/V0_3_0_ACCEPTANCE.md). I have tested Edge viewport emulation; actual iPhone Safari/Chrome file handling, keyboard and safe areas still require device acceptance.
+
+## Historical v0.2.0 Pre-release
 
 - **Branding and layout:** I made the header brand more prominent and use the full name **Turnaround Coordinator Logbook** there. The rest of the interface uses **TCO Logbook**. I removed the upper showcase status strip and moved release, local-storage and Hong Kong metadata to the desktop sidebar footer (or a compact content footer on smaller screens).
 - **East Asia radar map:** An original local SVG outline of East Asia / the Western Pacific replaces the plain radar background. The aircraft and CSS sweep share an approximate Hong Kong-area anchor. This is decorative geography, not navigation, live radar or a GIS product. It uses no external map service, tiles, third-party map artwork or network requests. Reduced-motion support and pausing animations while dialogs are open remain in place.
@@ -183,7 +196,7 @@ Open the Windows LAN address printed by Vite on the phone; allow private-network
 - **v0.2.0 Pre-release:** Refined branding and footer metadata, local SVG East Asia radar map, compact fictional records, quieter interface and simpler batch scheduling acknowledgement.
 - **v0.2.0c (documentation only):** Reworked owner statements into my first-person voice in English and Traditional Chinese, and corrected the recorded logo download sources. Application functionality remains at v0.2.0.
 - **v0.2.0d:** Fixed the LAN HTTP initialization crash with native UUID generation or a cryptographically random RFC 4122 v4 fallback. No schema change, record ID regeneration or automatic storage reset. The custom release suffix is shown in the UI/docs; the npm package retains its numeric 0.2.0 version without introducing a different SemVer encoding.
-- **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, full import/restore, Service Worker/offline reload and validated iOS PWA installation.
+- **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, merge import, Service Worker/offline reload and validated iOS PWA installation.
 - **Verification:** Local Edge viewport/layout and new workflow checks completed; actual iPhone/Safari, physical touch/keyboard, download and print acceptance remains pending. No deployment has been performed.
 
 The approved PRD describes a larger future product. It does not mean all production features are complete. See [prototype status](PROTOTYPE_STATUS.md), [manual acceptance](docs/MANUAL_ACCEPTANCE.md) and [publication preparation](docs/PUBLICATION_PREPARATION.md).
@@ -263,7 +276,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.2.0d Pre-release** 在本機執行，使用虛構樣本紀錄。這次小型相容性修正讓 LAN HTTP 及 localhost／HTTPS 均能產生安全 UUID；既有紀錄及儲存資料維持不變。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.0 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -281,7 +294,20 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
 
-## v0.2.0 預發佈版
+## v0.3.0 航機輸入及本機資料管理
+
+我維持本機前端範圍，不加入後端、登入、雲端同步或部署。內附樣本仍全部虛構；開首的獨立項目及商標聲明繼續適用。
+
+- 航機視窗使用可收縮控制項／網格及手機直排操作按鈕。可換行更次清單採 YYYY-MMM-DD、24 小時制、通宵 (+1) 及實際紀錄／工作狀態；缺少歷史工作進度時標示 Legacy。我移除隱式建立草稿更次：航機可經覆核後保持未連結，另用 Add Duty 建立及關聯。
+- 航機型號／子型號為直排相依欄位。精選 Airbus／Boeing 目錄將 A321 視為 A320 系列內的獨立型號；更改型號會清除不相容子型號。歷史／自訂快照保留可讀可編輯，不會自動改寫；型號、子型號及系列排名分開。詳見[目錄及官方參考](docs/AIRCRAFT_CATALOGUE.md)。
+- 計算延誤嚴重程度只使用自填異常整數分鐘：0–14 低於門檻、15–60 Minor、61–180 Moderate、181 以上 Major、未知則未能判定。我另行保留歷史營運影響。這是個人門檻，並非官方標準或航班延誤因果證據；不會從航班時間／取消狀態推斷時長。
+- 手機 Journal 搜尋獨佔一列，能力篩選在下方。Settings 只移除航空公司資料庫區塊，全部 24 張 PNG、Registry、權利及來源紀錄保留。「未來保護功能 — 即將推出」清楚標示正式安全／雲端功能尚未提供。
+- **Settings → 匯出完整備份（JSON）／匯入備份（JSON）** 與私隱預覽報告分開。版本化、未加密完整 JSON 包含隱藏欄位、垃圾桶、關聯及設定。先驗證檔案／格式／結構、支援欄位、ID 及關聯，再預覽及明確還原／取代。不提供合併／PDF 匯入；儲存失敗保留目前資料。取代前請閱讀[備份格式及保障](docs/JSON_BACKUP_RESTORE.md)。
+- 只有新安裝預設啟用六項選填欄位。已儲存偏好、停用／已刪欄位及既有紀錄不變，載入時不會遷移／重設。啟用欄位並非儲存機密工作或乘客資料的許可。
+
+詳見 [v0.3.0 驗收](docs/V0_3_0_ACCEPTANCE.md)。我已測試 Edge 視窗模擬；實體 iPhone Safari／Chrome 檔案操作、鍵盤及安全區仍須實機驗收。
+
+## 過往 v0.2.0 預發佈版
 
 - **品牌與版面：** 我將左上角品牌放大，並改用完整名稱 **Turnaround Coordinator Logbook**；其他介面仍使用 **TCO Logbook**。我移除上方的展示狀態列，將版本、本機儲存及香港時區資訊移至桌面側欄底部；較小螢幕則於內容頁尾顯示。
 - **東亞雷達地圖：** 我以原創的本機 SVG 東亞／西太平洋輪廓取代原本的純雷達背景，讓飛機圖示與 CSS 掃描動畫以香港附近為中心。地圖地理位置僅屬概略裝飾，並非導航、即時雷達或 GIS 產品；不使用外部地圖服務、圖磚、第三方地圖素材或網絡請求。減少動態效果支援，以及開啟對話框時暫停動畫的安排均保留。
@@ -417,7 +443,7 @@ npm.cmd run dev -- --host 0.0.0.0
 - **v0.2.0 Pre-release：** 更新品牌／頁尾資料、本機 SVG 東亞雷達地圖、精簡虛構樣本、簡化介面及批次更表操作。
 - **v0.2.0c（僅文件更新）：** 我將中英文 README 涉及項目決策及責任的敘述改成第一人稱，並更正 Logo 下載來源紀錄；App 功能仍維持 v0.2.0。
 - **v0.2.0d：** 修正 LAN HTTP 初始化崩潰，優先使用原生 UUID，否則以密碼學安全亂數產生 RFC 4122 v4 UUID。不更改 Schema、重新產生既有 ID 或自動重設儲存資料。介面及文件使用自訂版本後綴；npm 套件保留數字版本 0.2.0，不另設 SemVer 編碼。
-- **尚未實作：** 正式後端、真實身份驗證／Passkey、雲端同步、加密備份、完整匯入／還原、Service Worker／離線重新載入，以及經驗證的 iOS PWA 安裝。
+- **尚未實作：** 正式後端、真實身份驗證／Passkey、雲端同步、加密備份、合併匯入、Service Worker／離線重新載入，以及經驗證的 iOS PWA 安裝。
 - **驗證：** 已完成本機 Edge 不同視窗尺寸／排版及新功能流程檢查；實體 iPhone／Safari、實際觸控／鍵盤、下載及列印驗收仍有待完成。項目尚未部署。
 
 已批准的 PRD 描述的是更完整的未來產品，並不代表所有正式版功能已經完成。詳見 [原型狀態](PROTOTYPE_STATUS.md)、[人工驗收](docs/MANUAL_ACCEPTANCE.md) 及 [公開準備](docs/PUBLICATION_PREPARATION.md)。

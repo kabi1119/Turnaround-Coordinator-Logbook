@@ -32,7 +32,9 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
     l = useLabel();
   const [filters, setFilters] = useState<Filters>({}),
     [scope, setScope] = useState<'logged' | 'handled' | 'primary'>('logged'),
-    [rank, setRank] = useState<'airline' | 'variant' | 'family' | 'registration'>('airline');
+    [rank, setRank] = useState<'airline' | 'aircraftType' | 'variant' | 'family' | 'registration'>(
+      'airline',
+    );
   const rows = filterAircraft(db.aircraft, filters, db.settings.privacy);
   const s = stats(
     rows,
@@ -164,6 +166,7 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
             value={rank === 'registration' && !db.settings.privacy.registration ? 'airline' : rank}
             options={[
               { value: 'airline', label: t('Airline', '航空公司') },
+              { value: 'aircraftType', label: t('Aircraft type', '航機型號') },
               { value: 'variant', label: t('Aircraft variant', '航機子型號') },
               { value: 'family', label: t('Aircraft family', '航機系列') },
               ...(db.settings.privacy.registration

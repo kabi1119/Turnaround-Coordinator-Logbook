@@ -6,6 +6,8 @@ import { findLocalAirline } from '../data/localAirlineLogos';
 import AirlineLogo from '../components/AirlineLogo';
 import { Badge } from '../components/ui';
 import { useLabel, useT } from '../i18n';
+import { aircraftModel } from '../data/aircraftCatalogue';
+import { delaySeverity } from '../domain/delaySeverity';
 
 export default function AircraftDetails({
   a: raw,
@@ -58,7 +60,9 @@ export default function AircraftDetails({
               : ''}
           </dd>
           <dt>{t('Aircraft Type / Variant', '航機型號／子型號')}</dt>
-          <dd>{a.variant || missing}</dd>
+          <dd>
+            {aircraftModel(a) || missing} · {a.variant || missing}
+          </dd>
           <dt>{t('Aircraft Family / ICAO', '航機系列／ICAO')}</dt>
           <dd>
             {a.family || missing} / {a.icao || missing}
@@ -196,7 +200,15 @@ export default function AircraftDetails({
           <section className="inset" key={e.id}>
             <h4>{l(e.category)}</h4>
             <p>
-              {l(e.involvement)} · {l(e.impact)} · {l(e.resolution)}
+              {l(e.involvement)} · {l(e.resolution)}
+              {e.impact
+                ? ` · ${t('Historical operational impact', '歷史營運影響')}: ${l(e.impact)}`
+                : ''}
+            </p>
+            <p>
+              {t('Calculated Delay Severity', '計算延誤嚴重程度')}:{' '}
+              {l(delaySeverity(e.delayMinutes))}
+              {e.delayMinutes !== undefined ? ` (${e.delayMinutes} min)` : ''}
             </p>
             {p.disruptionNotes && <p>{e.notes || missing}</p>}
             {e.journalId && (
