@@ -6,7 +6,7 @@ import { Metric, SectionTitle, Select } from '../components/ui';
 import RecordFilters from '../components/RecordFilters';
 import { useLabel, useT } from '../i18n';
 import AirlineLogo from '../components/AirlineLogo';
-import DemoScope from '../components/DemoScope';
+
 export function Bars({ items, airline = false }: { items: [string, number][]; airline?: boolean }) {
   const max = Math.max(1, ...items.map((i) => i[1]));
   return (
@@ -91,7 +91,6 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
           detail={t('Included in both totals', '已包含在兩項總數內')}
         />
       </div>
-      <DemoScope rows={rows} />
       <div className="section-title">
         <h2>{t('Assignment insights', '處理紀錄分析')}</h2>
         <Select
@@ -233,7 +232,7 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
         {db.settings.privacy.registration && (
           <div>
             <strong>{stats(visible).unique}</strong>
-            <span>{t('Unique demo registrations', '不重複示範機身註冊')}</span>
+            <span>{t('Unique registrations', '不重複機身註冊')}</span>
           </div>
         )}
         <div>

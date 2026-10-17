@@ -60,7 +60,7 @@ export function Modal({
     >
       <div className="modal-head">
         <div>
-          <span className="eyebrow">TCO / DEMO</span>
+          <span className="eyebrow">TCO Logbook</span>
           <h2 id={titleId}>{title}</h2>
         </div>
         <button className="icon-button" aria-label={t('Close', '關閉')} onClick={onClose}>

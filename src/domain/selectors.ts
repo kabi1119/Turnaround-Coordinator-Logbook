@@ -277,7 +277,7 @@ export function report(
       count: t.handled,
     }));
   return {
-    notice: 'SYNTHETIC DEMO ONLY. Self-reported; not employer verified. Not a full backup.',
+    notice: 'FICTIONAL SAMPLES. Self-reported; not employer verified. Not a full backup.',
     from,
     to,
     roleScope:

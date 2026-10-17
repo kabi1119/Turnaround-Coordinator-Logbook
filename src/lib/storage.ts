@@ -105,13 +105,13 @@ export function loadDatabase(): { db: Database; error: string } {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { db: seedDatabase(), error: '' };
     const value = JSON.parse(raw);
-    if (!validDatabase(value)) throw new Error('Unsupported demo data');
+    if (!validDatabase(value)) throw new Error('Unsupported local data');
     return { db: value, error: '' };
   } catch {
     return {
       db: seedDatabase(),
       error:
-        'Saved demo data could not be read. A temporary demo is shown; the stored copy has not been overwritten. Reset explicitly to replace it.',
+        'Saved data could not be read. Temporary fictional samples are shown; the stored copy has not been overwritten. Use Settings to manage local data.',
     };
   }
 }

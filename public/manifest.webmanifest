@@ -1,6 +1,6 @@
 {
-  "name": "TCO Logbook Prototype",
-  "short_name": "TCO Demo",
+  "name": "TCO Logbook",
+  "short_name": "TCO Logbook",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f5f6f3",

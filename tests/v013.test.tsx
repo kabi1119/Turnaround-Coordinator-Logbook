@@ -155,7 +155,7 @@ describe('Conservative, reviewed demo-airline refresh', () => {
       commit = vi.fn(() => true),
       close = vi.fn();
     const view = render(<DemoAirlineRefresh db={db} commit={commit} onClose={close} />);
-    const confirm = screen.getByRole('button', { name: 'Confirm 24-airline demo refresh' });
+    const confirm = screen.getByRole('button', { name: 'Confirm sample refresh' });
     expect(confirm).toBeDisabled();
     expect(commit).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -166,13 +166,11 @@ describe('Conservative, reviewed demo-airline refresh', () => {
     );
     fireEvent.click(confirm);
     expect(commit).toHaveBeenCalledOnce();
-    expect((commit.mock.calls[0] as unknown as [typeof db])[0].aircraft).toHaveLength(24);
+    expect((commit.mock.calls[0] as unknown as [typeof db])[0].aircraft).toHaveLength(4);
     view.unmount();
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
-    expect(
-      screen.getByRole('button', { name: 'Refresh obsolete demo airlines' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh sample records' })).toBeInTheDocument();
   });
 });
 describe('Modal isolation, scroll stability and artwork bounds', () => {

@@ -1,12 +1,14 @@
 # Agent Instructions — TCO Logbook
 
-This repo is the **TCO Logbook Interactive Prototype v0.1**, not production.
+This repo is **TCO Logbook v0.2.0 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
+
 1. `docs/TCO_Logbook_PRD_v1.5_APPROVED.md` — authoritative approved PRD (product rules).
 2. `docs/Codex_Prototype_v0.1_Prompt.md` — implementation contract and v0.1 scope.
 
 ## Non-negotiables
+
 - Do not use real or user-specific HAS operational information. Synthetic demo data only.
 - Never invent airline brand logos. Use text/IATA-code fallback unless official licensed assets are verified.
 - A Full Turnaround is **one** Handling Assignment. Departure-only and Arrival-only are separate mutually exclusive handling types; all 3 contribute to Logged. Training does not contribute to Handled or Career coordinated counts.
@@ -16,14 +18,23 @@ This repo is the **TCO Logbook Interactive Prototype v0.1**, not production.
 - v0.1 uses local demo storage only; do not claim cloud sync/auth/backup/privacy guarantees.
 - UI: Home | Logbook | Add | Statistics | Journal; Settings separate; airplane icon; two-line Aircraft cards with Airline+FlightNo title.
 - Keep project code outside OneDrive, in current repo root, and do not create nested Git repo.
-- Do not start Phase 2 without explicit user approval.
+- Do not start Phase 2 without explicit user approval. v0.2.0 refines only local UI and fictional samples; it does not authorize production/backend work.
 
 Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before completion.
 
 ## Permanent version and release commits
-- Current agreed release: v0.1.4. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+
+- Current agreed release: v0.2.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
-- Commit/push only within the current user's authorization. The v0.1.4 recovery request supersedes the interrupted session's commit authorization: finish verification and wait for explicit owner approval before any commit or push. Preserve the existing index and history.
+- Commit/push only within the current user's authorization. The v0.2.0 request does not authorize an automatic commit or push. Preserve existing changes and history.
 - The owner's explicit local-PNG display policy supersedes the earlier display-only licensing gate above; all redistribution permissions remain unverified. Preserve assets, provenance and the opening README disclaimer.
+
+## v0.2.0 presentation and samples
+
+- Full product name only in the upper-left brand; TCO Logbook elsewhere. Release metadata belongs in the lower sidebar/footer, not an upper status strip.
+- Use local SVG/CSS for the decorative approximate East Asia radar map; no map API/tiles or live tracking claim.
+- Keep new sample data fictional without visible DEMO prefixes. Preserve disclosure in Settings, report notices and documentation; never strip or rewrite user-entered text automatically.
+- Keep frozen historical fixtures for safe reviewed sample refresh. Only exact unchanged fixtures may be replaced; user edits and retained links block removal. No automatic reseed/reset on upgrade.
+- Batch hours require valid input and final review/save, without the former chosen-hours acknowledgement checkbox. Keep duplicate/overlap handling and Planned/Worked rules.

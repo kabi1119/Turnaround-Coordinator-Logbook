@@ -89,7 +89,7 @@ export function JournalPage({
       </div>
       <p className="muted">
         {t(
-          'Synthetic stories only. Journal entries never contribute to Aircraft statistics.',
+          'Reflect on your experience. Journal entries do not increase Aircraft totals.',
           '只限虛構故事，日誌不計入航機統計。',
         )}
       </p>
@@ -102,7 +102,7 @@ export function JournalPage({
               </span>
               <ArrowUpRight size={20} />
             </div>
-            <span className="eyebrow">{j.date} · DEMO</span>
+            <span className="eyebrow">{j.date}</span>
             <h2>{j.title}</h2>
             <p>{j.learning || j.situation || t('A story in progress.', '撰寫中的故事。')}</p>
             <div className="tags">
@@ -160,7 +160,7 @@ export function JournalEditor({
           unit: '',
           contribution: '',
           evidence: '',
-          verification: 'Self-reported · demo, not employer verified',
+          verification: 'Self-reported · not employer verified',
         },
   );
   const [error, setError] = useState(''),
@@ -346,7 +346,7 @@ export function JournalEditor({
                 '核實分類 · 僅個人標籤',
               )}
               options={[
-                'Self-reported · demo, not employer verified',
+                'Self-reported · not employer verified',
                 'Synthetic exercise · unverified',
                 'Personal reflection · unverified',
               ]}

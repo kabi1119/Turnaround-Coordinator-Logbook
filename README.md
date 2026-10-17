@@ -29,7 +29,7 @@ All publicly distributed demonstration records and operational scenarios are syn
 
 **A personal aviation operations logbook and career development companion.**
 
-TCO Logbook is an independently developed aviation-oriented web application prototype for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.1.4** runs locally with synthetic demonstration data.
+TCO Logbook is an independently developed aviation-oriented web application prototype for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.2.0 Pre-release** runs locally with fictional sample records.
 
 ## About the Project
 
@@ -47,11 +47,23 @@ This is a non-commercial personal portfolio project. It was not commissioned by,
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and confirmed Seed/Reset actions. These are demo tools, not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
 
-## v0.1.4 Improvements
+## v0.2.0 Pre-release
+
+- The larger header brand reads **Turnaround Coordinator Logbook**; other UI uses **TCO Logbook**. The upper showcase strip is removed. Release/local-storage/Hong Kong metadata sits quietly at the bottom of the desktop sidebar, with a compact content footer on smaller screens.
+- An original local SVG outline of East Asia / the Western Pacific replaces the plain radar hero. The aircraft and CSS sweep share a Hong Kong-area anchor. Geography is approximate decoration, not navigation, live radar or a GIS product. No map service, tiles, third-party map artwork or network request is used. Reduced-motion and modal animation pause remain.
+- The compact fictional collection has **4 Confirmed Aircraft, 3 Duties (2 Worked / 1 Planned) and 2 Journals**. Six applicable flight legs cover Early, On Time, Delayed, Cancelled, Not Recorded and Other; all three roles/handling types, actual/scheduled/missing times, a custom bay, a disruption, linked/standalone journals, multiple aircraft per duty and an overnight duty are covered. Derived counts are **4 Logged / 3 Handled / 2 Primary**. Identifiers look like personal records but are invented; no employer operations or official schedules are represented.
+- Repeated visible DEMO labels and prefixes are removed from current UI and new samples. A concise Settings disclosure and exported report notice still identify fictional samples and local-only limitations. Privacy fields stay off by default; enable them only to inspect authorized fictional values.
+- Batch Add Duties no longer requires the chosen-hours acknowledgement checkbox. Entered valid hours, conflict detection, overlap override, review, explicit final confirmation and Planned classification remain.
+- Existing storage is loaded unchanged. **Settings → Refresh sample records** previews replacement of complete, unchanged historical fixtures with the smaller collection. Custom records/settings are retained; edited samples, duplicate IDs and retained personal links to removed samples block the whole transaction. No automatic refresh or full database clear runs. Existing user-entered or edited legacy labels remain as entered until reviewed; display cleanup never rewrites personal text.
+- All 24 catalogue choices and local airline PNGs remain available; the four sample airlines are not a limit on selectable airlines or user records. Logo display still does not establish redistribution rights.
+
+See [v0.2.0 acceptance](docs/V0_2_0_ACCEPTANCE.md). This remains a local frontend pre-release, not a production aviation system. No authentication, backend, cloud sync, deployment or additional service was introduced. No automatic commit or push.
+
+## Historical v0.1.4 Improvements
 
 - **Airline image combobox:** all 24 catalogue options show a local logo, full name and IATA code. Search names/codes, use arrows/Enter/Escape, or retain historical/custom text. Closed fields preview the selected identity. Mouse and touch share the same selection behavior.
 - **24 synthetic assignments on 24 dates:** one per catalogue airline, all Confirmed, covering nine role/type combinations with visibly fictional flights/registrations. Frozen Hong Kong dates span 12 August–16 October 2026. Derived totals: **24 Logged / 18 Handled / 9 Primary**; each handling type contributes 8 assignments. There are 25 duties (including the original six, two on one date and an overnight example) and 3 journals.
-- **Safe refresh:** Settings → **Refresh obsolete demo airlines** now previews full scenario replacement, generated rows, new duties and Journal/disruption impact. Unchanged v0.1.1–v0.1.3 samples are recognized by complete payload equality. IDs and Journal references remain; scenario dates, airline, timings and Duty links may change as previewed. Existing Duty/Journal payloads, unrelated records and settings stay intact. Edited/unrecognized required IDs or different-date/trashed Duty collisions block the whole transaction; nothing is overwritten. Repeated refresh does not accumulate rows. Never use Seed/Reset to refresh a mixed collection.
+- **Safe refresh:** Settings → **Refresh sample records** now previews full scenario replacement, generated rows, new duties and Journal/disruption impact. Unchanged v0.1.1–v0.1.3 samples are recognized by complete payload equality. IDs and Journal references remain; scenario dates, airline, timings and Duty links may change as previewed. Existing Duty/Journal payloads, unrelated records and settings stay intact. Edited/unrecognized required IDs or different-date/trashed Duty collisions block the whole transaction; nothing is overwritten. Repeated refresh does not accumulate rows. Never use Seed/Reset to refresh a mixed collection.
 - **Dashboard:** larger 24 px desktop / 18 px mobile HKT clock; Home → **View All Previous Duties** opens descending HK start-date history with details and Planned/Worked badges. Future shifts stay in Logbook. Add Duty, Batch Add Duties and the central Add tab remain.
 - **Version policy:** [VERSIONING.md](docs/VERSIONING.md) defines the owner's custom `vMAJOR.MINOR.PATCH[letter]` convention (not strict SemVer), production approval and version-first English release commits. Future work proposes a scope-appropriate version; agreed versions never change silently.
 
@@ -61,7 +73,7 @@ Home and Statistics describe overall totals separately from the exact unchanged 
 
 - **Readable airline logos:** card frames are 112 × 56 px on desktop and 96 × 52 px on phones; detail frames are 144 × 72 / 128 × 64 px. Compact views remain 56 × 36 px. Measured, padded artwork bounds adjust CSS placement/uniform scale so transparent or neutral margins do not shrink the artwork. All original PNGs and licensing records are unchanged; no derivative image is generated.
 - **Owner-defined 24-airline catalogue:** one identity/asset source drives default selection, IATA/name/alias search, registry and PNG mapping. NH / SQ / HX / EK are excluded from defaults and fresh samples, while historical/custom records remain visible and editable. Inclusion is not a verified HAS customer relationship. See [catalogue](docs/AIRLINE_CATALOGUE.md).
-- **Safe old-demo refresh:** Settings → Refresh obsolete demo airlines previews only full-content matches to untouched legacy synthetic fixtures. Confirmation changes only listed airline fields. Edited/custom/unrecognized samples and privacy-deleted fields are never inferred from IDs or DEMO labels alone; no records, links or storage are cleared. Refresh is idempotent. Existing Seed/Reset remain separate, explicit replacement actions.
+- **Safe old-demo refresh:** Settings → Refresh sample records previews only full-content matches to untouched legacy synthetic fixtures. Confirmation changes only listed airline fields. Edited/custom/unrecognized samples and privacy-deleted fields are never inferred from IDs or DEMO labels alone; no records, links or storage are cleared. Refresh is idempotent. Existing Seed/Reset remain separate, explicit replacement actions.
 - **Detail scrolling:** removed live backdrop blur, paused decorative radar while any modal is open and locked background scrolling until the last nested modal closes. The clock was already isolated; tests verify actual Home detail does not rerender/reset scroll on ticks. Short Edge traces did not reproduce the reported hardware stutter, so these changes reduce confirmed avoidable work without claiming a universal FPS fix.
 
 See [v0.1.3 acceptance and profiling notes](docs/V0_1_3_ACCEPTANCE.md). Earlier v0.1.2 workflows below remain implemented.
@@ -79,7 +91,7 @@ Open an Aircraft card for grouped assignment, arrival, departure, Duty/Journal r
 On Home choose **Add Duty** or **Batch Add Duties**; the central Add navigation is preserved.
 
 1. Choose a month/year and select multiple calendar dates. Selection and pending entries can span months.
-2. Choose Day / Evening / Night / Custom, enter your own start/end times and explicitly confirm the hours. There are no official or prefilled employer shift hours.
+2. Choose Day / Evening / Night / Custom, enter your own start/end times. There are no official or prefilled employer shift hours.
 3. Apply the template. Repeat with other templates/dates; edit or remove individual pending entries and add synthetic notes.
 4. Review dates, types, times, next-day end dates and conflicts. Identical shifts must be edited/removed; overlaps require a separate explicit keep-separate confirmation.
 5. Confirm once to save all entries locally. Failed storage writes retain pending entries for retry; no saved Duty is replaced by matching date.
@@ -148,7 +160,7 @@ Tests run once; `npm.cmd run test:watch` starts watch mode. The build runs TypeS
 4. In Settings, enable optional synthetic fields to try separate leg statuses, flight numbers and custom parking bays.
 5. Switch Timeline/Calendar, combine filters and inspect Statistics.
 6. Create a Journal reflection; review selected stories in Privacy Preview before exporting.
-7. Use Seed Demo Data or Reset Demo Data only after reading the replacement confirmation.
+7. Use Refresh sample records for safe reviewed replacement. Load sample records / Clear local records replace all records only after an explicit confirmation; avoid these on mixed collections.
 
 ### iPhone / LAN testing
 
@@ -168,6 +180,7 @@ Open the Windows LAN address printed by Vite on the phone; allow private-network
 - **v0.1.3:** Larger margin-aware logo presentation, unified 24-airline defaults, conservative reviewed legacy-demo airline refresh and targeted modal scroll/compositing changes.
 - **v0.1.4:** Accessible image combobox, one synthetic assignment per 24 catalogue airlines on distinct dates, reviewed dataset refresh, prominent HKT clock, previous-duty history and permanent version/commit conventions.
 - **v0.1.5 (documentation only):** Added an equivalent Traditional Chinese (Hong Kong) README and an English-language precedence notice; application features remain at v0.1.4.
+- **v0.2.0 Pre-release:** Refined brand/sidebar metadata, local East Asia radar map, compact fictional records, quieter UI and simplified batch roster entry.
 - **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, full import/restore, Service Worker/offline reload and validated iOS PWA installation.
 - **Verification:** Local Edge viewport/layout and new workflow checks completed; actual iPhone/Safari, physical touch/keyboard, download and print acceptance remains pending. No deployment has been performed.
 
@@ -175,7 +188,7 @@ The approved PRD describes a larger future product. It does not mean all product
 
 ## Privacy & Data Handling
 
-Only synthetic data may be used in the public demonstration. The v0.1.4 initial fixture has 25 duties, 24 Confirmed aircraft assignments on 24 distinct dates and 3 Journal entries. The former 18-assignment fixtures are retained solely for historical recognition and compatibility tests.
+Only synthetic data may be used in the public demonstration. The v0.2.0 initial fixture has 3 duties, 4 Confirmed aircraft assignments and 2 Journal entries. The former 18- and 24-assignment fixtures are retained solely for historical recognition and compatibility tests.
 
 Changes persist in this browser origin's **unencrypted localStorage**, key `tco-logbook-demo-v0.1`. Local Storage is not secure production cloud storage, authentication, access control or backup. Browser clearing, private browsing and storage failures can lose data; other browsers, devices, ports and origins have separate data. Multi-tab conflict handling is not implemented.
 
@@ -207,9 +220,9 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 ## Development Roadmap
 
-**Planned only, subject to separate approval:** policy/provider/cost decisions, real authentication, durable backend storage, offline synchronization/conflicts, public aircraft lookup, validated import/restore, encrypted backups and production/iPhone PWA acceptance. These are future phases of the approved PRD, not delivered v0.1.4 features.
+**Planned only, subject to separate approval:** policy/provider/cost decisions, real authentication, durable backend storage, offline synchronization/conflicts, public aircraft lookup, validated import/restore, encrypted backups and production/iPhone PWA acceptance. These are future phases of the approved PRD, not delivered v0.2.0 features.
 
-v0.1.4 remains a local frontend prototype. OCR/Excel roster import, HR integration, cloud services and production features remain deferred.
+v0.2.0 remains a local frontend pre-release. OCR/Excel roster import, HR integration, cloud services and production features remain deferred.
 
 ## Language Precedence
 
@@ -248,7 +261,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-TCO Logbook 是一個獨立開發的航空主題網頁應用程式原型，用於整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.1.4** 在本機執行，使用虛構示範資料。
+TCO Logbook 是一個獨立開發的航空主題網頁應用程式原型，用於整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.2.0 Pre-release** 在本機執行，使用虛構樣本紀錄。
 
 ## 關於本項目
 
@@ -266,11 +279,23 @@ TCO Logbook 是一個獨立開發的航空主題網頁應用程式原型，用�
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須確認的 Seed／Reset 操作。這些是示範工具，不是完整備份或自動匿名化功能。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
 
-## v0.1.4 改進內容
+## v0.2.0 預發佈版
+
+- 左上角放大的品牌名稱為 **Turnaround Coordinator Logbook**，其他介面維持 **TCO Logbook**。移除上方狀態列；版本、本機儲存及香港時區資料移至桌面側欄底部，較小螢幕則於內容底部顯示。
+- 原創本機 SVG 東亞／西太平洋輪廓取代原本雷達背景，飛機及 CSS 掃描中心位於香港附近。地圖僅屬概略裝飾，並非導航、即時雷達或 GIS；沒有地圖服務、圖磚或外部請求。保留減少動態效果及對話框開啟時暫停動畫。
+- 精簡虛構資料包含 **4 筆 Confirmed Aircraft、3 個 Duty（2 Worked／1 Planned）及 2 篇 Journal**。六個適用航段涵蓋 Early、On Time、Delayed、Cancelled、Not Recorded、Other；涵蓋全部三種角色及處理類型、實際／表定／缺少時間、自訂停機位、突發事件、關聯／獨立日誌、同更多架航機及通宵更次。統計由資料計算：**4 Logged／3 Handled／2 Primary**。識別資料均為虛構，不代表僱主營運或官方更表。
+- 移除目前介面及新樣本中重複的 DEMO 標示；Settings 及報告仍簡要說明虛構樣本與僅限本機的限制。私隱欄位預設關閉，只應為查看獲准的虛構值而啟用。
+- Batch Add Duties 移除自行選定時數的聲明核取方塊；有效時間、衝突檢查、重疊更次明確確認、覆核、最後確認及 Planned 分類均保留。
+- 既有儲存資料原樣載入。**Settings → Refresh sample records** 先預覽以精簡樣本取代完整且未改動的歷史樣本。保留自訂紀錄及設定；如樣本曾被編輯、ID 重複或個人紀錄仍參照將被移除的樣本，會阻止整個更新。不會自動更新或清空資料庫；使用者已輸入或修改的舊文字亦不會被擅自清理。
+- 保留全部 24 間航空公司選項及本機 PNG；四間樣本航空公司並非使用上限。啟用 Logo 顯示仍不等於取得再分發許可。
+
+詳見 [v0.2.0 驗收清單](docs/V0_2_0_ACCEPTANCE.md)。此版本仍為本機前端預發佈版，並非正式航空營運系統。沒有新增身份驗證、後端、雲端同步、部署或服務，亦不會自動 Commit／Push。
+
+## 過往 v0.1.4 改進內容
 
 - **附圖片的航空公司組合選擇框：** 24 個目錄選項均顯示本機 Logo、完整名稱及 IATA 代碼。可按名稱／代碼搜尋，以方向鍵、Enter、Escape 操作，亦可保留歷史／自訂文字。關閉的選擇欄位會預覽已選航空公司；滑鼠及觸控使用相同選取邏輯。
 - **24 個日期的 24 筆虛構航機任務：** 目錄內每間航空公司各一筆，全部為 Confirmed，涵蓋九種角色／處理類型組合，並使用明顯虛構的航班號及註冊編號。固定的香港日期橫跨 2026 年 8 月 12 日至 10 月 16 日。依據資料計算的總數為 **24 Logged / 18 Handled / 9 Primary**；三種處理類型各有 8 筆任務。另有 25 個 Duty（包括原本六個、同一天兩更及一個通宵更次範例）與 3 篇 Journal。
-- **安全更新示範資料：** Settings → **Refresh obsolete demo airlines** 會先預覽整個情境資料的替換內容、產生的紀錄、新增 Duty，以及對 Journal／突發事件的影響。v0.1.1–v0.1.3 未改動的樣本，會以完整資料內容相等作識別。ID 及 Journal 參照維持不變；情境日期、航空公司、時間及 Duty 關聯則可能按預覽更改。既有 Duty／Journal 內容、無關紀錄及設定維持不變。如必要 ID 曾被編輯／無法辨識，或出現日期不符／已移至垃圾桶的 Duty 衝突，整個交易會被阻止，不會覆寫任何資料。重複更新不會累積重複紀錄。切勿使用 Seed／Reset 更新混合了個人紀錄的資料集合。
+- **安全更新示範資料：** Settings → **Refresh sample records** 會先預覽整個情境資料的替換內容、產生的紀錄、新增 Duty，以及對 Journal／突發事件的影響。v0.1.1–v0.1.3 未改動的樣本，會以完整資料內容相等作識別。ID 及 Journal 參照維持不變；情境日期、航空公司、時間及 Duty 關聯則可能按預覽更改。既有 Duty／Journal 內容、無關紀錄及設定維持不變。如必要 ID 曾被編輯／無法辨識，或出現日期不符／已移至垃圾桶的 Duty 衝突，整個交易會被阻止，不會覆寫任何資料。重複更新不會累積重複紀錄。切勿使用 Seed／Reset 更新混合了個人紀錄的資料集合。
 - **主頁儀表板：** HKT 時鐘字體加大至桌面 24 px／手機 18 px；Home → **View All Previous Duties** 可開啟按香港更次開始日期倒序排列的歷史紀錄，並顯示詳情及 Planned／Worked 標籤。未來更次仍在 Logbook 顯示。Add Duty、Batch Add Duties 及中央 Add 分頁保留。
 - **版本管理政策：** [VERSIONING.md](docs/VERSIONING.md) 定義項目擁有者自訂的 `vMAJOR.MINOR.PATCH[letter]` 格式（並非嚴格遵循 SemVer）、正式版批准機制，以及版本號置前的英文 Release Commit 格式。往後開發會按更新規模建議版本號，已同意的版本不得擅自更改。
 
@@ -280,7 +305,7 @@ Home 及 Statistics 會將整體總數與未經修改的 v0.1.4 示範資料子�
 
 - **更清晰的航空公司 Logo：** 桌面卡片圖片框為 112 × 56 px、手機為 96 × 52 px；詳細資料框為 144 × 72／128 × 64 px；Compact 顯示維持 56 × 36 px。程式會測量圖片中帶有留白的可見內容邊界，再調整 CSS 位置及等比例縮放，避免透明或中性背景留白令 Logo 顯得太細。24 張原始 PNG 與授權紀錄均不變，亦沒有產生衍生圖片。
 - **使用者指定的 24 間航空公司目錄：** 由同一份航空公司身份／資產資料來源支援預設選項、IATA／名稱／別名搜尋、Registry 及 PNG 對應。NH／SQ／HX／EK 不再出現在預設選項及新生成的示範紀錄，但歷史／自訂紀錄仍可查看及編輯。列入目錄不等於已核實其與 HAS 的客戶關係。詳見 [航空公司目錄](docs/AIRLINE_CATALOGUE.md)。
-- **安全更新舊示範資料：** Settings → Refresh obsolete demo airlines 只預覽與未修改的舊版虛構測試資料在完整內容上相符的紀錄。確認後僅更改清單中的航空公司欄位。已編輯／自訂／無法識別的樣本，以及經私隱功能刪除的欄位，均不會只憑 ID 或 DEMO 標記推斷；亦不會清除任何紀錄、關聯或儲存內容。更新操作具冪等性。原有 Seed／Reset 仍屬獨立且需明確確認的替換操作。
+- **安全更新舊示範資料：** Settings → Refresh sample records 只預覽與未修改的舊版虛構測試資料在完整內容上相符的紀錄。確認後僅更改清單中的航空公司欄位。已編輯／自訂／無法識別的樣本，以及經私隱功能刪除的欄位，均不會只憑 ID 或 DEMO 標記推斷；亦不會清除任何紀錄、關聯或儲存內容。更新操作具冪等性。原有 Seed／Reset 仍屬獨立且需明確確認的替換操作。
 - **詳細資料捲動：** 移除即時背景模糊效果，在任何 Modal 開啟時暫停裝飾性雷達，並在最後一個巢狀 Modal 關閉前鎖定背景頁面捲動。時鐘原本已獨立運作；測試確認時鐘跳秒不會令 Home 的詳細資料重新渲染或重設捲動位置。簡短 Edge 效能紀錄未能重現所回報的硬件掉幀，因此這些調整只是減少已確認可避免的運算負擔，並非保證所有裝置均達到某個 FPS。
 
 詳見 [v0.1.3 驗收及效能分析備註](docs/V0_1_3_ACCEPTANCE.md)。下方較早期的 v0.1.2 操作流程仍然適用。
@@ -298,7 +323,7 @@ Recent Aircraft 卡片會優先顯示適用航段的實際 AIBT／AOBT。如只�
 在 Home 選擇 **Add Duty** 或 **Batch Add Duties**；中央 Add 導航分頁維持不變。
 
 1. 選擇月份／年份及多個日曆日期。已選日期及待儲存項目可以跨月。
-2. 選擇 Day／Evening／Night／Custom，自行輸入開始與結束時間，並明確確認更次時數。系統不提供任何官方或預設的僱主更次時間。
+2. 選擇 Day／Evening／Night／Custom，自行輸入開始與結束時間。系統不提供任何官方或預設的僱主更次時間。
 3. 套用範本。可為其他範本／日期重複操作；儲存前可逐筆修改或移除待處理項目，並加入虛構筆記。
 4. 覆核日期、類型、時間、翌日結束日期及衝突。完全相同的更次必須修改或移除；時段重疊則須另行明確確認保留為獨立更次。
 5. 確認一次後，將所有項目儲存至本機。若寫入儲存空間失敗，待處理項目會保留供重試；系統不會因日期相同而取代已存在的 Duty。
@@ -363,11 +388,11 @@ Tests 會執行一次；`npm.cmd run test:watch` 會啟動監察模式。Build �
 
 1. 查看 Home 上三種不同統計總數及最近的虛構紀錄。
 2. 新增 Aircraft；在 Review 畫面選擇 Back to Edit 或取消，然後再明確確認儲存。
-3. 試看 `2026-10-16` 的兩個 Duty，以及 `2026-10-15` 的通宵 Duty。
+3. 試看 `2026-10-16` 的日更、`2026-10-15` 的通宵更次，以及未計入已工作統計的 Planned 更次。
 4. 在 Settings 啟用選填的虛構資料欄位，測試獨立航段狀態、航班號及自訂停機位。
 5. 切換 Timeline／Calendar、組合篩選條件及查看 Statistics。
 6. 新增 Journal 反思紀錄；匯出前在 Privacy Preview 覆核選定的故事。
-7. 只有在閱讀替換確認內容後，才使用 Seed Demo Data 或 Reset Demo Data。
+7. 更新舊樣本時使用 Refresh sample records，先覆核變更清單。Load sample records／Clear local records 是另行確認的整體替換操作，不應用於混合了個人紀錄的資料集合。
 
 ### iPhone／區域網絡測試
 
@@ -387,6 +412,7 @@ npm.cmd run dev -- --host 0.0.0.0
 - **v0.1.3：** 更大的 Logo 顯示、按圖片邊距調整、統一的 24 間航空公司預設目錄、保守且須覆核的舊 Demo 航空公司更新，以及針對 Modal 捲動／合成繪製的優化。
 - **v0.1.4：** 可無障礙操作的圖片組合選擇框、24 間航空公司各一筆且分佈於不同日期的虛構任務、經覆核的資料集更新、更突出的 HKT 時鐘、過往 Duty 歷史，以及永久版本號／Commit 規則。
 - **v0.1.5（僅文件更新）：** 新增內容對應的繁體中文（香港）README 及英文版本優先聲明；應用程式功能仍維持 v0.1.4。
+- **v0.2.0：** 精簡預發佈介面、本機 SVG 東亞雷達地圖、四筆虛構航機任務、經覆核的安全樣本更新，以及批次更表聲明簡化。
 - **尚未實作：** 正式後端、真實身份驗證／Passkey、雲端同步、加密備份、完整匯入／還原、Service Worker／離線重新載入，以及經驗證的 iOS PWA 安裝。
 - **驗證：** 已完成本機 Edge 不同視窗尺寸／排版及新功能流程檢查；實體 iPhone／Safari、實際觸控／鍵盤、下載及列印驗收仍有待完成。項目尚未部署。
 
@@ -394,7 +420,7 @@ npm.cmd run dev -- --host 0.0.0.0
 
 ## 私隱與資料處理
 
-公開示範只能使用虛構資料。v0.1.4 的初始示範資料包含 25 個 Duty、在 24 個不同日期的 24 筆 Confirmed Aircraft 任務，以及 3 篇 Journal。原本的 18 筆任務測試資料只保留作歷史識別及相容性測試。
+公開展示只能使用虛構資料。v0.2.0 初始樣本包含 3 個 Duty、4 筆 Confirmed Aircraft 任務及 2 篇 Journal。舊版 18／24 筆任務資料只保留作歷史識別及相容性測試；新樣本數量不是使用者紀錄上限。既有儲存資料不會被自動取代。
 
 修改內容儲存在此瀏覽器來源（origin）的**未加密 localStorage**，Key 為 `tco-logbook-demo-v0.1`。Local Storage 並非安全的正式雲端儲存、身份驗證、存取控制或備份。清除瀏覽器資料、私人瀏覽模式或儲存失敗都可能導致資料遺失；不同瀏覽器、裝置、Port 及來源各自使用獨立資料。尚未實作多分頁衝突處理。
 
@@ -426,9 +452,9 @@ npm.cmd run dev -- --host 0.0.0.0
 
 ## 開發路線圖
 
-**僅屬計劃，須另行批准：** 公司政策／供應商／成本決策、真實身份驗證、持久後端儲存、離線同步與衝突處理、公開航機資料查詢、經驗證的匯入／還原、加密備份，以及正式版／iPhone PWA 驗收。這些是已批准 PRD 的未來階段，並非已交付的 v0.1.4 功能。
+**僅屬計劃，須另行批准：** 公司政策／供應商／成本決策、真實身份驗證、持久後端儲存、離線同步與衝突處理、公開航機資料查詢、經驗證的匯入／還原、加密備份，以及正式版／iPhone PWA 驗收。這些是已批准 PRD 的未來階段，並非已交付的 v0.2.0 功能。
 
-v0.1.4 仍是本機前端原型。OCR／Excel 更表匯入、人力資源系統整合、雲端服務及正式生產功能均繼續延後。
+v0.2.0 仍是本機前端預發佈版。OCR／Excel 更表匯入、人力資源系統整合、雲端服務及正式生產功能均繼續延後。
 
 ## 語言版本效力
 

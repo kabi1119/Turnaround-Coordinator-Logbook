@@ -36,7 +36,7 @@ import BatchDutyEditor from './features/BatchDutyEditor';
 import HongKongClock from './components/HongKongClock';
 import DutyHistory from './features/DutyHistory';
 import { previousDuties } from './domain/roster';
-import DemoScope from './components/DemoScope';
+
 type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
 type Overlay =
   | { type: 'add' }
@@ -102,7 +102,7 @@ function Workspace({
     }
     setDb(next);
     setStorageError('');
-    setToast(t('Saved on this device (prototype)', '已儲存在此裝置（原型）'));
+    setToast(t('Saved on this device', '已儲存在此裝置'));
     return true;
   }
   const s = stats(db.aircraft, db.duties),
@@ -139,8 +139,8 @@ function Workspace({
           <span className="app-mark">
             <Plane size={23} strokeWidth={1.7} />
           </span>
-          <span>
-            TCO <strong>Logbook</strong>
+          <span className="brand-name">
+            <strong>Turnaround Coordinator Logbook</strong>
             <small>PERSONAL AVIATION JOURNAL</small>
           </span>
         </button>
@@ -158,20 +158,12 @@ function Workspace({
           </button>
         </div>
       </header>
-      <div className="demo-strip">
-        <span className="live-dot" /> {t('PROTOTYPE v0.1.4', '原型 v0.1.4')}
-        <span>·</span>
-        {t('SYNTHETIC DEMO DATA', '合成示範資料')}
-        <span className="desktop-only">
-          · {t('DEVICE ONLY / NOT CLOUD SYNCED', '只存此裝置／無雲端同步')}
-        </span>
-      </div>
       <main id="main-content">
         {storageError && (
           <div className="notice amber" role="alert">
             {storageError}
             <button onClick={() => setPage('settings')}>
-              {t('Open Settings to reset demo explicitly', '開啟設定以明確重設示範資料')}
+              {t('Open Settings to manage local data', '開啟設定以管理本機資料')}
             </button>
           </div>
         )}
@@ -222,7 +214,6 @@ function Workspace({
                 detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
               />
             </div>
-            <DemoScope rows={db.aircraft} />
             <div className="home-columns">
               <div>
                 <SectionTitle
@@ -240,7 +231,7 @@ function Workspace({
                 {recentDuty ? (
                   <section className="current-duty surface-dark">
                     <div className="section-title">
-                      <Badge tone="light">{t('DEMO DUTY', '示範更次')}</Badge>
+                      <Badge tone="light">{t('Duty', '更次')}</Badge>
                       <button
                         className="icon-button"
                         aria-label={t('Open recent Duty', '開啟最近更次')}
@@ -379,8 +370,11 @@ function Workspace({
           />
         )}
         <footer className="page-footer">
-          TCO LOGBOOK{' '}
-          <span>v0.1.4 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
+          TCO Logbook{' '}
+          <span className="mobile-release">
+            v0.2.0 {t('Pre-release', '預發佈')} ·{' '}
+            {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
+          </span>
         </footer>
       </main>
       <nav className="app-navigation" aria-label={t('Main navigation', '主導覽')}>
@@ -400,9 +394,10 @@ function Workspace({
         ))}
         <div className="nav-context">
           <Plane size={20} />
-          <strong>TCO / DEMO</strong>
+          <strong>TCO Logbook</strong>
+          <span className="release-version">v0.2.0 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
-          <small>HONG KONG · UTC+08</small>
+          <small>Hong Kong · UTC+08</small>
         </div>
       </nav>
       {toast && (
@@ -416,9 +411,7 @@ function Workspace({
       )}
       {overlay?.type === 'add' && (
         <Modal title={t('Add to your logbook', '新增至紀錄簿')} onClose={close}>
-          <p className="muted">
-            {t('What would you like to record? Synthetic data only.', '想記下甚麼？只限虛構資料。')}
-          </p>
+          <p className="muted">{t('What would you like to record?', '想記下甚麼？')}</p>
           {[
             {
               en: 'New Aircraft',
@@ -465,7 +458,7 @@ function Workspace({
           dutyId={overlay.dutyId}
           onClose={close}
           commit={commit}
-          onSaved={() => setToast(t('Saved on this device (prototype)', '已儲存在此裝置（原型）'))}
+          onSaved={() => setToast(t('Saved on this device', '已儲存在此裝置'))}
         />
       )}
       {overlay?.type === 'dutyHistory' && (
@@ -523,7 +516,7 @@ function Workspace({
             </button>
           </div>
           <details>
-            <summary>{t('Revision activity · demo metadata', '修改紀錄 · 示範摘要')}</summary>
+            <summary>{t('Revision activity', '修改紀錄')}</summary>
             {detail.revisions.length ? (
               detail.revisions.map((r, i) => (
                 <p key={i}>
@@ -534,7 +527,7 @@ function Workspace({
                 </p>
               ))
             ) : (
-              <p>{t('Seeded synthetic record. No edits yet.', '預載合成紀錄，尚未修改。')}</p>
+              <p>{t('No revisions recorded.', '尚無修改紀錄。')}</p>
             )}
             <p className="muted">
               {t(
@@ -613,7 +606,7 @@ function Workspace({
           title={
             pending.kind === 'aircraftRestore'
               ? t('Review / Confirm Aircraft Restore', '覆核／確認還原航機')
-              : t('Move to demo Trash?', '移至示範垃圾桶？')
+              : t('Move to Trash?', '移至垃圾桶？')
           }
           onClose={() => setPending(null)}
           onConfirm={() => {

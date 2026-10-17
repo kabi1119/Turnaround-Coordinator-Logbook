@@ -82,20 +82,20 @@ export default function Settings({
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">PREFERENCES / LOCAL DEMO</span>
+          <span className="eyebrow">PREFERENCES / LOCAL</span>
           <h1>{t('Settings.', '設定。')}</h1>
-          <p>{t('Make the prototype feel like yours.', '調整原型的使用體驗。')}</p>
+          <p>{t('Your preferences and local data.', '個人偏好與本機資料。')}</p>
         </div>
         <button onClick={onBack}>{t('Back to Home', '返回首頁')}</button>
       </div>
       <div className="notice prototype-notice">
         <Shield size={24} />
         <div>
-          <strong>{t('Prototype v0.1.4 · Demo Data', '原型 v0.1.4 · 示範資料')}</strong>
+          <strong>{t('TCO Logbook · Pre-release', 'TCO Logbook · 預發佈')}</strong>
           <p>
             {t(
-              'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. These controls are demonstrations, not security guarantees or employer permission.',
-              '資料只存此裝置，沒有雲端同步。瀏覽器資料可能被清除或遺失；這些控制僅作示範，並非安全保證或公司許可。',
+              'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. Included sample records are fictional. Privacy controls are not security guarantees or employer permission.',
+              '資料只存此裝置，沒有雲端同步。瀏覽器資料可能被清除或遺失；內附樣本紀錄全屬虛構。私隱控制並非安全保證或公司許可。',
             )}
           </p>
         </div>
@@ -158,7 +158,7 @@ export default function Settings({
         </section>
         <section className="panel">
           <SectionTitle
-            title={t('Demo reports', '示範報告')}
+            title={t('Personal reports', '個人報告')}
             subtitle={t(
               'Review the period, role scope and stories before exporting.',
               '匯出前先覆核期間、角色範圍及故事。',
@@ -189,7 +189,7 @@ export default function Settings({
             <div>
               <strong>{t(...privacyLabels[k])}</strong>
               <small>
-                {affected(db, k)} {t('demo records contain this field', '項示範紀錄包含此欄位')}
+                {affected(db, k)} {t('records contain this field', '項紀錄包含此欄位')}
                 {!db.settings.privacy[k] ? ` · ${t('archived / hidden', '封存／隱藏')}` : ''}
               </small>
             </div>
@@ -215,9 +215,9 @@ export default function Settings({
         ))}
       </section>
       <section className="panel">
-        <SectionTitle title={t('Local demo data', '本機示範資料')} />
+        <SectionTitle title={t('Sample records', '樣本紀錄')} />
         <button onClick={() => setRefreshDemo(true)}>
-          {t('Refresh obsolete demo airlines', '更新過時示範航空公司')}
+          {t('Refresh sample records', '更新樣本紀錄')}
         </button>
         <p className="muted">
           {t(
@@ -228,23 +228,23 @@ export default function Settings({
         <div className="actions left">
           <button onClick={() => setReset('empty')}>
             <RotateCcw size={17} />
-            {t('Reset Demo Data · empty', '重設示範資料 · 清空')}
+            {t('Clear local records', '清空本機紀錄')}
           </button>
           <button onClick={() => setReset('seed')}>
             <DatabaseIcon size={17} />
-            {t('Seed Demo Data', '載入示範資料')}
+            {t('Load sample records', '載入樣本紀錄')}
           </button>
         </div>
         <p className="muted">
           {t(
-            'Both actions replace this browser’s demo dataset after confirmation. No other apps or files are affected.',
-            '兩者均會在確認後取代此瀏覽器的示範資料，不影響其他程式或檔案。',
+            'Both actions replace this browser’s records after confirmation. Use Refresh sample records to preserve personal records.',
+            '兩者均會在確認後取代此瀏覽器的紀錄。如需保留個人資料，請使用更新樣本紀錄。',
           )}
         </p>
       </section>
       <section className="panel">
         <SectionTitle
-          title={t('Trash · 30-day demo window', '垃圾桶 · 30 日示範回復期')}
+          title={t('Trash · 30-day recovery window', '垃圾桶 · 30 日回復期')}
           subtitle={t(
             'No background purge service. Expired entries cannot be restored here.',
             '沒有背景清除服務；到期項目不能在此還原。',
@@ -315,10 +315,10 @@ export default function Settings({
         >
           <p>
             {t(...privacyLabels[privacy])} · {affected(db, privacy)}{' '}
-            {t('affected demo records.', '項受影響示範紀錄。')}
+            {t('affected records.', '項受影響紀錄。')}
           </p>
           <Select
-            label={t('Existing demo values', '現有示範值')}
+            label={t('Existing values', '現有值')}
             options={[
               {
                 value: 'archive',
@@ -341,7 +341,7 @@ export default function Settings({
           {action === 'delete' && (
             <p className="notice amber">
               {t(
-                'This local field deletion cannot be undone. Previously downloaded copies remain outside this prototype.',
+                'This local field deletion cannot be undone. Previously downloaded copies remain outside this app.',
                 '刪除此本機欄位後無法復原，先前已下載的副本不受原型控制。',
               )}
             </p>
@@ -353,7 +353,7 @@ export default function Settings({
           title={
             reset === 'empty'
               ? t('Reset to an empty logbook?', '重設為空白紀錄？')
-              : t('Replace with synthetic demo data?', '取代為合成示範資料？')
+              : t('Replace with fictional sample records?', '取代為虛構樣本紀錄？')
           }
           onClose={() => setReset(null)}
           onConfirm={resetData}
@@ -437,7 +437,7 @@ export function ReportPreview({ db, onClose }: { db: Database; onClose: () => vo
       format === 'json'
         ? JSON.stringify(value, null, 2)
         : [
-            ['SYNTHETIC DEMO ONLY · not employer verified', ''],
+            ['FICTIONAL SAMPLES · not employer verified', ''],
             ['Role scope', value.roleScope],
             ['From', from],
             ['To', to],
@@ -454,12 +454,12 @@ export function ReportPreview({ db, onClose }: { db: Database; onClose: () => vo
     );
     const a = document.createElement('a');
     a.href = url;
-    a.download = `tco-sanitized-demo.${format}`;
+    a.download = `tco-report.${format}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return (
-    <Modal title={t('Privacy Preview · demo report', '私隱預覽 · 示範報告')} onClose={onClose} wide>
+    <Modal title={t('Privacy Preview · report', '私隱預覽 · 個人報告')} onClose={onClose} wide>
       <div className="report-controls">
         <p className="notice">
           {t(
@@ -551,7 +551,7 @@ export function ReportPreview({ db, onClose }: { db: Database; onClose: () => vo
         </fieldset>
       </div>
       <section className="report-paper">
-        <span className="eyebrow">TCO LOGBOOK / SYNTHETIC DEMO REPORT</span>
+        <span className="eyebrow">TCO Logbook / PERSONAL REPORT</span>
         <h2>{t('Career experience summary', '職涯經驗摘要')}</h2>
         <p>
           {from || t('Beginning', '起始')} → {to || t('Present', '目前')} ·{' '}

@@ -119,7 +119,7 @@ export default function AircraftEditor({
             start: '',
             end: '',
             status: 'Draft',
-            notes: 'DEMO · Created at Aircraft confirmation',
+            notes: 'Created at Aircraft confirmation',
           }
         : undefined;
     // Disabled values remain archived on edits; only enabled fields accept new values.
@@ -395,7 +395,7 @@ export default function AircraftEditor({
                   />
                   {history && (
                     <div className="notice">
-                      {t('Local demo history suggests', '本機示範歷史建議')}: {history.airline} ·{' '}
+                      {t('Local history suggests', '本機歷史建議')}: {history.airline} ·{' '}
                       {history.variant}
                       <button
                         type="button"
@@ -414,10 +414,7 @@ export default function AircraftEditor({
                   )}
                   <button type="button" disabled>
                     <Search size={16} />
-                    {t(
-                      'Search Public Database · Future feature — not connected in prototype',
-                      '搜尋公開資料庫 · 未來功能，原型未連接',
-                    )}
+                    {t('Search Public Database · Not connected', '搜尋公開資料庫 · 尚未連接')}
                   </button>
                 </>
               )}
@@ -436,8 +433,8 @@ export default function AircraftEditor({
                   </datalist>
                   <p className="muted">
                     {t(
-                      'Demo suggestions only — not a verified current HKIA stand catalog. Custom values welcome.',
-                      '僅示範建議，並非已核實的現行香港機場停機位清單；可自行輸入。',
+                      'Reference suggestions only — not a complete current stand catalogue. Custom values welcome.',
+                      '僅供參考，並非完整現行停機位清單；可自行輸入。',
                     )}
                   </p>
                 </>
@@ -455,8 +452,8 @@ export default function AircraftEditor({
                   onChange={(e) => patch({ actualHandling: e.target.checked })}
                 />
                 {t(
-                  'Actual handling took place (synthetic scenario). A cancellation without handling cannot be Confirmed.',
-                  '此合成情境有實際處理工作；純取消且無處理不能確認。',
+                  'Actual handling took place. A cancellation without handling cannot be Confirmed.',
+                  '有實際處理工作；純取消且無處理不能確認。',
                 )}
               </label>
               <Select
@@ -537,7 +534,7 @@ export default function AircraftEditor({
                   </div>
                   {p.disruptionNotes && (
                     <TextArea
-                      label={t('Sanitized demo event notes', '去識別化示範事件筆記')}
+                      label={t('Event notes', '事件筆記')}
                       value={event.notes}
                       onChange={(e) => updateEvent(event.id, { notes: e.target.value })}
                     />
@@ -554,7 +551,7 @@ export default function AircraftEditor({
                 </section>
               ))}
               <TextArea
-                label={t('Notes · synthetic only', '筆記 · 只限虛構資料')}
+                label={t('Notes', '筆記')}
                 value={a.notes}
                 onChange={(e) => patch({ notes: e.target.value })}
               />
@@ -666,11 +663,7 @@ export default function AircraftEditor({
             <dt>{t('Notes', '筆記')}</dt>
             <dd>{a.notes || '—'}</dd>
             <dt>{t('Actual handling', '實際處理')}</dt>
-            <dd>
-              {a.actualHandling
-                ? t('Yes · synthetic', '有 · 合成情境')
-                : t('No · Draft only', '無 · 僅草稿')}
-            </dd>
+            <dd>{a.actualHandling ? t('Yes', '有') : t('No · Draft only', '無 · 僅草稿')}</dd>
             <dt>{t('Will be saved as', '將儲存為')}</dt>
             <dd>
               <Badge tone="teal">{l(review === 'draft' ? 'Draft' : 'Confirmed')}</Badge> ·{' '}

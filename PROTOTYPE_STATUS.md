@@ -1,4 +1,20 @@
-# Prototype v0.1.4 status
+# TCO Logbook v0.2.0 Pre-release status
+
+## v0.2.0 UI and sample refinement — 2026-10-17 (Hong Kong)
+
+Built on the existing checkout at committed v0.1.5a (29c9fbc), preserving all in-progress v0.2.0 changes and the owner's earlier Lufthansa asset replacement. No automatic commit/push, history rewrite, deployment or production service is authorized.
+
+- Larger full-name upper-left brand, short name elsewhere; removed the upper prototype/data/device strip. Subtle version/device/Hong Kong metadata is in the lower desktop sidebar and the small mobile/tablet footer.
+- Decorative local SVG East Asia / Western Pacific map with China, Korea, Japan, Taiwan, northern Philippines and Vietnam silhouettes; plane, rings and CSS sweep share the Hong Kong-area anchor. No external map assets/services. Reduced-motion and pause while dialogs are open remain.
+- Four fictional Aircraft / three Duties / two Journals replace the fresh showcase collection, covering all requested statuses, handling types/roles and relationship/timing scenarios with 4 Logged / 3 Handled / 2 Primary. Existing persisted records are not automatically replaced.
+- Settings sample refresh previews aircraft, duty and journal changes and replaces only exact known untouched fixtures. Personal records/settings remain; edited samples, duplicate IDs and retained links block updates. Frozen legacy/v0.1.4 seeds remain compatibility fixtures. Same version-1 storage key/schema; no migration/reset on load.
+- New visible labels and sample values omit DEMO. Settings and exports retain fictional/local-only disclosures. Existing user text is preserved verbatim, including old labels if the owner has edited/retained them.
+- Removed only the batch chosen-hours acknowledgement; valid times, final review/save, duplicate/overlap checks and explicit overlap override remain.
+- No new dependency or external asset. Existing logo bytes and unresolved rights stay intact; existing inventory/bounds corrections for the owner's LH replacement are preserved.
+
+Verification: see docs/V0_2_0_ACCEPTANCE.md for executed checks and browser limits. Older sections below are historical and do not describe the current four-record fresh dataset.
+
+## Historical v0.1.4 status
 
 ## Interrupted implementation recovery — 2026-10-17 (Hong Kong)
 
@@ -142,46 +158,46 @@ The workflow table below continues to describe the preserved v0.1 functionality.
 
 `Implemented` means functional local UI and state; `Demo-only` means deliberately limited simulation; `Deferred` is outside v0.1.
 
-| Workflow | Status | Behavior / limits |
-|---|---|---|
-| Home and five-item navigation | Implemented | Home / Logbook / Add / Statistics / Journal; Settings separate; generic aircraft icon |
-| Home totals and recent records | Implemented | Derived Logged, Handled, Primary in required order; recent Duty and consistent Aircraft cards |
-| English / Traditional Chinese | Implemented | Navigation, labels, controls and domain choices switch immediately; user/demo content and standard references remain as entered |
-| System light / dark and responsive shell | Implemented | CSS system theme, mobile breakpoints, native dialogs, reduced-motion and print styles; visual verification pending |
-| Duty create / edit / detail | Implemented | Stable IDs, same-day multiple Duties, optional shift times, +1-day display; fixed HK grouping |
-| Duty selection from Quick Add | Implemented | Unique same-date candidate auto-selected; multiple candidates require choice; user may explicitly create new Draft Duty |
-| New Draft Duty timing | Implemented | No Duty created during editing or review; creation is atomic with Confirm & Save |
-| Aircraft create / edit / Draft | Implemented | Four core fields plus editable HK Handling Date; missing fields / no actual handling cannot be Confirmed |
-| Review for every Aircraft save | Implemented | Save & Close / Add Next / Draft all review; Back preserves form; cancel does not write; guarded single confirmation |
-| Duplicate advisory | Implemented | Date, Duty, type, airline/variant plus enabled registration or relevant flight match; explicit keep-separate checkbox; stable-ID upsert |
-| Aircraft cards | Implemented | Airline + permitted flight(s) title; Role · Variant (permitted Registration) subtitle; no empty parentheses |
-| Registration history / lookup | Implemented | Local matching history suggests snapshot airline/variant; user explicitly adopts; history counts and first/last confirmed encounter |
-| Public database lookup | Deferred | Disabled button; no network calls or vendor decision |
-| Optional Parking Bay | Demo-only | Native searchable datalist plus custom text, uppercase with suffixes retained; small illustrative, non-verified catalog |
-| Independent leg statuses | Implemented | Applicable legs only; Early / On Time / Delayed / Cancelled / Other / Not Recorded; explicit manual origin |
-| Gate time proposals | Demo-only | HK dated SIBT/AIBT and SOBT/AOBT; exact second boundaries; explicit adoption, mismatch warning; never chocks/runway substitution |
-| Disruption events | Implemented | Multiple events, category/involvement/impact/resolution, optional gated notes and Journal link; Normal + events warning |
-| Timeline / Calendar / search | Implemented | Newest-first by Duty date; multiple Duties per day; month navigation, selected-day list; no day-off inference |
-| Combined filters | Implemented | Handling Date, airline, family, variant, role, handling type, permitted independent statuses, disruption; private identifiers excluded from search |
-| Aircraft trash / restore | Implemented | Confirmation with record review, recalculated stats; restore from Settings within demo 30-day window |
-| Duty trash / restore | Implemented | Preserves Aircraft and Journal, unlinks and records original association; explicit restore preview; never overwrites new links |
-| Revision history | Demo-only | Timestamp/action metadata for reviewed Aircraft saves; no previous payload snapshots or rollback/retention guarantee |
-| Statistics | Implemented | Pure selectors, disjoint type counts, Logged / Handled / Primary scope, role breakdown, rankings, monthly chart and separate leg status categories |
-| Unique registrations | Implemented | Trim + uppercase; preserves significant separators/suffixes; ignores blanks; metric hidden while disabled |
-| Duty Shifts | Implemented | Confirmed Duties only; date filter applies independently, explicitly labeled; Aircraft in Draft Duty still count |
-| Disruption statistics | Implemented | Event count vs count of unique Confirmed assignments with events, separately from assignment disruption status |
-| Career Journal | Implemented | Create/edit/search/date/competency, Draft/Confirmed, STAR fields, tags, outcomes/unit/contribution/source/verification |
-| Journal relations | Implemented | Standalone, one Duty OR multiple Aircraft; editable/unlinkable; never contributes to aircraft statistics |
-| Sensitive field defaults | Demo-only | All six optional field groups off initially; no input/display/search/filter of disabled data; synthetic archived values retained |
-| Field disable impact | Demo-only | Count preview; choose archive/hide or explicit local field deletion; not security or company-policy authorization |
-| Privacy Preview | Implemented | Separate period, Primary vs Primary+Supporting, selected count categories and Confirmed sanitized stories; explicit review required |
-| Career counts | Implemented | Three distinct coordinated figures; Training excluded; Supporting scope disclosed; no Full Turnaround doubling |
-| JSON / CSV / PDF | Demo-only | Allowlisted count/story JSON, counts-only CSV, browser print/PDF; no raw operational identifiers or links; not full backup |
-| Seed / Reset | Implemented | Explicit replacement confirmation, retains language/privacy; unknown/corrupt stored copy preserved until explicit reset |
-| Local persistence | Demo-only | Validated versioned localStorage; small synthetic datasets, quota failures do not report success; no multi-tab conflict solution |
-| PWA shell | Demo-only | Manifest, generic airplane SVG, viewport and safe-area support; not a validated installable/offline iPhone PWA |
-| Auth / cloud / conflict / encrypted backup | Deferred | Clearly unavailable Settings rows; no accounts, secrets, backend, providers or external integrations |
-| Production import / restore / deployment | Deferred | No full import, hosting, paid services or production readiness claims |
+| Workflow                                   | Status      | Behavior / limits                                                                                                                                  |
+| ------------------------------------------ | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Home and five-item navigation              | Implemented | Home / Logbook / Add / Statistics / Journal; Settings separate; generic aircraft icon                                                              |
+| Home totals and recent records             | Implemented | Derived Logged, Handled, Primary in required order; recent Duty and consistent Aircraft cards                                                      |
+| English / Traditional Chinese              | Implemented | Navigation, labels, controls and domain choices switch immediately; user/demo content and standard references remain as entered                    |
+| System light / dark and responsive shell   | Implemented | CSS system theme, mobile breakpoints, native dialogs, reduced-motion and print styles; visual verification pending                                 |
+| Duty create / edit / detail                | Implemented | Stable IDs, same-day multiple Duties, optional shift times, +1-day display; fixed HK grouping                                                      |
+| Duty selection from Quick Add              | Implemented | Unique same-date candidate auto-selected; multiple candidates require choice; user may explicitly create new Draft Duty                            |
+| New Draft Duty timing                      | Implemented | No Duty created during editing or review; creation is atomic with Confirm & Save                                                                   |
+| Aircraft create / edit / Draft             | Implemented | Four core fields plus editable HK Handling Date; missing fields / no actual handling cannot be Confirmed                                           |
+| Review for every Aircraft save             | Implemented | Save & Close / Add Next / Draft all review; Back preserves form; cancel does not write; guarded single confirmation                                |
+| Duplicate advisory                         | Implemented | Date, Duty, type, airline/variant plus enabled registration or relevant flight match; explicit keep-separate checkbox; stable-ID upsert            |
+| Aircraft cards                             | Implemented | Airline + permitted flight(s) title; Role · Variant (permitted Registration) subtitle; no empty parentheses                                        |
+| Registration history / lookup              | Implemented | Local matching history suggests snapshot airline/variant; user explicitly adopts; history counts and first/last confirmed encounter                |
+| Public database lookup                     | Deferred    | Disabled button; no network calls or vendor decision                                                                                               |
+| Optional Parking Bay                       | Demo-only   | Native searchable datalist plus custom text, uppercase with suffixes retained; small illustrative, non-verified catalog                            |
+| Independent leg statuses                   | Implemented | Applicable legs only; Early / On Time / Delayed / Cancelled / Other / Not Recorded; explicit manual origin                                         |
+| Gate time proposals                        | Demo-only   | HK dated SIBT/AIBT and SOBT/AOBT; exact second boundaries; explicit adoption, mismatch warning; never chocks/runway substitution                   |
+| Disruption events                          | Implemented | Multiple events, category/involvement/impact/resolution, optional gated notes and Journal link; Normal + events warning                            |
+| Timeline / Calendar / search               | Implemented | Newest-first by Duty date; multiple Duties per day; month navigation, selected-day list; no day-off inference                                      |
+| Combined filters                           | Implemented | Handling Date, airline, family, variant, role, handling type, permitted independent statuses, disruption; private identifiers excluded from search |
+| Aircraft trash / restore                   | Implemented | Confirmation with record review, recalculated stats; restore from Settings within demo 30-day window                                               |
+| Duty trash / restore                       | Implemented | Preserves Aircraft and Journal, unlinks and records original association; explicit restore preview; never overwrites new links                     |
+| Revision history                           | Demo-only   | Timestamp/action metadata for reviewed Aircraft saves; no previous payload snapshots or rollback/retention guarantee                               |
+| Statistics                                 | Implemented | Pure selectors, disjoint type counts, Logged / Handled / Primary scope, role breakdown, rankings, monthly chart and separate leg status categories |
+| Unique registrations                       | Implemented | Trim + uppercase; preserves significant separators/suffixes; ignores blanks; metric hidden while disabled                                          |
+| Duty Shifts                                | Implemented | Confirmed Duties only; date filter applies independently, explicitly labeled; Aircraft in Draft Duty still count                                   |
+| Disruption statistics                      | Implemented | Event count vs count of unique Confirmed assignments with events, separately from assignment disruption status                                     |
+| Career Journal                             | Implemented | Create/edit/search/date/competency, Draft/Confirmed, STAR fields, tags, outcomes/unit/contribution/source/verification                             |
+| Journal relations                          | Implemented | Standalone, one Duty OR multiple Aircraft; editable/unlinkable; never contributes to aircraft statistics                                           |
+| Sensitive field defaults                   | Demo-only   | All six optional field groups off initially; no input/display/search/filter of disabled data; synthetic archived values retained                   |
+| Field disable impact                       | Demo-only   | Count preview; choose archive/hide or explicit local field deletion; not security or company-policy authorization                                  |
+| Privacy Preview                            | Implemented | Separate period, Primary vs Primary+Supporting, selected count categories and Confirmed sanitized stories; explicit review required                |
+| Career counts                              | Implemented | Three distinct coordinated figures; Training excluded; Supporting scope disclosed; no Full Turnaround doubling                                     |
+| JSON / CSV / PDF                           | Demo-only   | Allowlisted count/story JSON, counts-only CSV, browser print/PDF; no raw operational identifiers or links; not full backup                         |
+| Seed / Reset                               | Implemented | Explicit replacement confirmation, retains language/privacy; unknown/corrupt stored copy preserved until explicit reset                            |
+| Local persistence                          | Demo-only   | Validated versioned localStorage; small synthetic datasets, quota failures do not report success; no multi-tab conflict solution                   |
+| PWA shell                                  | Demo-only   | Manifest, generic airplane SVG, viewport and safe-area support; not a validated installable/offline iPhone PWA                                     |
+| Auth / cloud / conflict / encrypted backup | Deferred    | Clearly unavailable Settings rows; no accounts, secrets, backend, providers or external integrations                                               |
+| Production import / restore / deployment   | Deferred    | No full import, hosting, paid services or production readiness claims                                                                              |
 
 ## Decisions and deliberate boundaries
 

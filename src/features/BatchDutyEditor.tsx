@@ -28,7 +28,6 @@ export default function BatchDutyEditor({
     Night: { start: '', end: '' },
     Custom: { start: '', end: '' },
   });
-  const [confirmedHours, setConfirmedHours] = useState(false);
   const [entries, setEntries] = useState<Duty[]>([]);
   const [review, setReview] = useState(false);
   const [override, setOverride] = useState(false);
@@ -48,15 +47,11 @@ export default function BatchDutyEditor({
     setError('');
   };
   function applyTemplate() {
-    if (
-      !selected.length ||
-      !confirmedHours ||
-      selected.some((date) => !shiftRange({ date, ...template }))
-    ) {
+    if (!selected.length || selected.some((date) => !shiftRange({ date, ...template }))) {
       setError(
         t(
-          'Select dates, enter different valid start/end times and confirm your template hours.',
-          '請選擇日期、輸入不同的有效開更及完更時間，並確認自訂時段。',
+          'Select dates, enter different valid start/end times before applying a template.',
+          '請選擇日期、輸入不同的有效開更及完更時間，再套用範本。',
         ),
       );
       return;
@@ -168,7 +163,6 @@ export default function BatchDutyEditor({
                   value={type}
                   onChange={(e) => {
                     setType(e.target.value as ShiftType);
-                    setConfirmedHours(false);
                   }}
                 />
                 <div className="form-grid">
@@ -181,7 +175,6 @@ export default function BatchDutyEditor({
                         ...templates,
                         [type]: { ...template, start: e.target.value },
                       });
-                      setConfirmedHours(false);
                     }}
                   />
                   <Field
@@ -190,21 +183,9 @@ export default function BatchDutyEditor({
                     value={template.end}
                     onChange={(e) => {
                       setTemplates({ ...templates, [type]: { ...template, end: e.target.value } });
-                      setConfirmedHours(false);
                     }}
                   />
                 </div>
-                <label className="check">
-                  <input
-                    type="checkbox"
-                    checked={confirmedHours}
-                    onChange={(e) => setConfirmedHours(e.target.checked)}
-                  />
-                  {t(
-                    'I confirm these are my chosen hours, not an official HAS schedule.',
-                    '我確認這是自行選定的時段，並非 HAS 官方更表。',
-                  )}
-                </label>
                 <button className="primary" onClick={applyTemplate}>
                   {t('Apply template to selected dates', '套用範本至所選日期')}
                 </button>
@@ -284,10 +265,7 @@ export default function BatchDutyEditor({
                       />
                     </div>
                     <TextArea
-                      label={t(
-                        `Duty ${i + 1} notes · synthetic only`,
-                        `更次 ${i + 1} 筆記 · 只限虛構`,
-                      )}
+                      label={t(`Duty ${i + 1} notes`, `更次 ${i + 1} 筆記 · 只限虛構`)}
                       value={entry.notes}
                       onChange={(e) => patchEntry(entry.id, { notes: e.target.value })}
                     />

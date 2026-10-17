@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { seedDatabase } from '../src/data/seed';
+import { v014SeedDatabase as seedDatabase } from '../src/data/v014Seed';
 import { legacySeedDatabase } from '../src/data/legacySeed';
 import { legacyDemoAirlines } from '../src/data/demoRefresh';
 import { applyDemoDataset, demoDatasetPlan, isCurrentDemo } from '../src/data/demoDatasetRefresh';
@@ -238,7 +238,7 @@ describe('v0.1.4 deterministic synthetic data and reviewed refresh', () => {
       commit = vi.fn(() => true),
       close = vi.fn();
     const view = render(<DemoAirlineRefresh db={db} commit={commit} onClose={close} />);
-    const confirm = screen.getByRole('button', { name: 'Confirm 24-airline demo refresh' });
+    const confirm = screen.getByRole('button', { name: 'Confirm sample refresh' });
     expect(confirm).toBeDisabled();
     expect(screen.getByRole('dialog')).toHaveTextContent('Hong Kong Airlines');
     fireEvent.click(screen.getByRole('checkbox'));
@@ -249,7 +249,7 @@ describe('v0.1.4 deterministic synthetic data and reviewed refresh', () => {
     view.unmount();
     render(<DemoAirlineRefresh db={db} commit={() => false} onClose={close} />);
     fireEvent.click(screen.getByRole('checkbox'));
-    fireEvent.click(screen.getByRole('button', { name: 'Confirm 24-airline demo refresh' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm sample refresh' }));
     expect(screen.getByRole('alert')).toHaveTextContent('No refresh was applied');
   });
   it.each(['en', 'zh-HK'] as const)(
@@ -278,7 +278,7 @@ describe('v0.1.4 deterministic synthetic data and reviewed refresh', () => {
       ).toBeNull();
       fireEvent.click(screen.getByRole('checkbox'));
       const confirm = screen.getByRole('button', {
-        name: language === 'en' ? 'Confirm 24-airline demo refresh' : '確認更新 24 家航空公司示範',
+        name: language === 'en' ? 'Confirm sample refresh' : '確認更新樣本',
       });
       expect(confirm).toBeDisabled();
       fireEvent.click(confirm);
@@ -294,7 +294,7 @@ describe('v0.1.4 deterministic synthetic data and reviewed refresh', () => {
     const next = structuredClone(db);
     next.journals[0].learning = 'New edit';
     view.rerender(<DemoAirlineRefresh db={next} commit={commit} onClose={() => {}} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Confirm 24-airline demo refresh' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm sample refresh' }));
     expect(commit).not.toHaveBeenCalled();
     expect(screen.getByRole('alert')).toHaveTextContent('Preview changed');
   });

@@ -1,4 +1,4 @@
-# Owner-defined airline catalogue — current v0.1.4
+# Owner-defined airline catalogue — current v0.2.0
 
 This is the owner's requested default selection, **not a verified or exhaustive HAS handling customer list**. The single source is src/data/airlineCatalogue.ts; registry, search, local PNG mappings and reference exports derive from it. No current airline operational relationship is inferred.
 
@@ -33,7 +33,11 @@ NH / ANA, SQ, HX and EK are excluded only from default suggestions and fresh syn
 
 New owner-defined entries have no invented verification date or official identity source; the catalogue document is their scope reference. Original nine reference records and rights evidence remain in historicalAirlineReferences. Every legal permission remains unverified/not-established. No third-party permission is inferred from display or membership.
 
-## Reviewed v0.1.4 dataset refresh
+## Current v0.2.0 sample collection
+
+All 24 selectable identities and PNG mappings remain. The fresh collection now uses four fictional assignments (CX, UO, LD and QR), three duties and two journals; it is not a one-record-per-airline showcase or a limit on user records. Settings → Refresh sample records uses src/data/sampleRefresh.ts to preview and replace only complete, unchanged recognized fixtures, preserving unrelated personal data and blocking edited samples or retained personal links. No automatic refresh runs. See [v0.2.0 acceptance](V0_2_0_ACCEPTANCE.md) for compatibility and executed checks.
+
+## Historical reviewed v0.1.4 dataset refresh
 
 Fresh seedDatabase creates exactly one assignment per identity on 24 distinct fixed Hong Kong dates; all 24 are Confirmed. It retains the six historical Duty and three Journal payloads/IDs, adds nineteen date-specific demo duties and preserves a two-shift date and overnight example. Flights, registrations, bays and notes are explicitly synthetic. Type examples are illustrations, not live fleet assertions or HAS customer claims. All nine role/handling combinations are covered; derived totals are 24 Logged, 18 Handled and 9 Primary.
 
@@ -41,10 +45,10 @@ No automatic migration runs. Settings → Refresh obsolete demo airlines preview
 
 Only full recursive equality to frozen v0.1.1–v0.1.3 fixtures permits replacement, never ID/DEMO labels alone. Edited/deleted-field/unknown payloads occupying a required ID, duplicate target IDs or different-date/trashed required duties block the entire refresh. A database change since preview also blocks confirmation. Unknown custom IDs remain untouched, including out-of-catalogue names. Therefore an ambiguous legacy collection may require owner review and is not falsely reported as cleaned. The exact unchanged v0.1.4 demo subset is labeled separately from overall statistics.
 
-legacySeed.ts and the old airline-only refresh helper remain compatibility fixtures; the current UI uses demoDatasetRefresh.ts. Do not use Seed/Reset on a mixed collection: those pre-existing confirmed actions replace the entire collection.
+legacySeed.ts, v014Seed.ts and older refresh helpers remain compatibility fixtures; the v0.2.0 UI uses sampleRefresh.ts. Do not use full sample-load/clear actions on a mixed collection: those separately confirmed actions replace the entire collection.
 
 ## Logo presentation
 
-src/data/logoBounds.ts records read-only measured, padded source bounds for the 24 PNGs. CSS applies uniform scale/position within responsive white frames, avoiding empty margins while retaining all artwork. A six-source-pixel measurement pad protects edges; representative CX/UO/LH/LD/JL/QR were visually checked. Source dimensions and aspect ratio remain unchanged. LH's baked checkerboard is still present, not falsely described as transparency.
+src/data/logoBounds.ts records read-only measured, padded source bounds for the 24 PNGs. CSS applies uniform scale/position within responsive white frames, avoiding empty margins while retaining all artwork. A six-source-pixel measurement pad protects edges; representative CX/UO/LH/LD/JL/QR were visually checked. The owner's committed v0.1.5a LH replacement and accompanying inventory/bounds corrections are retained; v0.2.0 does not alter any PNG. The earlier checkerboard observation refers to the historical LH asset, not the replacement.
 
 No original bytes were modified or derivative raster generated. Unknown/missing/disabled/error images retain the code fallback. See AIRLINE_ASSET_AUDIT.md and AIRLINE_ASSET_INVENTORY.json for immutable checksums and unchanged unresolved redistribution rights.

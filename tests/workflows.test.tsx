@@ -120,7 +120,7 @@ describe('Cross-feature regression workflows', () => {
     await user.click(screen.getByRole('button', { name: 'Settings' }));
     await user.selectOptions(screen.getByLabelText('Language'), 'zh-HK');
     expect(localStorage.getItem(STORAGE_KEY)).toBe('broken-json');
-    await user.click(screen.getByRole('button', { name: 'Seed Demo Data' }));
+    await user.click(screen.getByRole('button', { name: 'Load sample records' }));
     expect(localStorage.getItem(STORAGE_KEY)).toBe('broken-json');
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
     expect(stored().version).toBe(1);

@@ -1,113 +1,183 @@
-import { handlingTypes, newLeg, roles } from '../domain/model';
-import type { Database } from '../domain/model';
-import { airlineCatalogue } from './airlineCatalogue';
-import { legacySeedDatabase } from './legacySeed';
-import { variants } from './reference';
+import { emptyAircraft, newLeg, restrictivePrivacy } from '../domain/model';
+import type { Database, Journal } from '../domain/model';
 
-/** Frozen representative HK dates, deterministic IDs; never based on device timezone. */
+/** Fictional scenarios only. Stable IDs/dates are for repeatable local acceptance, never live operations. */
 export function seedDatabase(): Database {
-  const base = legacySeedDatabase();
-  const dates = [
-    '2026-10-16',
-    '2026-10-15',
-    '2026-10-14',
-    '2026-09-22',
-    '2026-08-12',
-    ...Array.from({ length: 19 }, (_, i) => `2026-09-${String(30 - i).padStart(2, '0')}`).filter(
-      (d) => d !== '2026-09-22',
-    ),
-    '2026-09-11',
+  const duties: Database['duties'] = [
+    {
+      id: 'sample-day',
+      date: '2026-10-16',
+      start: '06:00',
+      end: '14:00',
+      status: 'Confirmed',
+      workState: 'Worked',
+      shiftType: 'Day',
+      notes: 'Morning coordination shift.',
+    },
+    {
+      id: 'sample-night',
+      date: '2026-10-15',
+      start: '22:00',
+      end: '06:00',
+      status: 'Confirmed',
+      workState: 'Worked',
+      shiftType: 'Night',
+      notes: 'Overnight handover.',
+    },
+    {
+      id: 'sample-planned',
+      date: '2026-11-05',
+      start: '14:00',
+      end: '22:00',
+      status: 'Confirmed',
+      workState: 'Planned',
+      shiftType: 'Evening',
+      notes: 'Upcoming personal roster entry.',
+    },
   ];
-  // Keep the six original duties and three journal IDs/content. New dates get explicit demo duties.
-  const duties = [...base.duties];
-  const typeNames = [
-    'B737-800',
-    'A321neo',
-    'A320-200',
-    'A320-200',
-    'A350-1000',
-    'A330-300',
-    'A350-900',
-    'A350-900',
-    'A320-200',
-    'B787-9',
-    'A350-900',
-    'B777-300ER',
-    'A330-300F',
-    'A350-900',
-    'B777-300ER',
-    'B787-9',
-    'A320-200',
-    'B737-800',
-    'A350-1000',
-    'A320-200',
-    'B787-9',
-    'A320-200',
-    'A321neo',
-    'A320-200',
-  ];
-  const aircraft = airlineCatalogue.map((airline, i) => {
-    const date = dates[i];
-    let duty = duties.find((d) => d.date === date);
-    if (!duty) {
-      duty = {
-        id: `demo-v014-duty-${date}`,
-        date,
-        start: '08:00',
-        end: '16:00',
-        status: 'Confirmed',
-        notes: 'DEMO · fictional shift, not an employer roster',
-      };
-      duties.push(duty);
-    }
-    const variant = variants.find((v) => v.name === typeNames[i])!;
-    const status =
-      i === 0
-        ? ('Delayed' as const)
-        : (['Early', 'On Time', 'Delayed', 'Cancelled', 'Other', 'Not Recorded'] as const)[i % 6];
-    const timed = i % 6 < 3;
-    const scheduledOnly = i % 6 === 1;
-    const stamp = `${date}T12:00:00+08:00`;
-    return {
-      ...base.aircraft[i % 18],
-      id: `a${i + 1}`,
-      date,
-      dutyId: duty.id,
-      airline: airline.name,
-      variant: variant.name,
-      family: variant.family,
-      icao: variant.icao,
-      handling: handlingTypes[i % 3],
-      role: roles[Math.floor(i / 3) % 3],
-      registration: `DEMO-${airline.iata}-${String(i + 1).padStart(3, '0')}`,
-      bay: i % 2 === 0 ? `DEMO-BAY-${i + 1}` : '',
+  const aircraft: Database['aircraft'] = [
+    {
+      ...emptyAircraft('2026-10-16', 'sample-day'),
+      id: 'sample-aircraft-1',
+      airline: 'Cathay Pacific',
+      variant: 'A350-1000',
+      family: 'A350',
+      icao: 'A35K',
+      role: 'Primary Coordinator',
+      handling: 'Full Turnaround',
+      registration: 'X-TCL1',
+      bay: 'W121L',
       arrival: {
         ...newLeg(),
-        flight: `DEMO-${airline.iata}-ARR`,
-        status,
-        scheduled: timed ? `${date}T${i === 1 ? '22:30' : '10:00'}:00` : '',
-        actual:
-          timed && !scheduledOnly ? `${date}T${status === 'Delayed' ? '10:15' : '09:40'}:00` : '',
+        flight: 'CX9401',
+        status: 'Early',
+        scheduled: '2026-10-16T09:00:00',
+        actual: '2026-10-16T08:40:00',
       },
       departure: {
         ...newLeg(),
-        flight: `DEMO-${airline.iata}-DEP`,
-        status: i % 6 === 0 ? ('On Time' as const) : status,
-        scheduled: timed ? `${date}T${i === 1 ? '23:55' : '12:00'}:00` : '',
-        actual:
-          timed && !scheduledOnly
-            ? `${date}T${i === 0 ? '12:05' : status === 'Delayed' ? '12:20' : '12:05'}:00`
-            : '',
+        flight: 'CX9402',
+        status: 'On Time',
+        scheduled: '2026-10-16T11:00:00',
+        actual: '2026-10-16T11:07:00',
       },
-      events: i === 0 ? base.aircraft[0].events : i === 4 ? base.aircraft[4].events : [],
-      disruption: i === 0 || i === 4 ? ('Disrupted' as const) : ('Unknown' as const),
-      notes:
-        'DEMO v0.1.4 · Entirely synthetic scenario; not an actual flight or employer assignment.',
-      status: 'Confirmed' as const,
-      createdAt: stamp,
-      updatedAt: stamp,
-      revisions: [],
-    };
-  });
-  return { ...base, duties, aircraft };
+      disruption: 'Normal',
+      notes: 'Completed the arrival and departure handover.',
+    },
+    {
+      ...emptyAircraft('2026-10-16', 'sample-day'),
+      id: 'sample-aircraft-2',
+      airline: 'HK Express',
+      variant: 'A321neo',
+      family: 'A320',
+      icao: 'A21N',
+      role: 'Supporting Coordinator',
+      handling: 'Full Turnaround',
+      registration: 'X-TCL2',
+      bay: 'NORTH-REMOTE',
+      arrival: {
+        ...newLeg(),
+        flight: 'UO9403',
+        status: 'Delayed',
+        scheduled: '2026-10-16T11:30:00',
+        actual: '2026-10-16T11:50:00',
+      },
+      departure: {
+        ...newLeg(),
+        flight: 'UO9404',
+        status: 'Cancelled',
+        scheduled: '2026-10-16T13:20:00',
+      },
+      disruption: 'Disrupted',
+      notes: 'Departure cancelled after initial ground coordination.',
+      events: [
+        {
+          id: 'sample-event-1',
+          category: 'Ground Handling',
+          involvement: 'Assisted',
+          impact: 'Minor',
+          resolution: 'Handed Over',
+          notes: 'Shared a revised stand plan with the next coordinator.',
+          journalId: 'sample-journal-linked',
+        },
+      ],
+    },
+    {
+      ...emptyAircraft('2026-10-16', 'sample-night'),
+      id: 'sample-aircraft-3',
+      airline: 'Air Hong Kong',
+      variant: 'A330-300F',
+      family: 'A330',
+      icao: 'A333',
+      role: 'Training / Observation',
+      handling: 'Arrival Only',
+      registration: 'X-TCL3',
+      arrival: { ...newLeg(), flight: 'LD9405' },
+      notes: 'Observed the overnight arrival; gate time was not recorded.',
+    },
+    {
+      ...emptyAircraft('2026-10-15', 'sample-night'),
+      id: 'sample-aircraft-4',
+      airline: 'Qatar Airways',
+      variant: 'B787-9',
+      family: 'B787',
+      icao: 'B789',
+      role: 'Primary Coordinator',
+      handling: 'Departure Only',
+      registration: 'X-TCL4',
+      bay: 'S25R',
+      departure: {
+        ...newLeg(),
+        flight: 'QR9406',
+        status: 'Other',
+        scheduled: '2026-10-15T23:30:00',
+      },
+      notes: 'Revised movement plan; actual off-block time not recorded.',
+    },
+  ];
+  for (const a of aircraft) {
+    a.status = 'Confirmed';
+    a.createdAt = a.date + 'T14:00:00+08:00';
+    a.updatedAt = a.createdAt;
+  }
+  const journal: Journal = {
+    id: 'sample-journal-linked',
+    date: '2026-10-16',
+    title: 'Keeping the handover clear',
+    status: 'Confirmed',
+    situation: 'A change of plan during the afternoon handover.',
+    challenge: 'Keep priorities clear as the plan changes.',
+    responsibility: 'Support the coordinator with a concise update.',
+    actions: 'Summarised the open items and confirmed the next action.',
+    result: 'The next coordinator received a clear handover.',
+    learning: 'Separate confirmed facts from pending decisions.',
+    tags: ['Communication', 'Time Management'],
+    dutyId: '',
+    aircraftIds: ['sample-aircraft-1', 'sample-aircraft-2'],
+    outcome: '',
+    unit: '',
+    contribution: 'Supporting coordination',
+    evidence: '',
+    verification: 'Self-reported',
+  };
+  return {
+    version: 1,
+    duties,
+    aircraft,
+    journals: [
+      journal,
+      {
+        ...journal,
+        id: 'sample-journal-standalone',
+        title: 'A more useful shift checklist',
+        aircraftIds: [],
+        tags: ['Continuous Improvement'],
+        situation: 'Reviewing a personal preparation routine.',
+        actions: 'Reordered the checklist around the next action.',
+        result: 'A shorter, clearer preparation routine.',
+        learning: 'Keep checklists focused and easy to scan.',
+      },
+    ],
+    settings: { language: 'en', privacy: { ...restrictivePrivacy } },
+  };
 }

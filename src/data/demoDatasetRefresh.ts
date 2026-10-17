@@ -1,5 +1,5 @@
 import type { Aircraft, Database } from '../domain/model';
-import { seedDatabase } from './seed';
+import { v014SeedDatabase as seedDatabase } from './v014Seed';
 import { legacySeedDatabase } from './legacySeed';
 import { legacyDemoAirlines } from './demoRefresh';
 

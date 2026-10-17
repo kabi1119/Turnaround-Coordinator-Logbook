@@ -10,8 +10,8 @@ export default function DemoScope({ rows }: { rows: Aircraft[] }) {
   return (
     <p className="muted demo-scope">
       {t(
-        'Metrics above cover all matching records. Unchanged v0.1.4 demo subset',
-        '以上統計涵蓋所有符合紀錄。未修改 v0.1.4 示範子集',
+        'Metrics above cover all matching records. Historical sample subset',
+        '以上統計涵蓋所有符合紀錄。歷史樣本子集',
       )}
       : {demo.length} · {t('Logged / Handled / Primary', '記錄／處理／主要')}: {totals.logged} /{' '}
       {totals.handled} / {totals.primary}.{' '}

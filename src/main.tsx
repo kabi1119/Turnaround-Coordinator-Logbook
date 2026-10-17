@@ -8,3 +8,4 @@ import './styles/responsive.css';
 import './styles/v0_1_2.css';
 import './styles/v0_1_4.css';
 createRoot(document.getElementById('root')!).render(<App />);
+import './styles/v0_2_0.css';

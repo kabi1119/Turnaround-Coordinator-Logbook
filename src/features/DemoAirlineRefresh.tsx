@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import type { Database } from '../domain/model';
-import { applyDemoDataset, demoDatasetPlan } from '../data/demoDatasetRefresh';
+import { sampleRefreshPlan, refreshSamples } from '../data/sampleRefresh';
 import { Modal } from '../components/ui';
-import { useT } from '../i18n';
+import { useLabel, useT } from '../i18n';
 
 export default function DemoAirlineRefresh({
   db,
@@ -14,76 +14,88 @@ export default function DemoAirlineRefresh({
   onClose: () => void;
 }) {
   const t = useT(),
+    l = useLabel(),
+    [plan] = useState(() => sampleRefreshPlan(db)),
     [approved, setApproved] = useState(false),
     [error, setError] = useState('');
   const saving = useRef(false);
-  const [plan] = useState(() => demoDatasetPlan(db));
+  const describe = (id: string) => {
+    const aircraft = db.aircraft.find((a) => a.id === id);
+    if (aircraft) return `${aircraft.date} · ${aircraft.airline}`;
+    const duty = db.duties.find((d) => d.id === id);
+    if (duty) return `${duty.date} · ${duty.start || '—'}–${duty.end || '—'}`;
+    const journal = db.journals.find((j) => j.id === id);
+    return journal
+      ? `${journal.date} · ${journal.title}`
+      : t('Unrecognized record', '未能辨認的紀錄');
+  };
   return (
-    <Modal
-      title={t('Review 24-airline demo refresh', '覆核 24 家航空公司示範更新')}
-      onClose={onClose}
-      wide
-    >
+    <Modal title={t('Review sample refresh', '覆核樣本更新')} onClose={onClose} wide>
       <p className="notice">
         {t(
-          'Only full, unchanged application-generated samples can be replaced. Aircraft IDs and existing Journal references are kept. All existing duties, journals, settings and unrelated records are preserved. Nothing changes until confirmation.',
-          '只會替換內容完全符合未修改應用程式範例的紀錄，保留航機 ID 及既有日誌引用。保留所有現有更次、日誌、設定及其他紀錄，確認前不會更改資料。',
+          'Replace only unchanged application samples with the compact fictional collection. Personal records and settings are preserved. Edited samples and personal links to removed records block the update. Nothing changes before confirmation.',
+          '只會以精簡虛構樣本取代未修改的應用程式範例，保留個人紀錄及設定。已修改的樣本或個人紀錄仍引用將移除的資料時，會阻擋更新。確認前不會更改資料。',
         )}
       </p>
-      <p>
-        {t('Replace', '替換')}: {plan.replace.length} ·{' '}
-        {t('Generate / replace with', '產生／替換為')}: {plan.generate.length} ·{' '}
-        {t('Target synthetic assignments', '目標虛構處理紀錄')}: 24
-      </p>
-      <p>
-        {t('New demo duties', '新增示範更次')}: {plan.addDuties.length} ·{' '}
-        {t('New required demo journals', '新增必要示範日誌')}: {plan.addJournals.length}
-      </p>
-      <p>
-        {t('Existing journals retaining aircraft links', '保留航機連結的現有日誌')}:{' '}
-        {plan.linkedJournals.length} ·{' '}
-        {t('Disruption events replaced / generated', '替換／產生異常事件')}: {plan.eventsRemoved} /{' '}
-        {plan.eventsGenerated}
-      </p>
-      <p>
-        {t(
-          'Existing aircraft IDs retain their journal references but point to the new synthetic scenarios below. Their date, airline and Duty may change. No journal text is edited; all existing duties remain.',
-          '既有航機 ID 會保留日誌引用，但改為以下新虛構情境，其日期、航空公司及所屬更次可能更改。不會修改日誌文字，所有現有更次均保留。',
-        )}
-      </p>
+      {(['aircraft', 'duties', 'journals'] as const).map((key) => (
+        <p key={key}>
+          {t(
+            key === 'aircraft' ? 'Aircraft' : key === 'duties' ? 'Duties' : 'Journals',
+            key === 'aircraft' ? '航機' : key === 'duties' ? '更次' : '日誌',
+          )}{' '}
+          · {t('Remove / add', '移除／新增')}: {plan.remove[key].length} / {plan.add[key].length}
+        </p>
+      ))}
+      <details>
+        <summary>{t('Review affected records', '查看受影響紀錄')}</summary>
+        <h3>{t('Aircraft to remove', '將移除的航機')}</h3>
+        {plan.remove.aircraft.map((id) => (
+          <p key={id}>{describe(id)}</p>
+        ))}
+        <h3>{t('Aircraft to add', '將新增的航機')}</h3>
+        {plan.add.aircraft.map((a) => (
+          <p key={a.id}>
+            {a.date} · {a.airline} · {l(a.handling)}
+          </p>
+        ))}
+        <h3>{t('Duties to remove', '將移除的更次')}</h3>
+        {plan.remove.duties.map((id) => (
+          <p key={id}>{describe(id)}</p>
+        ))}
+        <h3>{t('Duties to add', '將新增的更次')}</h3>
+        {plan.add.duties.map((d) => (
+          <p key={d.id}>
+            {d.date} · {d.start}–{d.end} HKT · {l(d.workState || 'Not Recorded')}
+          </p>
+        ))}
+        <h3>{t('Journals to remove', '將移除的日誌')}</h3>
+        {plan.remove.journals.map((id) => (
+          <p key={id}>{describe(id)}</p>
+        ))}
+        <h3>{t('Journals to add', '將新增的日誌')}</h3>
+        {plan.add.journals.map((j) => (
+          <p key={j.id}>
+            {j.date} · {j.title}
+          </p>
+        ))}
+        <p>
+          {t(
+            'Linked sample disruptions are replaced with their assignments. Personal links must be resolved before removal.',
+            '連結的樣本異常事件會隨處理紀錄一併替換。移除前必須先處理個人紀錄的引用。',
+          )}
+        </p>
+      </details>
       {plan.blocked.length > 0 && (
         <p role="alert" className="notice amber">
           {t(
-            'Refresh blocked: edited or unrecognized records occupy required IDs. They will not be overwritten. Review the listed records; no automatic cleanup is safe.',
-            '無法更新：必要 ID 已被修改過或無法辨認的紀錄佔用，不會覆寫。無法安全自動清理，請先檢查紀錄。',
+            'Refresh blocked: review edited records or personal links. Nothing will be overwritten.',
+            '無法更新：請檢查已修改紀錄或個人引用，不會覆寫資料。',
           )}{' '}
-          {plan.blocked.join(', ')}
+          {plan.blocked.map(describe).join('; ')}
         </p>
       )}
-      <details open>
-        <summary>{t('Records to remove / replace', '將移除／替換的紀錄')}</summary>
-        {plan.replace.map((a) => (
-          <p key={a.id}>
-            {a.id} · {a.date} · {a.airline}
-          </p>
-        ))}
-      </details>
-      <details open>
-        <summary>{t('Records to generate', '將產生的紀錄')}</summary>
-        {plan.generate.map((a) => (
-          <p key={a.id}>
-            {a.id} · {a.date} · {a.airline}
-            {db.settings.privacy.registration ? ` · ${a.registration}` : ''}
-          </p>
-        ))}
-      </details>
-      {!plan.generate.length && !plan.blocked.length && (
-        <p>
-          {t(
-            'The 24-airline dataset is already current. No refresh is needed.',
-            '24 家航空公司示範資料已是最新，毋須更新。',
-          )}
-        </p>
+      {!plan.changed && !plan.blocked.length && (
+        <p>{t('Sample records are already current.', '樣本紀錄已是最新。')}</p>
       )}
       <label className="check">
         <input type="checkbox" checked={approved} onChange={(e) => setApproved(e.target.checked)} />
@@ -97,10 +109,10 @@ export default function DemoAirlineRefresh({
         <button onClick={onClose}>{t('Cancel', '取消')}</button>
         <button
           className="primary"
-          disabled={!approved || !!plan.blocked.length || !plan.generate.length}
+          disabled={!approved || !!plan.blocked.length || !plan.changed}
           onClick={() => {
             if (saving.current) return;
-            const next = applyDemoDataset(db, plan.token);
+            const next = refreshSamples(db, plan.token);
             if (!next) {
               setError(
                 t(
@@ -123,7 +135,7 @@ export default function DemoAirlineRefresh({
             }
           }}
         >
-          {t('Confirm 24-airline demo refresh', '確認更新 24 家航空公司示範')}
+          {t('Confirm sample refresh', '確認更新樣本')}
         </button>
       </div>
     </Modal>

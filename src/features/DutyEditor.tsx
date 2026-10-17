@@ -130,7 +130,7 @@ export default function DutyEditor({
             onChange={(e) => patch({ shiftType: e.target.value as Duty['shiftType'] })}
           />
           <TextArea
-            label={t('Notes · synthetic only', '筆記 · 只限虛構資料')}
+            label={t('Notes', '筆記')}
             value={d.notes}
             onChange={(e) => patch({ notes: e.target.value })}
           />

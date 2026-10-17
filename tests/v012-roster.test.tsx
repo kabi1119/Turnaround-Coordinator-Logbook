@@ -42,9 +42,6 @@ function prepare(
   fireEvent.change(screen.getByLabelText('Shift template'), { target: { value: type } });
   fireEvent.change(screen.getByLabelText('Template start'), { target: { value: start } });
   fireEvent.change(screen.getByLabelText('Template end'), { target: { value: end } });
-  fireEvent.click(
-    screen.getByLabelText('I confirm these are my chosen hours, not an official HAS schedule.'),
-  );
   fireEvent.click(screen.getByRole('button', { name: 'Apply template to selected dates' }));
 }
 
@@ -116,17 +113,17 @@ describe('Roster dates, conflicts and backwards-compatible work counts', () => {
 });
 
 describe('Batch duty review and persistence UI', () => {
-  it('Requires customized hours confirmation; selects dates, edits/removes pending duties and saves once only after review', () => {
+  it('Requires valid customized hours; selects dates, edits/removes pending duties and saves once only after review', () => {
     const db = empty(),
       commit = vi.fn(() => true),
       close = vi.fn();
     render(<BatchDutyEditor db={db} commit={commit} onClose={close} />);
     fireEvent.click(screen.getByRole('button', { name: 'Apply template to selected dates' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('confirm your template hours');
+    expect(screen.getByRole('alert')).toHaveTextContent('different valid start/end times');
     prepare(['2026-11-05', '2026-11-06', '2026-11-30'], 'Night', '22:00', '06:00');
     expect(screen.getByLabelText('Pending duty 3')).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Duty 1 start'), { target: { value: '21:00' } });
-    fireEvent.change(screen.getByLabelText('Duty 1 notes · synthetic only'), {
+    fireEvent.change(screen.getByLabelText('Duty 1 notes'), {
       target: { value: 'Synthetic roster note' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Remove duty 2' }));
