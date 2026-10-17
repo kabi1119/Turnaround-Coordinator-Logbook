@@ -6,8 +6,8 @@
 
 - **HAS by Cathay (Hong Kong Airport Services Limited)**
 - **Cathay Pacific Airways**
-- **Air Hong Kong**
 - **Hong Kong Express (HK Express)**
+- **Air Hong Kong**
 - **Airport Authority Hong Kong**
 - **Any other airline, airport operator, ground handling company, or aviation organization**
 
