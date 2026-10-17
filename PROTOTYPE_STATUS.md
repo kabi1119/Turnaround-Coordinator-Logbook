@@ -1,4 +1,13 @@
-# TCO Logbook v0.2.0 Pre-release status
+# TCO Logbook v0.2.0d Pre-release status
+
+## v0.2.0d LAN HTTP compatibility — 2026-10-18 (Hong Kong)
+
+- src/lib/uuid.ts prefers native crypto.randomUUID when available and otherwise uses crypto.getRandomValues for 16 random bytes with RFC 4122 version-4 and variant bits. Missing secure randomness throws an explicit error; no Math.random fallback or dependency.
+- The existing domain id entry point delegates to the shared utility, covering Aircraft, Duties, Journal, disruptions and batch roster IDs. Seed/sample-refresh module initialization no longer requires a secure-context-only API. No other direct application randomUUID calls remain.
+- Storage key/schema, existing IDs and relationships are unchanged; no automatic migration, reset or regeneration. UI/docs use v0.2.0d; the numeric npm version remains 0.2.0 rather than introducing an unagreed SemVer encoding for the project's custom suffix.
+- Verification: 139 tests passed across 14 files, including native/fallback UUIDs, format/uniqueness, deterministic version/variant bit cases, unavailable randomness, module initialization and stored-ID/link preservation. Lint, build and format checks passed; npm audit found 0 vulnerabilities. The existing acceptance document needed whitespace-only formatting. Generated isolated browser profile artifacts were moved outside the source tree before lint; no lint rules were weakened.
+- Isolated Windows Edge verified both http://localhost:5173/ (secure context, native randomUUID) and http://192.168.1.2:5173/ (insecure context, randomUUID undefined, getRandomValues available). Both loaded four initial samples, created and saved Duty/Aircraft records, enforced Aircraft review, retained stored records byte-for-byte on reload and preserved Duty/Journal links. No JavaScript runtime exceptions. No insecure-context browser flags or randomUUID polyfill were used. The already-running development server was left running; the owner's browser/storage was not accessed.
+- Physical iPhone Safari/Chrome acceptance remains with the owner. HTTP LAN and localhost have separate origin storage; this fix does not synchronize or transfer data between them. No commit, push, deployment or history rewrite.
 
 ## v0.2.0 UI and sample refinement — 2026-10-17 (Hong Kong)
 

@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.2.0 Pre-release** runs locally with fictional sample records. **v0.2.0c is a documentation-only refinement**; it does not change the application features.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.2.0d Pre-release** runs locally with fictional sample records. This small compatibility fix supports secure UUID creation on LAN HTTP as well as localhost/HTTPS; existing records and storage remain unchanged.
 
 ## About the Project
 
@@ -182,6 +182,7 @@ Open the Windows LAN address printed by Vite on the phone; allow private-network
 - **v0.1.5 (documentation only):** Added an equivalent Traditional Chinese (Hong Kong) README and an English-language precedence notice; application features remained at v0.1.4.
 - **v0.2.0 Pre-release:** Refined branding and footer metadata, local SVG East Asia radar map, compact fictional records, quieter interface and simpler batch scheduling acknowledgement.
 - **v0.2.0c (documentation only):** Reworked owner statements into my first-person voice in English and Traditional Chinese, and corrected the recorded logo download sources. Application functionality remains at v0.2.0.
+- **v0.2.0d:** Fixed the LAN HTTP initialization crash with native UUID generation or a cryptographically random RFC 4122 v4 fallback. No schema change, record ID regeneration or automatic storage reset. The custom release suffix is shown in the UI/docs; the npm package retains its numeric 0.2.0 version without introducing a different SemVer encoding.
 - **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, full import/restore, Service Worker/offline reload and validated iOS PWA installation.
 - **Verification:** Local Edge viewport/layout and new workflow checks completed; actual iPhone/Safari, physical touch/keyboard, download and print acceptance remains pending. No deployment has been performed.
 
@@ -262,7 +263,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.2.0 Pre-release** 在本機執行，使用虛構樣本紀錄；**v0.2.0c 只更新文件**，不改動應用程式功能。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.2.0d Pre-release** 在本機執行，使用虛構樣本紀錄。這次小型相容性修正讓 LAN HTTP 及 localhost／HTTPS 均能產生安全 UUID；既有紀錄及儲存資料維持不變。
 
 ## 關於本項目
 
@@ -415,6 +416,7 @@ npm.cmd run dev -- --host 0.0.0.0
 - **v0.1.5（僅文件更新）：** 新增內容對應的繁體中文（香港）README 及英文版本優先聲明；當時應用程式功能仍維持 v0.1.4。
 - **v0.2.0 Pre-release：** 更新品牌／頁尾資料、本機 SVG 東亞雷達地圖、精簡虛構樣本、簡化介面及批次更表操作。
 - **v0.2.0c（僅文件更新）：** 我將中英文 README 涉及項目決策及責任的敘述改成第一人稱，並更正 Logo 下載來源紀錄；App 功能仍維持 v0.2.0。
+- **v0.2.0d：** 修正 LAN HTTP 初始化崩潰，優先使用原生 UUID，否則以密碼學安全亂數產生 RFC 4122 v4 UUID。不更改 Schema、重新產生既有 ID 或自動重設儲存資料。介面及文件使用自訂版本後綴；npm 套件保留數字版本 0.2.0，不另設 SemVer 編碼。
 - **尚未實作：** 正式後端、真實身份驗證／Passkey、雲端同步、加密備份、完整匯入／還原、Service Worker／離線重新載入，以及經驗證的 iOS PWA 安裝。
 - **驗證：** 已完成本機 Edge 不同視窗尺寸／排版及新功能流程檢查；實體 iPhone／Safari、實際觸控／鍵盤、下載及列印驗收仍有待完成。項目尚未部署。
 

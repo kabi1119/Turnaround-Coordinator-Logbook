@@ -1,3 +1,5 @@
+import { uuidV4 } from '../lib/uuid';
+
 export const handlingTypes = ['Full Turnaround', 'Departure Only', 'Arrival Only'] as const;
 export const roles = [
   'Primary Coordinator',
@@ -159,7 +161,7 @@ export const hkToday = (now = new Date()) =>
     month: '2-digit',
     day: '2-digit',
   }).format(now);
-export const id = () => crypto.randomUUID();
+export const id = uuidV4;
 export const emptyAircraft = (date = hkToday(), dutyId = ''): Aircraft => ({
   id: id(),
   date,
