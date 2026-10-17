@@ -10,6 +10,7 @@ import AirlineLogo from './AirlineLogo';
 import { useLabel, useT } from '../i18n';
 import type { Aircraft, Privacy } from '../domain/model';
 import { cardText, hasArrival, hasDeparture } from '../domain/selectors';
+import { aircraftTimes } from '../domain/time';
 export function Modal({
   title,
   children,
@@ -157,6 +158,7 @@ export function AircraftCard({
   const c = cardText(a, privacy);
   const t = useT();
   const l = useLabel();
+  const times = aircraftTimes(a, privacy);
   return (
     <button className="aircraft-card" onClick={onClick}>
       <AirlineLogo airline={a.airline} decorative />
@@ -166,6 +168,19 @@ export function AircraftCard({
           {l(a.role) || t('Role not selected', '未選角色')} ·{' '}
           {a.variant || t('Type not selected', '未選機型')}
           {privacy.registration && a.registration ? ` (${a.registration})` : ''}
+        </span>
+        <span className="aircraft-times">
+          {!privacy.gateTimes
+            ? t('Times hidden by privacy settings', '時間已按私隱設定隱藏')
+            : times.length
+              ? times
+                  .map(
+                    (time) =>
+                      `${time.scheduled ? t('Scheduled ', '表定 ') : ''}${time.label} ${time.value}`,
+                  )
+                  .join(' · ') + ' HKT'
+              : t('Time not recorded', '未記錄時間')}
+          {privacy.bay && a.bay ? ` · ${t('Bay', '停機位')} ${a.bay}` : ''}
         </span>
         <span className="card-meta">
           {l(a.handling)} <span>·</span> {a.date || t('Undated', '未定日期')}{' '}

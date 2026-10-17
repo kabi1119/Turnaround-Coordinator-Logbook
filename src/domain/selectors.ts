@@ -1,4 +1,5 @@
 import { flightStatuses, handlingTypes, roles } from './model';
+import { completedDuty } from './roster';
 import type { Aircraft, Database, Filters, Privacy, PrivacyKey, Duty, Journal } from './model';
 export const normalizeRegistration = (v: string) => v.trim().toUpperCase();
 export const hasArrival = (a: Aircraft) =>
@@ -99,7 +100,7 @@ export function stats(records: Aircraft[], duties: Duty[] = []) {
     supporting: s,
     training: t,
     unique: new Set(rows.map((a) => normalizeRegistration(a.registration)).filter(Boolean)).size,
-    duties: duties.filter((d) => d.status === 'Confirmed').length,
+    duties: duties.filter((d) => completedDuty(d)).length,
     events: rows.reduce((n, a) => n + a.events.length, 0),
     disrupted: rows.filter((a) => a.events.length > 0).length,
     types: handlingTypes.map((type) => ({

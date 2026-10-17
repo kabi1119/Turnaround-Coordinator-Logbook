@@ -20,16 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import type { Aircraft, Database } from './domain/model';
-import {
-  canRestore,
-  cardText,
-  hasArrival,
-  hasDeparture,
-  normalizeRegistration,
-  stats,
-  trashDuty,
-  visibleAircraft,
-} from './domain/selectors';
+import { canRestore, normalizeRegistration, stats, trashDuty } from './domain/selectors';
 import { LanguageContext, useLabel, useT } from './i18n';
 import { loadDatabase, writeDatabase } from './lib/storage';
 import { AircraftCard, Badge, Confirm, Empty, Metric, Modal, SectionTitle } from './components/ui';
@@ -40,7 +31,9 @@ import Statistics from './features/Statistics';
 import { JournalEditor, JournalPage } from './features/Journal';
 import Settings, { ReportPreview } from './features/Settings';
 import Radar from './components/Radar';
-import AirlineLogo from './components/AirlineLogo';
+import AircraftSummary from './features/AircraftDetails';
+import BatchDutyEditor from './features/BatchDutyEditor';
+import HongKongClock from './components/HongKongClock';
 type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
 type Overlay =
   | { type: 'add' }
@@ -48,6 +41,7 @@ type Overlay =
   | { type: 'detail'; id: string }
   | { type: 'duty'; id?: string }
   | { type: 'dutyDetail'; id: string }
+  | { type: 'batchDuty' }
   | { type: 'journal'; id?: string }
   | { type: 'report' }
   | { type: 'history'; registration: string }
@@ -149,15 +143,7 @@ function Workspace({
           </span>
         </button>
         <div className="header-right">
-          <span className="header-date">
-            {new Intl.DateTimeFormat(t('en-HK', 'zh-HK'), {
-              timeZone: 'Asia/Hong_Kong',
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-            }).format(new Date())}
-            <small>HONG KONG · UTC+08</small>
-          </span>
+          <HongKongClock />
           <button
             className="icon-button"
             aria-label={t('Settings', '設定')}
@@ -171,7 +157,7 @@ function Workspace({
         </div>
       </header>
       <div className="demo-strip">
-        <span className="live-dot" /> {t('PROTOTYPE v0.1.1', '原型 v0.1.1')}
+        <span className="live-dot" /> {t('PROTOTYPE v0.1.2', '原型 v0.1.2')}
         <span>·</span>
         {t('SYNTHETIC DEMO DATA', '合成示範資料')}
         <span className="desktop-only">
@@ -207,6 +193,16 @@ function Workspace({
               </div>
               <Radar />
             </section>
+            <div className="home-duty-actions">
+              <button onClick={() => setOverlay({ type: 'duty' })}>
+                <CalendarDays size={18} />
+                {t('Add Duty', '新增更次')}
+              </button>
+              <button className="primary" onClick={() => setOverlay({ type: 'batchDuty' })}>
+                <CalendarDays size={18} />
+                {t('Batch Add Duties', '批次新增更次')}
+              </button>
+            </div>
             <div className="metrics surface-dark">
               <Metric
                 value={s.logged}
@@ -255,7 +251,9 @@ function Workspace({
                           year: 'numeric',
                           timeZone: 'Asia/Hong_Kong',
                         }).format(new Date(`${recentDuty.date}T12:00+08:00`))}
-                        <small>{l(recentDuty.status)}</small>
+                        <small>
+                          {l(recentDuty.status)} · {l(recentDuty.workState || 'Worked')}
+                        </small>
                       </div>
                     </div>
                     <div className="duty-facts">
@@ -376,7 +374,7 @@ function Workspace({
         )}
         <footer className="page-footer">
           TCO LOGBOOK{' '}
-          <span>v0.1.1 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
+          <span>v0.1.2 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
         </footer>
       </main>
       <nav className="app-navigation" aria-label={t('Main navigation', '主導覽')}>
@@ -464,6 +462,7 @@ function Workspace({
           onSaved={() => setToast(t('Saved on this device (prototype)', '已儲存在此裝置（原型）'))}
         />
       )}
+      {overlay?.type === 'batchDuty' && <BatchDutyEditor db={db} onClose={close} commit={commit} />}
       {overlay?.type === 'duty' && (
         <DutyEditor
           db={db}
@@ -483,7 +482,12 @@ function Workspace({
       {overlay?.type === 'report' && <ReportPreview db={db} onClose={close} />}
       {detail && (
         <Modal title={t('Aircraft Record', '航機紀錄')} onClose={close} wide>
-          <AircraftSummary a={detail} db={db} />
+          <AircraftSummary
+            a={detail}
+            db={db}
+            onDuty={(id) => setOverlay({ type: 'dutyDetail', id })}
+            onJournal={(id) => setOverlay({ type: 'journal', id })}
+          />
           <div className="actions">
             <button onClick={() => setPending({ kind: 'aircraftTrash', id: detail.id })}>
               <Trash2 size={16} />
@@ -531,7 +535,10 @@ function Workspace({
       {duty && (
         <Modal title={`${t('Duty', '更次')} · ${duty.date}`} onClose={close} wide>
           <div className="section-title">
-            <Badge tone="teal">{l(duty.status)}</Badge>
+            <Badge tone="teal">
+              {l(duty.status)} · {l(duty.workState || 'Worked')}
+              {duty.shiftType ? ` · ${l(duty.shiftType)}` : ''}
+            </Badge>
             <span>
               {duty.start || '—'} – {duty.end || '—'}
               {duty.start && duty.end && duty.end < duty.start ? ' (+1)' : ''} · Asia/Hong_Kong
@@ -663,104 +670,6 @@ function Workspace({
         </Confirm>
       )}
     </div>
-  );
-}
-function AircraftSummary({ a: raw, db }: { a: Aircraft; db: Database }) {
-  const p = db.settings.privacy,
-    a = visibleAircraft(raw, p),
-    t = useT(),
-    l = useLabel(),
-    c = cardText(a, p);
-  return (
-    <>
-      <span className="eyebrow">SYNTHETIC / DEMO ASSIGNMENT</span>
-      <div className="detail-airline">
-        <AirlineLogo airline={a.airline} size="lg" decorative />
-        <h2 className="detail-title">{c.title}</h2>
-      </div>
-      <p>
-        {l(a.role)} · {a.variant}
-        {p.registration && a.registration ? ` (${a.registration})` : ''}
-      </p>
-      <div className="tags">
-        <Badge tone="teal">{l(a.status)}</Badge>
-        <Badge>{l(a.handling)}</Badge>
-        {!a.dutyId && <Badge tone="amber">{t('Unlinked', '未連結')}</Badge>}
-      </div>
-      <dl className="review-list">
-        <dt>{t('Handling Date', '處理日期')}</dt>
-        <dd>{a.date} · Asia/Hong_Kong</dd>
-        <dt>{t('Duty', '更次')}</dt>
-        <dd>
-          {db.duties.find((d) => d.id === a.dutyId)?.date || t('Unlinked', '未連結')} ·{' '}
-          {db.duties.find((d) => d.id === a.dutyId)?.start || '—'}
-        </dd>
-        <dt>{t('Aircraft Family / ICAO', '航機系列／ICAO')}</dt>
-        <dd>
-          {a.family} / {a.icao}
-        </dd>
-        {p.bay && (
-          <>
-            <dt>{t('Parking Bay', '停機位')}</dt>
-            <dd>{a.bay || '—'}</dd>
-          </>
-        )}
-        {(['arrival', 'departure'] as const)
-          .filter((key) => (key === 'arrival' ? hasArrival(a) : hasDeparture(a)))
-          .map((key) => (
-            <div className="review-leg" key={key}>
-              {p.statuses && (
-                <>
-                  <dt>
-                    {key === 'arrival'
-                      ? t('Arrival Status', '抵港狀態')
-                      : t('Departure Status', '離港狀態')}
-                  </dt>
-                  <dd>
-                    {l(a[key].status)} · {l(a[key].origin)}
-                  </dd>
-                </>
-              )}
-              {p.gateTimes && (
-                <>
-                  <dt>{key === 'arrival' ? 'SIBT → AIBT' : 'SOBT → AOBT'}</dt>
-                  <dd>
-                    {a[key].scheduled || '—'} → {a[key].actual || '—'} (+08:00)
-                  </dd>
-                </>
-              )}
-            </div>
-          ))}
-        <dt>{t('Disruption', '異常')}</dt>
-        <dd>
-          {l(a.disruption)} · {a.events.length} {t('events', '事件')}
-        </dd>
-        <dt>{t('Notes', '筆記')}</dt>
-        <dd>{a.notes || '—'}</dd>
-      </dl>
-      {a.disruption === 'Normal' && a.events.length > 0 && (
-        <p className="notice amber">
-          {t(
-            'Inconsistent: events recorded while status is Normal.',
-            '不一致：已記錄事件但狀態為正常。',
-          )}
-        </p>
-      )}
-      {a.events.map((e) => (
-        <section className="inset" key={e.id}>
-          <h3>{l(e.category)}</h3>
-          <p>
-            {l(e.involvement)} · {l(e.impact)} · {l(e.resolution)}
-          </p>
-          {p.disruptionNotes && <p>{e.notes}</p>}
-          {e.journalId && (
-            <p>
-              {t('Journal', '日誌')}: {db.journals.find((j) => j.id === e.journalId)?.title || '—'}
-            </p>
-          )}
-        </section>
-      ))}
-    </>
   );
 }
 function HistoryView({

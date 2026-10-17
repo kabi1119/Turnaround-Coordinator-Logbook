@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import AirlineLogo from '../src/components/AirlineLogo';
 import * as registry from '../src/data/airlines';
 import { airlines, demoAirlines } from '../src/data/reference';
@@ -7,6 +7,7 @@ import type { AirlineReference } from '../src/data/airlines';
 import App from '../src/App';
 import { seedDatabase } from '../src/data/seed';
 import { STORAGE_KEY } from '../src/lib/storage';
+import { displayLogoPath } from '../src/data/localAirlineLogos';
 
 const approvedFixture = (): AirlineReference => ({
   ...structuredClone(registry.airlineRegistry[0]),
@@ -67,7 +68,7 @@ describe('Verified airline reference and local-only logo policy', () => {
       expect(registry.approvedLogoPath(a)).toBeNull();
     }
   });
-  it('Renders every registry entry using an accessible code/name fallback with no image requests', () => {
+  it('Renders mapped local PNGs while retaining accessible identity and code fallback for unmapped airlines', () => {
     const { container } = render(
       <>
         {registry.airlineRegistry.map((a) => (
@@ -75,9 +76,12 @@ describe('Verified airline reference and local-only logo policy', () => {
         ))}
       </>,
     );
-    expect(container.querySelectorAll('img')).toHaveLength(0);
+    expect(container.querySelectorAll('img')).toHaveLength(5);
     for (const a of registry.airlineRegistry) {
-      expect(screen.getByRole('img', { name: `${a.name} (${a.iata})` })).toHaveTextContent(a.iata);
+      const identity = screen.getByRole('img', { name: `${a.name} (${a.iata})` });
+      if (displayLogoPath(a))
+        expect(identity.querySelector('img')).toHaveAttribute('src', displayLogoPath(a));
+      else expect(identity).toHaveTextContent(a.iata);
       expect(screen.getByText(a.name)).toBeInTheDocument();
     }
   });
@@ -120,12 +124,11 @@ describe('Verified airline reference and local-only logo policy', () => {
       }),
     ).toBeNull();
   });
-  it('An approved local asset uses the supplied pixels and fails gracefully without a broken image', () => {
-    // Mocked metadata tests a future-approved branch; no test brand image is shipped.
-    vi.spyOn(registry, 'findAirline').mockReturnValue(approvedFixture());
+  it('An owner-enabled local PNG uses original pixels and fails gracefully independently of unverified rights', () => {
     const { container, rerender } = render(<AirlineLogo airline="Cathay Pacific" size="lg" />);
     const image = container.querySelector('img')!;
-    expect(image).toHaveAttribute('src', '/assets/airlines/test-only.svg');
+    expect(image).toHaveAttribute('src', '/assets/airlines/CX.png');
+    expect(registry.findAirline('CX')!.logo.permission).toBe('not-established');
     expect(image).toHaveAttribute('alt', '');
     fireEvent.error(image);
     expect(container.querySelector('img')).toBeNull();

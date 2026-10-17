@@ -1,37 +1,39 @@
-# Airline asset audit — v0.1.1 public portfolio preparation
+# Airline asset audit — v0.1.2 local display integration
 
 Reviewed: **2026-10-17 (Asia/Hong_Kong)**. Owner request: preserve all existing PNG files for the intended public source-available portfolio release. This decision supersedes the earlier recommendation to exclude them; **it does not establish third-party permission**.
 
 ## Current inventory and permission status
 
-**24 owner-retained PNGs; 0 independently verified public redistribution permissions; 0 approved runtime logo paths.** No existing image was deleted, renamed, moved, compressed or replaced. All 24 were visually reviewed using a temporary local contact sheet; its thumbnails are inspection aids, not replacement assets.
+**24 owner-retained PNGs with owner-enabled local display; 0 independently verified public redistribution permissions.** No existing image was deleted, renamed, moved, compressed or replaced. All 24 were visually reviewed using a temporary local contact sheet; its thumbnails are inspection aids, not replacement assets.
 
 All files below are in `public/assets/airlines/`. Tracking status is the state observed during preparation, not a permanent assertion about future commits. Full original byte sizes, dimensions and SHA-256 checksums are in [AIRLINE_ASSET_INVENTORY.json](AIRLINE_ASSET_INVENTORY.json).
 
-| 7C | Jeju Air | `7C.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| 9G | Sun PhuQuoc Airways | `9G.png` | [Owner-supplied page](https://cdnlogo.com/logo/sun-phuquoc-airways_158143.html) | Untracked | Unverified |
-| AK | AirAsia (Malaysia) | `AK.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| BI | Royal Brunei Airlines | `BI.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| CX | Cathay Pacific | `CX.png` | [Owner-supplied page](https://seeklogo.com/vector-logo/510108/cathay-pacific) | Untracked | Unverified |
-| D7 | AirAsia X | `D7.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| DL | Delta Air Lines | `DL.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| FJ | Fiji Airways | `FJ.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| GK | Jetstar Japan | `GK.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| JL | Japan Airlines | `JL.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| JX | STARLUX Airlines | `JX.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| KE | Korean Air | `KE.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| LD | Air Hong Kong | `LD.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| LH | Lufthansa | `LH.png` | [Owner-supplied page](https://pluspng.com/logo/png-lufthansa-logo.html) | Untracked | Unverified |
-| LX | SWISS | `LX.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| MS | Egyptair | `MS.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| PG | Bangkok Airways | `PG.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| PX | Air Niugini | `PX.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| QR | Qatar Airways | `QR.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| QZ | Indonesia AirAsia | `QZ.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| RJ | Royal Jordanian | `RJ.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| S7 | S7 Airlines | `S7.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| UO | HK Express | `UO.png` | Source unknown; individual page not supplied | Untracked | Unverified |
-| Z2 | Philippines AirAsia | `Z2.png` | Source unknown; individual page not supplied | Untracked | Unverified |
+| IATA | Intended airline      | Filename | Known source page                                                               | Git status at v0.1.2 inspection | Redistribution permission |
+| ---- | --------------------- | -------- | ------------------------------------------------------------------------------- | ------------------------------- | ------------------------- |
+| 7C   | Jeju Air              | `7C.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| 9G   | Sun PhuQuoc Airways   | `9G.png` | [Owner-supplied page](https://cdnlogo.com/logo/sun-phuquoc-airways_158143.html) | Tracked                         | Unverified                |
+| AK   | AirAsia (Malaysia)    | `AK.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| BI   | Royal Brunei Airlines | `BI.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| CX   | Cathay Pacific        | `CX.png` | [Owner-supplied page](https://seeklogo.com/vector-logo/510108/cathay-pacific)   | Tracked                         | Unverified                |
+| D7   | AirAsia X             | `D7.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| DL   | Delta Air Lines       | `DL.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| FJ   | Fiji Airways          | `FJ.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| GK   | Jetstar Japan         | `GK.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| JL   | Japan Airlines        | `JL.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| JX   | STARLUX Airlines      | `JX.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| KE   | Korean Air            | `KE.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| LD   | Air Hong Kong         | `LD.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| LH   | Lufthansa             | `LH.png` | [Owner-supplied page](https://pluspng.com/logo/png-lufthansa-logo.html)         | Tracked                         | Unverified                |
+| LX   | SWISS                 | `LX.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| MS   | Egyptair              | `MS.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| PG   | Bangkok Airways       | `PG.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| PX   | Air Niugini           | `PX.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| QR   | Qatar Airways         | `QR.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| QZ   | Indonesia AirAsia     | `QZ.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| RJ   | Royal Jordanian       | `RJ.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| S7   | S7 Airlines           | `S7.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| UO   | HK Express            | `UO.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
+| Z2   | Philippines AirAsia   | `Z2.png` | Source unknown; individual page not supplied                                    | Tracked                         | Unverified                |
 
 For **every** entry: trademark/copyright ownership remains with the respective airline/brand rights holders; no compatible public-repository redistribution grant or licence evidence has been supplied. No entry is marked "Verified permission". "Unverified permission" means no grant was established; it does not assert that permission is impossible or that infringement has been legally determined.
 
@@ -61,22 +63,19 @@ During preparation the CX page was readable; the LH and 9G pages could not be re
 
 ## Runtime display and build distribution are separate
 
-The existing nine-entry `src/data/airlines.ts` registry and `AirlineLogo` component are preserved. All current registry paths remain null, permissions remain `not-established`, and the UI shows code/name fallbacks. Unknown manual names keep the neutral fallback.
+The v0.1.2 owner request explicitly enables the retained local PNGs. `src/data/localAirlineLogos.ts` contains 24 display identities, aliases, exact filenames and displayEnabled flags. Its redistributionPermission remains unverified for every entry. The original nine-entry legal/reference registry keeps all prior sources and unverified permission evidence unchanged. No saved Aircraft snapshot is normalized or rewritten.
 
-The existing `approvedLogoPath` gate requires approval, permission evidence, verification date, notes and a constrained same-origin path. An image error falls back to text. External URLs, data URLs, traversal, encoded paths and query strings are rejected. The uppercase retained PNG names are intentionally not wired into this lowercase-path gate; no broken references are introduced.
+AirlineLogo resolves the reference identity or explicit local identity, validates the operator/name mapping, checks an exact build-time filesystem inventory and returns only same-origin `/assets/airlines/<IATA>.png` paths. External URLs, path traversal, invalid mappings, absent/disabled files and image errors fall back to a code/name. Case is preserved. There is no new third-party download or runtime external logo service.
 
-**Vite serves public-directory files directly and copies them into dist even if no component references them.** The intended future public Git release and current local production build include the retained PNGs. Zero approved display paths does not mean zero bundled images.
+The old approvedLogoPath helper remains a legal-approval check only; it does not enable display. No permission-unverified value was changed to approved, and enabled display is not evidence of legal authorization. AK/QZ/Z2 and GK retain the distinct identities documented above despite shared artwork.
 
-If display is separately requested later, use distinct metadata for:
+The shared component appears in Aircraft cards/detail, Logbook, airline ranking bars and existing Aircraft editor previews. The white frame and object-fit: contain preserve supplied pixels/proportions in both themes.
 
-1. **Display enabled / reviewed identity / exact local filename** — a technical and owner presentation decision.
-2. **Redistribution permission / evidence / scope / date** — an independent third-party rights determination.
-
-Enabling display must never rewrite an unverified permission as approved. This separation is a proposal only; this preparation does not relax the existing display gate or add new branding features.
+**Vite copies all public files into dist whether rendered or not.** The original PNGs and third-party notices are retained. Build-time filename enumeration avoids duplicating the PNGs as imported hashed assets. The full original SHA-256 inventory remains the integrity baseline.
 
 ## Reference identity and handling affiliation
 
-The existing nine references are CX, UO, HX, SQ, NH, EK, QR, LH and LD. Their identity references remain in the registry; the asset inventory does not expand the dropdown or rewrite saved Aircraft snapshots.
+The existing nine references are CX, UO, HX, SQ, NH, EK, QR, LH and LD. Their identity references remain in the registry; the local display manifest adds explicit display identities without claiming new verified handling affiliations or rewriting saved Aircraft snapshots.
 
 - [HKIA airline directory](https://www.hongkongairport.com/en/flights/airlines-information/airlines.page): limited airline name/code reference.
 - [IATA Air Hong Kong entry](https://www.iata.org/en/about/members/airline-list/air-hong-kong/607/): LD / AHK.

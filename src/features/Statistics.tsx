@@ -5,14 +5,17 @@ import { filterAircraft, ranking, stats, visibleAircraft } from '../domain/selec
 import { Metric, SectionTitle, Select } from '../components/ui';
 import RecordFilters from '../components/RecordFilters';
 import { useLabel, useT } from '../i18n';
-export function Bars({ items }: { items: [string, number][] }) {
+import AirlineLogo from '../components/AirlineLogo';
+export function Bars({ items, airline = false }: { items: [string, number][]; airline?: boolean }) {
   const max = Math.max(1, ...items.map((i) => i[1]));
   return (
     <div className="bars">
       {items.map(([name, count]) => (
         <div className="bar-row" key={name}>
           <div>
-            <span>{name}</span>
+            <span>
+              {airline && <AirlineLogo airline={name} size="sm" decorative />} {name}
+            </span>
             <strong>{count}</strong>
           </div>
           <div className="bar-track">
@@ -174,6 +177,9 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
             onChange={(e) => setRank(e.target.value as typeof rank)}
           />
           <Bars
+            airline={
+              rank === 'airline' || (rank === 'registration' && !db.settings.privacy.registration)
+            }
             items={ranking(
               ranked,
               rank === 'registration' && !db.settings.privacy.registration ? 'airline' : rank,
@@ -214,11 +220,11 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
       <div className="mini-metrics">
         <div>
           <strong>{s.duties}</strong>
-          <span>{t('Confirmed Duty Shifts', '已確認更次')}</span>
+          <span>{t('Worked Duty Shifts', '已工作更次')}</span>
           <small>
             {t(
-              'Date-filtered independently of Aircraft filters',
-              '按日期獨立篩選，不受航機條件影響',
+              'Confirmed worked duties; planned shifts excluded. Legacy confirmed duties retain their original meaning. Date-filtered independently.',
+              '只計已確認並已工作的更次，排除計劃更次；舊版已確認更次保留原有含義，按日期獨立篩選。',
             )}
           </small>
         </div>

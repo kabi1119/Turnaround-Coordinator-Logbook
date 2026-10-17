@@ -15,6 +15,7 @@ import { seedDatabase } from '../data/seed';
 import { useLabel, useT } from '../i18n';
 import { airlineRegistry, approvedLogoPath } from '../data/airlines';
 import AirlineLogo from '../components/AirlineLogo';
+import { localAirlineLogos, displayLogoPath } from '../data/localAirlineLogos';
 const privacyLabels: Record<PrivacyKey, [string, string]> = {
   registration: ['Registration', '機身註冊'],
   flights: ['Flight Number(s)', '航班編號'],
@@ -88,7 +89,7 @@ export default function Settings({
       <div className="notice prototype-notice">
         <Shield size={24} />
         <div>
-          <strong>Prototype v0.1.1 · Demo Data</strong>
+          <strong>{t('Prototype v0.1.2 · Demo Data', '原型 v0.1.2 · 示範資料')}</strong>
           <p>
             {t(
               'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. These controls are demonstrations, not security guarantees or employer permission.',
@@ -107,8 +108,8 @@ export default function Settings({
         />
         <p className="muted">
           {t(
-            `${airlineRegistry.length} airline references · ${approvedCount} logos approved for display. Owner-retained image files have unverified redistribution rights. This is not an exhaustive HAS TCO customer list.`,
-            `${airlineRegistry.length} 項航空公司參考資料，${approvedCount} 個標誌獲批顯示。擁有人保留的圖片檔案，其再散布權利尚未核實；並非 HAS TCO 完整客戶名單。`,
+            `${airlineRegistry.length} reference entries · ${localAirlineLogos.length} local logo mappings enabled · ${approvedCount} independently permission-approved references. Redistribution rights remain unverified; display is an owner decision, not legal authorization. This is not a HAS TCO customer list.`,
+            `${airlineRegistry.length} 項參考資料 · ${localAirlineLogos.length} 個本機標誌映射已啟用 · ${approvedCount} 項參考資料已核實授權。再散布權利仍未核實；顯示是擁有人決定，並非法律授權。這不是 HAS TCO 客戶名單。`,
           )}
         </p>
         <div className="airline-library">
@@ -116,8 +117,8 @@ export default function Settings({
             <div className="airline-library-row" key={entry.iata}>
               <AirlineLogo airline={entry.name} size="sm" showName />
               <Badge>
-                {approvedLogoPath(entry)
-                  ? t('Approved local logo', '獲批本機標誌')
+                {displayLogoPath(entry)
+                  ? t('Local display enabled · rights unverified', '本機顯示已啟用 · 權利未核實')
                   : t('Code fallback · permission unverified', '代碼顯示 · 授權未核實')}
               </Badge>
               <small>{t('Ramp / TCO affiliation: unverified', 'Ramp／TCO 關係：未核實')}</small>
@@ -148,8 +149,8 @@ export default function Settings({
           </p>
           <p className="muted">
             {t(
-              'Airline names / IATA text are displayed. Retained public image files remain accessible separately; display approval does not establish redistribution rights.',
-              '介面顯示航空公司名稱／IATA 文字。保留的 public 圖片檔可另外存取；顯示核准不代表已取得再散布權利。',
+              'Local airline PNGs are displayed where mapped; names/codes identify the airline independently of shared artwork. Missing images fall back to text. Redistribution rights remain unverified.',
+              '已映射的本機 PNG 會顯示；航空公司身份由名稱及代碼識別，不單憑共用標誌。圖片缺失時改為文字，權利仍未核實。',
             )}
           </p>
         </section>

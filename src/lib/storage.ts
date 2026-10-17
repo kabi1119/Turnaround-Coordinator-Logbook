@@ -29,7 +29,10 @@ function validDatabase(value: unknown): value is Database {
       (d) =>
         object(d) &&
         strings(d, ['id', 'date', 'start', 'end', 'status', 'notes']) &&
-        ['Draft', 'Confirmed', 'Trashed'].includes(String(d.status)),
+        ['Draft', 'Confirmed', 'Trashed'].includes(String(d.status)) &&
+        (d.workState === undefined || ['Planned', 'Worked'].includes(String(d.workState))) &&
+        (d.shiftType === undefined ||
+          ['Day', 'Evening', 'Night', 'Custom'].includes(String(d.shiftType))),
     ) &&
     value.aircraft.every(
       (a) =>

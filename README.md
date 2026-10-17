@@ -29,7 +29,7 @@ All publicly distributed demonstration records and operational scenarios are syn
 
 **A personal aviation operations logbook and career development companion.**
 
-TCO Logbook is an independently developed aviation-oriented web application prototype for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.1.1** runs locally with synthetic demonstration data.
+TCO Logbook is an independently developed aviation-oriented web application prototype for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.1.2** runs locally with synthetic demonstration data.
 
 ## About the Project
 
@@ -47,11 +47,45 @@ This is a non-commercial personal portfolio project. It was not commissioned by,
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and confirmed Seed/Reset actions. These are demo tools, not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
 
+## v0.1.2 Workflows
+
+### Aircraft details and Recent Aircraft times
+
+Recent Aircraft cards now prefer actual AIBT / AOBT for the applicable leg(s). If only scheduled data exists, the card says Scheduled SIBT / SOBT. No aircraft time is derived from Duty, creation or update timestamps. Missing values show Time not recorded; privacy-disabled values are explicitly hidden. Next-day events retain their dates.
+
+Open an Aircraft card for grouped assignment, arrival, departure, Duty/Journal relationships, full disruption details, notes and record activity. Flight number, registration, bay and leg data still follow Settings privacy switches; enable them only for synthetic or appropriately authorized demonstrations. Aircraft edits still require Review / Double-check.
+
+### Monthly / batch roster
+
+On Home choose **Add Duty** or **Batch Add Duties**; the central Add navigation is preserved.
+
+1. Choose a month/year and select multiple calendar dates. Selection and pending entries can span months.
+2. Choose Day / Evening / Night / Custom, enter your own start/end times and explicitly confirm the hours. There are no official or prefilled employer shift hours.
+3. Apply the template. Repeat with other templates/dates; edit or remove individual pending entries and add synthetic notes.
+4. Review dates, types, times, next-day end dates and conflicts. Identical shifts must be edited/removed; overlaps require a separate explicit keep-separate confirmation.
+5. Confirm once to save all entries locally. Failed storage writes retain pending entries for retry; no saved Duty is replaced by matching date.
+
+Batch duties are **Confirmed + Planned**, where Confirmed describes record state and Planned describes work progress. Planned never contributes to Worked Duty Shifts, even after its date passes. In Duty → Edit Duty, mark Worked explicitly after completion. A future or unfinished shift cannot be newly marked Worked. Aircraft assignment counts remain independent of a Duty's work progress.
+
+A Duty's date is always its Hong Kong shift-start date. End earlier than start means next day, including month/year boundaries; equal start/end is rejected. Day / Evening / Night are personal labels. Templates are remembered only while the batch dialog is open, not as a permanent template library.
+
+Existing v0.1.1 Duties without the new optional workState retain their original Confirmed-duty counting semantics. No automatic data rewrite, reset or reseeding occurs. Keep the same browser origin/port to access the same localStorage; a repository rename does not move browser data between origins. Older app versions do not understand Planned work progress, so use v0.1.2 for roster records.
+
+### Local airline logos
+
+All 24 existing local PNGs have explicit case-sensitive display mappings. Aircraft cards/detail, Logbook, airline rankings and existing selection previews reuse AirlineLogo. Name/code identifies the operator independently of shared AirAsia/Jetstar artwork. Disabled, invalid, unavailable or failed images use code/name fallback. No new images were downloaded.
+
+**Display enabled is not legal permission.** All previously unverified rights/provenance remain unverified; the README disclaimer and third-party notices remain applicable.
+
+### Hong Kong live clock
+
+The header shows Hong Kong date, weekday and HH:mm:ss HKT using Asia/Hong_Kong. It refreshes from current device time each second and when the tab resumes/focuses; only the clock component updates. Accuracy depends on the device clock, with no authoritative time-server synchronization.
+
 ## Screenshots / Preview
 
 Screenshots will be added after manual visual acceptance using synthetic data only. No screenshots are included or linked here yet.
 
-Run the local prototype with the instructions below. The [visual acceptance checklist](docs/V0_1_1_VISUAL_ACCEPTANCE.md) covers both themes, reduced motion and seven viewport widths. Automated tests do not establish actual iPhone or pixel-layout acceptance.
+Run the local prototype with the instructions below. The [v0.1.2 acceptance checklist](docs/V0_1_2_ACCEPTANCE.md) covers all new workflows. Local Edge checks exercised seven viewport widths in both themes, batch save/reload and grouped details without horizontal overflow. These checks do not establish actual iPhone/Safari acceptance.
 
 ## Technology Stack
 
@@ -64,13 +98,13 @@ Use **Node.js 24 LTS**, npm, Git and a modern Edge/Chrome browser. This preparat
 For a new checkout, once you have repository access:
 
 ```powershell
-git clone https://github.com/kabi1119/TCO-Logbook.git
-cd TCO-Logbook
+git clone https://github.com/kabi1119/Turnaround-Coordinator-Logbook.git
+cd Turnaround-Coordinator-Logbook
 npm.cmd ci
 npm.cmd run dev
 ```
 
-For the existing Windows checkout, open PowerShell in `C:\Projects\TCO-Logbook`, run `npm.cmd ci` if needed, then `npm.cmd run dev`. Using `npm.cmd` avoids PowerShell's `npm.ps1` execution-policy issue without changing system policy.
+For the existing Windows checkout, open PowerShell in `C:\Projects\Turnaround-Coordinator-Logbook`, run `npm.cmd ci` if needed, then `npm.cmd run dev`. Using `npm.cmd` avoids PowerShell's `npm.ps1` execution-policy issue without changing system policy.
 
 Open the address printed by Vite, normally `http://127.0.0.1:5173/`. If that port is occupied, use the address actually printed. Stop with `Ctrl+C`.
 
@@ -111,8 +145,9 @@ Open the Windows LAN address printed by Vite on the phone; allow private-network
 
 - **v0.1.0:** Initial interactive frontend prototype and domain workflows.
 - **v0.1.1:** Visual/theme enhancements, decorative radar, responsive navigation and airline reference/fallback components. This publication preparation updates documentation and the development test toolchain.
+- **v0.1.2:** Complete applicable Aircraft details and gate-time card summaries; reviewed monthly/batch planned duties with conflict checks; owner-enabled local PNGs with independent rights status; live Hong Kong device clock.
 - **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, full import/restore, Service Worker/offline reload and validated iOS PWA installation.
-- **Manual acceptance pending:** Real browser/iPhone layout, animation, focus, download and print checks. No deployment has been performed.
+- **Verification:** Local Edge viewport/layout and new workflow checks completed; actual iPhone/Safari, physical touch/keyboard, download and print acceptance remains pending. No deployment has been performed.
 
 The approved PRD describes a larger future product. It does not mean all production features are complete. See [prototype status](PROTOTYPE_STATUS.md), [manual acceptance](docs/MANUAL_ACCEPTANCE.md) and [publication preparation](docs/PUBLICATION_PREPARATION.md).
 
@@ -134,7 +169,7 @@ The owner has chosen to retain **24 existing airline PNGs** in `public/assets/ai
 
 The supplied source pages identify CX (Seeklogo), LH (PlusPNG) and 9G (CDNLogo). Exact individual pages for the remaining images are unknown; the owner reports that most came from Seeklogo. A download site is not automatically the rights holder.
 
-The existing component still displays code/name fallbacks until its approval gate is satisfied; no unverified permission flag has been approved. **Images in Vite's public directory are copied into builds and are directly accessible even when the component does not display them.** Future builds therefore contain these retained files. No runtime request is made to the download sites.
+The owner-enabled display manifest now maps all 24 original PNGs independently of the unchanged legal permission records. Missing, disabled, invalid or failed image mappings use code/name fallback; no unverified permission flag has been approved. **Images in Vite's public directory are copied into builds and are directly accessible even when the component does not display them.** Future builds therefore contain these retained files. No runtime request is made to the download sites.
 
 See the complete [asset audit](docs/AIRLINE_ASSET_AUDIT.md) and [checksum inventory](docs/AIRLINE_ASSET_INVENTORY.json). CX, LD (Air Hong Kong) and HX (Hong Kong Airlines) are distinct. The nine app references are not an exhaustive HKIA or HAS ramp/TCO customer list, and no handling affiliation is verified.
 
@@ -150,6 +185,6 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 ## Development Roadmap
 
-**Planned only, subject to separate approval:** policy/provider/cost decisions, real authentication, durable backend storage, offline synchronization/conflicts, public aircraft lookup, validated import/restore, encrypted backups and production/iPhone PWA acceptance. These are future phases of the approved PRD, not delivered v0.1.1 features.
+**Planned only, subject to separate approval:** policy/provider/cost decisions, real authentication, durable backend storage, offline synchronization/conflicts, public aircraft lookup, validated import/restore, encrypted backups and production/iPhone PWA acceptance. These are future phases of the approved PRD, not delivered v0.1.2 features.
 
-This preparation does not add v0.1.2 features, monthly batch rosters, new Aircraft Detail screens or a new live clock.
+v0.1.2 implements only the four enhancements described above. OCR/Excel roster import, HR integration, cloud services and production features remain outside this release.

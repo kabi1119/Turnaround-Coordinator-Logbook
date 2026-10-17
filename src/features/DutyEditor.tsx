@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Database, Duty } from '../domain/model';
 import { hkToday, id } from '../domain/model';
+import { completedDuty, shiftRange } from '../domain/roster';
 import { Confirm, Field, Modal, Select, TextArea } from '../components/ui';
 import { useT } from '../i18n';
 export default function DutyEditor({
@@ -18,7 +19,15 @@ export default function DutyEditor({
   const [d, setD] = useState<Duty>(
     existing
       ? { ...existing }
-      : { id: id(), date: hkToday(), start: '', end: '', status: 'Draft', notes: '' },
+      : {
+          id: id(),
+          date: hkToday(),
+          start: '',
+          end: '',
+          status: 'Draft',
+          workState: 'Planned',
+          notes: '',
+        },
   );
   const [error, setError] = useState(''),
     [dirty, setDirty] = useState(false),
@@ -37,6 +46,24 @@ export default function DutyEditor({
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            if (d.start && d.end && !shiftRange(d)) {
+              setError(
+                t(
+                  'Enter a valid shift date and different start/end times.',
+                  '請輸入有效更次日期及不同的開更、完更時間。',
+                ),
+              );
+              return;
+            }
+            if (d.workState === 'Worked' && !completedDuty({ ...d, status: 'Confirmed' })) {
+              setError(
+                t(
+                  'A future or unfinished shift must remain Planned.',
+                  '未來或尚未結束的更次必須保留為計劃中。',
+                ),
+              );
+              return;
+            }
             if (
               commit({
                 ...db,
@@ -83,6 +110,24 @@ export default function DutyEditor({
             options={['Draft', 'Confirmed']}
             value={d.status}
             onChange={(e) => patch({ status: e.target.value as Duty['status'] })}
+          />
+          <Select
+            label={t('Work state', '工作進度')}
+            options={['Planned', 'Worked']}
+            value={d.workState || 'Worked'}
+            onChange={(e) => patch({ workState: e.target.value as Duty['workState'] })}
+          />
+          <p className="muted">
+            {t(
+              'Planned duties never count as worked shifts. Mark Worked explicitly after the shift; elapsed time alone does not change the state.',
+              '計劃更次不計入已工作更次。完更後須自行標記已工作，時間經過不會自動改變進度。',
+            )}
+          </p>
+          <Select
+            label={t('Shift type', '更次類型')}
+            options={['Day', 'Evening', 'Night', 'Custom']}
+            value={d.shiftType || 'Custom'}
+            onChange={(e) => patch({ shiftType: e.target.value as Duty['shiftType'] })}
           />
           <TextArea
             label={t('Notes · synthetic only', '筆記 · 只限虛構資料')}

@@ -82,7 +82,10 @@ export default function Logbook({
                   {t('matching records', '項符合紀錄')}
                 </small>
               </span>
-              <Badge tone={d.status === 'Draft' ? 'amber' : 'teal'}>{l(d.status)}</Badge>
+              <Badge tone={d.status === 'Draft' ? 'amber' : 'teal'}>
+                {l(d.status)} · {l(d.workState || 'Worked')}
+                {d.shiftType ? ` · ${l(d.shiftType)}` : ''}
+              </Badge>
               <ChevronRight size={17} />
             </button>
             {rows

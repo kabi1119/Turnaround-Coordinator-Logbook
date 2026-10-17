@@ -1,7 +1,15 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 export default defineConfig({
+  server: { watch: { ignored: ['**/.checkpoints/**'] } },
+  define: {
+    __LOCAL_AIRLINE_FILES__: JSON.stringify(
+      readdirSync(new URL('./public/assets/airlines/', import.meta.url)).filter((name) =>
+        /^[A-Z0-9]{2}\.png$/.test(name),
+      ),
+    ),
+  },
   plugins: [
     react(),
     {

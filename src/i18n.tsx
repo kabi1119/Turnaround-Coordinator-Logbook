@@ -6,6 +6,12 @@ export function useT(): Translate {
   return (en, zh) => (lang === 'en' ? en : zh);
 }
 export const labels: Record<string, string> = {
+  Planned: '計劃中',
+  Worked: '已工作',
+  Day: '日更',
+  Evening: '晚更',
+  Night: '夜更',
+  Custom: '自訂',
   'Full Turnaround': '完整過站',
   'Departure Only': '僅離港',
   'Arrival Only': '僅抵港',

@@ -1,0 +1,119 @@
+.home-duty-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 24px;
+}
+.hk-clock {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+.hk-clock time {
+  font-size: 20px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.hk-clock small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.aircraft-times {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.detail-section {
+  border-top: 1px solid var(--line);
+  padding: 16px 0;
+}
+.detail-section h3 {
+  margin-top: 0;
+}
+.detail-section h4 {
+  margin: 12px 0 8px;
+}
+.detail-section dd,
+.detail-section p {
+  overflow-wrap: anywhere;
+}
+.preserve-lines {
+  white-space: pre-wrap;
+}
+.roster-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+  margin: 20px 0;
+}
+.roster-layout > *,
+.roster-entry-fields > * {
+  min-width: 0;
+}
+.roster-calendar {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.roster-calendar button {
+  min-width: 0;
+  min-height: 44px;
+}
+.roster-entries {
+  display: grid;
+  gap: 12px;
+}
+.roster-entry-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.roster-entries .section-title {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.bar-row > div > span:has(.airline-identity) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .roster-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hk-clock {
+    font-size: 10px;
+    max-width: 128px;
+  }
+  .hk-clock time {
+    font-size: 16px;
+  }
+  .header-right {
+    gap: 6px;
+  }
+  .home-duty-actions > button {
+    flex: 1 1 140px;
+  }
+  .roster-entry-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 390px) {
+  .app-header {
+    gap: 8px;
+  }
+  .brand {
+    gap: 6px;
+  }
+  .brand > span:last-child {
+    font-size: 15px;
+  }
+  .brand small {
+    font-size: 6px;
+  }
+  .hk-clock {
+    max-width: 110px;
+  }
+}

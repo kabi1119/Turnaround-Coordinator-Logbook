@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { approvedLogoPath, findAirline } from '../data/airlines';
+import { findAirline } from '../data/airlines';
+import { displayLogoPath, findLocalAirline } from '../data/localAirlineLogos';
 import { useT } from '../i18n';
 
 export default function AirlineLogo({
@@ -13,8 +14,8 @@ export default function AirlineLogo({
   showName?: boolean;
   decorative?: boolean;
 }) {
-  const entry = findAirline(airline),
-    src = approvedLogoPath(entry);
+  const entry = findAirline(airline) || findLocalAirline(airline),
+    src = displayLogoPath(entry);
   const [failedSource, setFailedSource] = useState<string | null>(null);
   const t = useT();
   const name = entry?.name || airline || t('Airline not selected', '未選航空公司');

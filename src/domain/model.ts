@@ -42,6 +42,9 @@ export type PrivacyKey =
   'registration' | 'flights' | 'bay' | 'gateTimes' | 'statuses' | 'disruptionNotes';
 export type Privacy = Record<PrivacyKey, boolean>;
 export interface Duty {
+  /** Absent on v0.1.1 records: retain legacy Confirmed-duty semantics. */
+  workState?: 'Planned' | 'Worked';
+  shiftType?: 'Day' | 'Evening' | 'Night' | 'Custom';
   id: string;
   date: string;
   start: string;

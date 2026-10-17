@@ -1,8 +1,39 @@
-# Prototype v0.1.1 status
+# Prototype v0.1.2 status
 
 Updated: 2026-10-17 (Asia/Hong_Kong). Baseline: approved PRD v1.5 + prototype implementation brief. This is a frontend demonstration with synthetic data only. No Phase 2 work has started.
 
-## Public portfolio preparation — 2026-10-17
+## v0.1.2 implementation — 2026-10-17 (Hong Kong)
+
+This section supersedes older workflow/display/version statements below. Work was performed exclusively in C:\Projects\Turnaround-Coordinator-Logbook; the retired checkout was not accessed. Initial Git state: clean main, HEAD f6322c9, origin https://github.com/kabi1119/Turnaround-Coordinator-Logbook.git. No automatic staging, commit, push, history rewrite, visibility change or deployment.
+
+### Delivered scope
+
+1. Shared Aircraft cards show applicable actual AIBT/AOBT, otherwise explicitly scheduled SIBT/SOBT; absent time has a clean fallback and privacy-hidden time is labeled hidden. Never substitutes Duty/created/updated timestamps. Cross-date times retain their Hong Kong dates. Prominent airline/flight and role/type/registration hierarchy stays intact.
+2. Existing detail modal now uses grouped AircraftDetails: all applicable user fields, separate leg flights/times/status/source, actual handling, bay, family/ICAO, full events/notes, linked Duty and Journal navigation, created/updated metadata. Technical IDs are not dumped. Disabled privacy groups remain hidden/archived; edit/review remains the only save path.
+3. Home Add Duty / Batch Add Duties, interactive month/year calendar, multi-date selection across months, blank user-defined Day/Evening/Night/Custom templates with explicit hours confirmation, pending editing/removal/notes, totals and review. New batch entries are Confirmed + Planned; exact duplicates block saving, timed overlaps require explicit override. Stable pending IDs and guarded confirmation prevent repeated creation; storage failure keeps pending edits. Same-date shifts append independently. Hong Kong start date controls cross-midnight/month/year boundaries.
+4. Optional Duty workState and shiftType extend schema version 1 without rewriting existing data. Missing legacy workState preserves original Confirmed-duty statistics; Planned is excluded indefinitely. Worked requires explicit user action and a completed shift; future/unfinished new Worked entries are rejected. Aircraft/Journal counts, IDs, associations and trash/reconnect semantics stay independent and intact.
+5. All 24 existing original PNGs enabled by a separate local display manifest. Exact filename inventory is injected at build time; invalid/missing/disabled/error mappings fall back to text. Shared AirAsia/Jetstar artwork does not establish operator identity. Original reference/permission records remain unchanged and unverified. Shared component covers cards, detail, Logbook, rankings and existing editor previews. Original PNG hashes and third-party notices remain intact.
+6. Header Hong Kong clock uses Intl / Asia/Hong_Kong, seconds, tabular numerals, device-clock accuracy disclosure, current-time refresh each second and on resume/focus. Cleanup removes timer/listeners; updates stay within the clock component. Bilingual new controls and responsive styling preserve five-tab navigation, radar, reduced-motion and themes.
+
+### Compatibility and verification
+
+- No schema rewrite/migration is needed: workState/shiftType are optional; existing version-1 payloads load idempotently and remain byte-for-byte unchanged until an explicit normal save. No reset, seed replacement, browser profile read or user data deletion is performed. Same browser origin/storage key is required; do not downgrade to v0.1.1 for Planned roster data, which that version cannot interpret.
+- Baseline: 65 tests / 6 files passed before implementation. v0.1.2: **90 tests / 10 files passed**, including original Aircraft review/counting/status/filter/lifecycle checks and new card/detail, roster/conflict/compatibility, PNG and clock coverage. Two former code-only logo assertions were updated to the explicitly requested local-display policy; independent legal-approval assertions remain.
+- TypeScript caught a new empty-array test-fixture inference issue; it was corrected to Database, without weakening assertions. Lint, build and formatting are run against final changes; results reported in delivery. Package and lockfile release version is 0.1.2; no dependency upgrade or additional framework/library was needed.
+- Real Edge headless production preview: 375/390/430/768/1024/1440/1920 widths, light/dark; no document overflow or clock/Settings collision, loaded logos, no runtime exception or external app request. Mobile batch review/detail contained within viewport; two overnight Planned shifts persisted/reloaded while original 18 Aircraft and 3 Journals stayed unchanged. Clock advanced. Screenshots were visually inspected; ignored QA files stay under .checkpoints/v012-*.
+- The first dev-server browser attempt collided with an Edge profile cache lock under .checkpoints; UI checks used production preview instead. Vite now excludes ignored .checkpoints artifacts from its development watcher so the local QA profile cannot cause that lock failure. QA browser/profile is separate from personal browser data and is stopped after verification.
+- Original 24 PNG byte/hash integrity and build copies are checked; no image deletion, rename, move, compression or replacement. No additional image download or invented logo. No new open-source licence; README opening disclaimer preserved.
+- New acceptance document: docs/V0_1_2_ACCEPTANCE.md. Asset audit/inventory and public asset guide updated without altering legal/provenance evidence. Restored the missing publication-document link target with current source-available boundaries; older v0.1.1 documentation below is historical.
+
+### Known limits
+
+Final executed checks: npm.cmd run test **90/90 passed (10 files)**; npm.cmd run lint **passed / zero warnings**; npm.cmd run build **passed**; npm.cmd run format:check **passed**; npm.cmd audit **0 known vulnerabilities**. Git diff whitespace check passed. Final original and dist PNGs match all 24 inventory hashes; THIRD_PARTY_NOTICES.md and the original AircraftEditor/seed/business regression test files remain unchanged. Development server returned HTTP 200 after watcher fix. Test servers and the separate Edge instance were stopped.
+
+Final Git state: main, HEAD f6322c9bc805874f4310c2c2d6a87159cc9982f2 (unchanged), 23 modified tracked paths and 13 new untracked source/test/document paths; nothing staged. Generated dist/node_modules/QA artifacts remain ignored. No commit/push or other remote mutation occurred.
+
+Actual iPhone/Safari/physical touch and full keyboard, print/download acceptance remain manual. Desktop Edge viewport emulation is not an iPhone test. Templates persist only within the open batch dialog; saved duties retain type/times/notes. Overlap detection requires recorded start/end times; untimed legacy duties cannot establish a timed overlap. localStorage remains unencrypted/origin-specific and lacks multi-tab conflict handling. Clock depends on device accuracy. Airline redistribution rights remain unverified despite owner-enabled display. No backend/auth/cloud, OCR/Excel/HR import, deployment or unrelated feature was added.
+
+## Historical v0.1.1 public portfolio preparation — 2026-10-17
 
 This section supersedes the historical asset-distribution statements below. The owner intends a public, source-available, non-commercial personal portfolio with retained airline PNGs; no open-source licence is granted and no standalone LICENSE is added. Publication itself is not performed here.
 

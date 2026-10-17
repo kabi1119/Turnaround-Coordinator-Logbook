@@ -1,5 +1,7 @@
 # v0.1.1 視覺／響應式人工驗收
 
+> 此為 v0.1.1 歷史清單。v0.1.2 已另作本機 Edge 檢查及啟用本機 PNG 顯示，最新流程及限制見 [V0_1_2_ACCEPTANCE.md](V0_1_2_ACCEPTANCE.md)。以下舊版「零圖片／未有瀏覽器」描述不代表目前狀態。
+
 **狀態：尚未完成實際瀏覽器及 iPhone 驗收。** 本次 Computer Use 回傳 `apps: [] / browsers: []`。已執行 CSS token 對比計算、元件與 CSS media contract 測試，但 jsdom 不提供真實版面、像素截圖或動畫幀驗證，不能據此聲稱沒有水平溢位。
 
 ## Windows 啟動

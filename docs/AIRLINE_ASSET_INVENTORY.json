@@ -1,6 +1,6 @@
 {
   "reviewedOn": "2026-10-17",
-  "scope": "Owner-retained files for intended public portfolio release; not a licence grant or an approved runtime registry.",
+  "scope": "v0.1.2 owner-enabled local display and retained public portfolio files. Not a licence grant; legal/provenance records unchanged.",
   "sourceLimit": "Owner supplied three source-page URLs and reports most other files came from Seeklogo. Other individual sources are unknown; no exact direct-download URLs were supplied. Supplied pages do not prove file-byte provenance or redistribution permission.",
   "assets": [
     {
@@ -18,9 +18,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -38,9 +38,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -58,9 +58,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Identical generic AirAsia wordmark bytes shared across three intended operator mappings; not operator-specific verification."
     },
     {
@@ -78,9 +78,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -98,9 +98,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -118,9 +118,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -138,9 +138,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -158,9 +158,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -178,9 +178,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Generic Jetstar brand artwork; GK identifies Jetstar Japan, not JQ or former 3K."
     },
     {
@@ -198,9 +198,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -218,9 +218,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -238,9 +238,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -258,9 +258,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -278,9 +278,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visible checkerboard background is preserved; no transparency or pixel corrections applied."
     },
     {
@@ -298,9 +298,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -318,9 +318,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -338,9 +338,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -358,9 +358,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -378,9 +378,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -398,9 +398,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Identical generic AirAsia wordmark bytes shared across three intended operator mappings; not operator-specific verification."
     },
     {
@@ -418,9 +418,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -438,9 +438,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -458,9 +458,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Visual brand matches intended filename mapping; current official brand authenticity and all code assignments are not independently certified."
     },
     {
@@ -478,9 +478,9 @@
       "redistributionPermission": "unverified",
       "permissionEvidence": null,
       "rightsHolder": "Respective airline/brand rights holders; downloader is not presumed to own the rights.",
-      "runtimeDisplay": "disabled-by-existing-approval-gate",
+      "runtimeDisplay": "owner-enabled-local-display-rights-unverified",
       "usage": "Retained in public/assets/airlines; served directly and copied into Vite builds.",
-      "gitTrackingAtReview": "untracked",
+      "gitTrackingAtReview": "tracked",
       "identityNotes": "Identical generic AirAsia wordmark bytes shared across three intended operator mappings; not operator-specific verification."
     }
   ]
