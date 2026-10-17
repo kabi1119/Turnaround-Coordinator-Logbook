@@ -62,7 +62,7 @@ describe('v0.1.4 image combobox', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(input).toHaveValue('Cathay Pacific');
     expect(input).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByRole('dialog', { name: 'Review / Double-check' })).toBeNull();
+    expect(screen.queryByRole('dialog', { name: 'Review Handling Record' })).toBeNull();
   });
   it('ArrowUp scrolls the last mounted option into view; Escape retains the editor', () => {
     const close = vi.fn();
@@ -74,7 +74,7 @@ describe('v0.1.4 image combobox', () => {
     fireEvent.keyDown(input, { key: 'ArrowUp' });
     expect(
       document.getElementById(input.getAttribute('aria-activedescendant')!)!,
-    ).toHaveTextContent('Philippines AirAsia');
+    ).toHaveTextContent('SWISS International Air Lines');
     expect(scroll).toHaveBeenLastCalledWith({ block: 'nearest' });
     expect(scroll.mock.contexts.at(-1)).toBe(
       document.getElementById(input.getAttribute('aria-activedescendant')!),
@@ -82,7 +82,7 @@ describe('v0.1.4 image combobox', () => {
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(input).toHaveAttribute('aria-expanded', 'false');
     expect(close).not.toHaveBeenCalled();
-    expect(screen.getByRole('dialog', { name: 'New Aircraft' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'New Handling Record' })).toBeInTheDocument();
   });
   it.each(['mouse', 'touch'] as const)(
     'Selects with %s and returns focus to the input',

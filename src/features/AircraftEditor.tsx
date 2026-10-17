@@ -268,7 +268,11 @@ export default function AircraftEditor({
   return (
     <>
       <Modal
-        title={existing ? t('Edit Aircraft', '編輯航機') : t('New Aircraft', '新增航機')}
+        title={
+          existing
+            ? t('Edit Handling Record', '編輯航機處理紀錄')
+            : t('New Handling Record', '新增航機處理紀錄')
+        }
         onClose={() => setDiscard(true)}
         wide
       >
@@ -566,7 +570,10 @@ export default function AircraftEditor({
         </form>
       </Modal>
       {review && (
-        <Modal title={t('Review / Double-check', '覆核／再次核對')} onClose={() => setReview(null)}>
+        <Modal
+          title={t('Review Handling Record', '覆核航機處理紀錄')}
+          onClose={() => setReview(null)}
+        >
           <div className="airline-selection">
             <AirlineLogo airline={a.airline} size="sm" showName />
           </div>
@@ -664,7 +671,8 @@ export default function AircraftEditor({
           {matches.length > 0 && (
             <div className="notice amber">
               <strong>
-                {t('Possible duplicate assignment', '可能重複的處理紀錄')} ({matches.length})
+                {t('Possible duplicate handling record', '可能重複的航機處理紀錄')} (
+                {matches.length})
               </strong>
               <label className="check">
                 <input type="checkbox" checked={keep} onChange={(e) => setKeep(e.target.checked)} />

@@ -54,9 +54,28 @@ export function displayLogoPath(identity?: { iata: string; name: string }): stri
   return `/assets/airlines/${asset.filename}`;
 }
 
+/** Presentation only: never mutates catalogue identities or stored record values. */
+export function orderAirlines<T extends { iata: string; name: string }>(
+  entries: readonly T[],
+  prioritize = true,
+): T[] {
+  const priority = ['CX', 'UO', 'LD'];
+  const rank = (code: string) => {
+    const index = priority.indexOf(code);
+    return prioritize && index >= 0 ? index : priority.length;
+  };
+  return [...entries].sort(
+    (a, b) =>
+      rank(a.iata) - rank(b.iata) ||
+      a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }) ||
+      a.iata.localeCompare(b.iata, 'en'),
+  );
+}
+
 export function searchAirlines(query: string) {
   const q = query.trim().toLowerCase();
-  return airlineCatalogue.filter((a) =>
+  const matches = airlineCatalogue.filter((a) =>
     [a.iata, a.name, ...a.aliases].some((value) => value.toLowerCase().includes(q)),
   );
+  return orderAirlines(matches, !q);
 }

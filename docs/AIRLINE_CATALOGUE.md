@@ -1,4 +1,4 @@
-# Owner-defined airline catalogue — current v0.2.0
+# Owner-defined airline catalogue — current v0.3.1
 
 This is the owner's requested default selection, **not a verified or exhaustive HAS handling customer list**. The single source is src/data/airlineCatalogue.ts; registry, search, local PNG mappings and reference exports derive from it. No current airline operational relationship is inferred.
 
@@ -33,7 +33,7 @@ NH / ANA, SQ, HX and EK are excluded only from default suggestions and fresh syn
 
 New owner-defined entries have no invented verification date or official identity source; the catalogue document is their scope reference. Original nine reference records and rights evidence remain in historicalAirlineReferences. Every legal permission remains unverified/not-established. No third-party permission is inferred from display or membership.
 
-## Current v0.2.0 sample collection
+## Current sample collection (introduced v0.2.0)
 
 All 24 selectable identities and PNG mappings remain. The fresh collection now uses four fictional assignments (CX, UO, LD and QR), three duties and two journals; it is not a one-record-per-airline showcase or a limit on user records. Settings → Refresh sample records uses src/data/sampleRefresh.ts to preview and replace only complete, unchanged recognized fixtures, preserving unrelated personal data and blocking edited samples or retained personal links. No automatic refresh runs. See [v0.2.0 acceptance](V0_2_0_ACCEPTANCE.md) for compatibility and executed checks.
 
@@ -46,6 +46,10 @@ No automatic migration runs. Settings → Refresh obsolete demo airlines preview
 Only full recursive equality to frozen v0.1.1–v0.1.3 fixtures permits replacement, never ID/DEMO labels alone. Edited/deleted-field/unknown payloads occupying a required ID, duplicate target IDs or different-date/trashed required duties block the entire refresh. A database change since preview also blocks confirmation. Unknown custom IDs remain untouched, including out-of-catalogue names. Therefore an ambiguous legacy collection may require owner review and is not falsely reported as cleaned. The exact unchanged v0.1.4 demo subset is labeled separately from overall statistics.
 
 legacySeed.ts, v014Seed.ts and older refresh helpers remain compatibility fixtures; the v0.2.0 UI uses sampleRefresh.ts. Do not use full sample-load/clear actions on a mixed collection: those separately confirmed actions replace the entire collection.
+
+## v0.3.1 selection order
+
+Default new/edit entry lists use one shared non-mutating orderAirlines helper: CX, UO, LD, then the other 21 names sorted A–Z in English. Active name/code/alias queries filter first and sort only relevant matches alphabetically, without priority pinning. No identity, saved airline value, asset mapping or legal metadata changes. See V0_3_1_ACCEPTANCE.md for regression/manual acceptance.
 
 ## Logo presentation
 

@@ -119,7 +119,7 @@ export default function Logbook({
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">RECORD / REVISIT</span>
+          <span className="eyebrow">{t('Aircraft', '航機')}</span>
           <h1>{t('The logbook.', '航機紀錄。')}</h1>
           <p>
             {t(
@@ -130,7 +130,7 @@ export default function Logbook({
         </div>
         <button className="primary" onClick={onNew}>
           <Plus size={18} />
-          {t('New Aircraft', '新增航機')}
+          {t('New Handling Record', '新增航機處理紀錄')}
         </button>
       </div>
       <RecordFilters

@@ -21,7 +21,13 @@ export function dutyOptionText(d: Duty, label: (value: string) => string = (valu
     ? `${year}-${months[Number(month) - 1]}-${day}`
     : d.date || '—';
   const overnight = d.start && d.end && d.end < d.start ? '(+1)' : '';
-  return `${date} ${d.start || '—'}–${d.end || '—'}${overnight} · ${label(d.status)}/${label(d.workState || 'Legacy')}`;
+  const progress =
+    d.workState === 'Planned'
+      ? 'Scheduled'
+      : d.workState === 'Worked'
+        ? 'Worked'
+        : 'Work state not recorded';
+  return `${date} ${d.start || '—'}–${d.end || '—'}${overnight} · ${label(progress)}`;
 }
 
 export function previousDuties(duties: Duty[], now = Date.now()) {

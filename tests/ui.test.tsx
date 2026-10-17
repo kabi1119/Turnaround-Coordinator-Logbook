@@ -30,7 +30,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Choose a handling date');
     await user.click(screen.getByRole('button', { name: 'Save Draft' }));
-    expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).toHaveTextContent(
+    expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toHaveTextContent(
       'no Duty will be created',
     );
     expect(commit).not.toHaveBeenCalled();
@@ -45,20 +45,20 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await core(user);
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(commit).not.toHaveBeenCalled();
-    const review = screen.getByRole('dialog', { name: 'Review / Double-check' });
+    const review = screen.getByRole('dialog', { name: 'Review Handling Record' });
     expect(within(review).getByText(/Unlinked · no Duty will be created/)).toBeInTheDocument();
     await user.click(within(review).getByRole('button', { name: 'Back to Edit' }));
     expect(screen.getByLabelText('Airline *')).toHaveValue('Cathay Pacific');
     expect(commit).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     await user.click(
-      within(screen.getByRole('dialog', { name: 'Review / Double-check' })).getByRole('button', {
+      within(screen.getByRole('dialog', { name: 'Review Handling Record' })).getByRole('button', {
         name: 'Close',
       }),
     );
     expect(commit).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    const btn = within(screen.getByRole('dialog', { name: 'Review / Double-check' })).getByRole(
+    const btn = within(screen.getByRole('dialog', { name: 'Review Handling Record' })).getByRole(
       'button',
       { name: 'Confirm & Save' },
     );
@@ -118,7 +118,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
       'No linked Duty',
     );
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).toHaveTextContent(
+    expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toHaveTextContent(
       'Unlinked',
     );
     await user.click(screen.getByRole('button', { name: 'Back to Edit' }));
@@ -126,7 +126,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.click(screen.getByRole('combobox', { name: 'Duty / Shift' }));
     await user.click(screen.getByRole('option', { name: /2026-Oct-16 06:00/ }));
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toBeInTheDocument();
   });
   it('Likely duplicate allows explicit separate assignment; editing same ID does not warn', async () => {
     const db = seedDatabase();
@@ -150,7 +150,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     expect(screen.queryByLabelText(/Arrival Flight Status/)).not.toBeInTheDocument();
     expect(screen.queryByText(existing.registration)).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).not.toHaveTextContent(
+    expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).not.toHaveTextContent(
       existing.registration,
     );
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
@@ -190,7 +190,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.click(screen.getByText('More Details'));
     await user.type(screen.getByLabelText('Parking Bay · search or custom'), 'demo-w121l');
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('dialog', { name: 'Review / Double-check' })).toHaveTextContent(
+    expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toHaveTextContent(
       'DEMO-W121L',
     );
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
@@ -234,7 +234,7 @@ describe('App navigation, persistence and privacy', () => {
   it('New Aircraft persists only after confirmation and survives remount', async () => {
     const user = userEvent.setup();
     const view = render(<App />);
-    await user.click(screen.getByRole('button', { name: 'Log an Aircraft' }));
+    await user.click(screen.getByRole('button', { name: 'Log a Handling Task' }));
     await core(user);
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();

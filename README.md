@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.0 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.1 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -47,7 +47,17 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
 
-## v0.3.0 Aircraft entry and local data management
+## v0.3.1 focused interface refinements
+
+I use **Log a Handling Task** for the Home action, **Handling Record** for new/edit/review/detail interfaces and **Handling Assignments** for Statistics. Aircraft remains the identity/category term; I have not renamed TypeScript models, stored fields or backup keys. Full Turnaround still counts once.
+
+The shared airline ordering helper shows **CX, UO, LD**, then the other 21 catalogue names A–Z in English. Active search shows only matching names/codes/aliases without unrelated pinned results. Both new/edit forms retain all 24 local logos/fallbacks and custom historical text; rights/provenance disclosures are unchanged.
+
+Duty choices show only work progress: Planned appears as **Scheduled**, Worked as **Worked**, and missing historical progress as **Work state not recorded**. I preserve YYYY-MMM-DD, 24-hour time, overnight (+1), missing-time values and underlying record/work states. Past dates never imply Worked. v0.3.0 JSON backup/restore, existing records/preferences and LAN HTTP compatibility remain unchanged.
+
+See [v0.3.1 acceptance](docs/V0_3_1_ACCEPTANCE.md) for verification and manual mobile checks. No automatic commit/push or deployment.
+
+## Historical v0.3.0 Aircraft entry and local data management
 
 I keep this release local-only, with no backend, login, cloud sync or deployment. All included samples remain fictional; the opening independent-project and trademark notices still apply.
 
@@ -276,7 +286,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.0 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.1 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -294,7 +304,17 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
 
-## v0.3.0 航機輸入及本機資料管理
+## v0.3.1 介面細節改進
+
+我將 Home 操作統一為 **記錄航機處理任務**，新增／編輯／覆核及詳情介面使用 **航機處理紀錄**，Statistics 則使用 **航機處理任務**。Aircraft／航機仍是身份／分類用語；我沒有更改 TypeScript 模型、儲存欄位或備份 Key。完整過站仍只計一項任務。
+
+共用排序規則預設先顯示 **CX、UO、LD**，其餘 21 間按英文名稱 A–Z 排列。搜尋時只顯示名稱／代碼／別名相符的結果，不會固定插入無關航空公司。新增及編輯表單均保留 24 張本機 Logo／Fallback、自訂歷史文字及原有權利／來源聲明。
+
+更次清單只顯示工作進度：Planned 顯示為 **Scheduled／已排班**，Worked 顯示為 **Worked／已工作**，歷史缺值則顯示 **未記錄工作進度**。我保留 YYYY-MMM-DD、24 小時制、通宵 (+1)、缺少時間及底層紀錄／工作狀態，不會因日期已過而推斷為已工作。v0.3.0 JSON 備份／還原、既有紀錄／偏好及 LAN HTTP 相容處理維持不變。
+
+詳見 [v0.3.1 驗收](docs/V0_3_1_ACCEPTANCE.md)的驗證及手機檢查流程。不會自動 Commit／Push 或部署。
+
+## 過往 v0.3.0 航機輸入及本機資料管理
 
 我維持本機前端範圍，不加入後端、登入、雲端同步或部署。內附樣本仍全部虛構；開首的獨立項目及商標聲明繼續適用。
 

@@ -181,7 +181,7 @@ function Workspace({
                 </p>
                 <button className="primary" onClick={() => setOverlay({ type: 'aircraft' })}>
                   <Plus size={18} />
-                  {t('Log an Aircraft', '新增航機紀錄')}
+                  {t('Log a Handling Task', '記錄航機處理任務')}
                   <ArrowUpRight size={17} />
                 </button>
               </div>
@@ -372,7 +372,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.3.0 {t('Pre-release', '預發佈')} ·{' '}
+            v0.3.1 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -395,7 +395,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.3.0 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.3.1 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
@@ -414,9 +414,9 @@ function Workspace({
           <p className="muted">{t('What would you like to record?', '想記下甚麼？')}</p>
           {[
             {
-              en: 'New Aircraft',
-              zh: '新增航機',
-              sub: t('One handling assignment', '一項處理紀錄'),
+              en: 'New Handling Record',
+              zh: '新增航機處理紀錄',
+              sub: t('One handling assignment', '一項航機處理任務'),
               icon: Plane,
               type: 'aircraft',
             },
@@ -487,7 +487,7 @@ function Workspace({
       )}
       {overlay?.type === 'report' && <ReportPreview db={db} onClose={close} />}
       {detail && (
-        <Modal title={t('Aircraft Record', '航機紀錄')} onClose={close} wide>
+        <Modal title={t('Handling Record', '航機處理紀錄')} onClose={close} wide>
           <AircraftSummary
             a={detail}
             db={db}
@@ -512,7 +512,7 @@ function Workspace({
               onClick={() => setOverlay({ type: 'aircraft', id: detail.id })}
             >
               <Pencil size={16} />
-              {t('Edit Record', '編輯紀錄')}
+              {t('Edit Handling Record', '編輯航機處理紀錄')}
             </button>
           </div>
           <details>
@@ -557,7 +557,7 @@ function Workspace({
               onClick={() => setOverlay({ type: 'aircraft', dutyId: duty.id })}
             >
               <Plus size={16} />
-              {t('Add Aircraft to this Duty', '新增航機至此更次')}
+              {t('New Handling Record for this Duty', '新增此更次的航機處理紀錄')}
             </button>
             <button onClick={() => setOverlay({ type: 'duty', id: duty.id })}>
               {t('Edit Duty', '編輯更次')}
@@ -605,7 +605,7 @@ function Workspace({
         <Confirm
           title={
             pending.kind === 'aircraftRestore'
-              ? t('Review / Confirm Aircraft Restore', '覆核／確認還原航機')
+              ? t('Review Handling Record Restore', '覆核還原航機處理紀錄')
               : t('Move to Trash?', '移至垃圾桶？')
           }
           onClose={() => setPending(null)}

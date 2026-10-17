@@ -186,7 +186,7 @@ describe('Modal isolation, scroll stability and artwork bounds', () => {
     try {
       const view = render(<App />);
       fireEvent.click(document.querySelector('.aircraft-card')!);
-      const dialog = screen.getByRole('dialog', { name: 'Aircraft Record' });
+      const dialog = screen.getByRole('dialog', { name: 'Handling Record' });
       dialog.scrollTop = 200;
       const calls = rendered.mock.calls.length;
       expect(calls).toBeGreaterThan(0);

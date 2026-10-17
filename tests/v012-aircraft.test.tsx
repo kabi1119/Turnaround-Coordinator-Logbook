@@ -141,7 +141,7 @@ describe('v0.1.2 aircraft card gate times', () => {
     render(<App />);
     const before = localStorage.getItem(STORAGE_KEY);
     fireEvent.click(document.querySelector('.aircraft-card')!);
-    const detail = screen.getByRole('dialog', { name: 'Aircraft Record' });
+    const detail = screen.getByRole('dialog', { name: 'Handling Record' });
     expect(
       within(detail).getByRole('heading', { name: 'Assignment Information' }),
     ).toBeInTheDocument();

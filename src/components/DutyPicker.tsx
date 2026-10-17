@@ -124,12 +124,14 @@ export default function DutyPicker({
           '尚未建立更次？請先使用「Add Duty」新增，再返回此處關聯。',
         )}
       </small>
-      <small>
-        {t(
-          'Legacy means work state was not recorded; existing counting rules apply.',
-          'Legacy 表示未記錄工作進度；沿用既有統計規則。',
-        )}
-      </small>
+      {duties.some((d) => !d.workState) && (
+        <small>
+          {t(
+            'Historical duties without work state remain unclassified; counting rules are unchanged.',
+            '歷史更次缺少工作進度時不會推斷分類；統計規則維持不變。',
+          )}
+        </small>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.3.0 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.3.1 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,11 +24,11 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.3.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.3.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
-- Commit/push only within the current user's authorization. The v0.3.0 request does not authorize an automatic commit or push. Preserve existing changes and history.
+- Commit/push only within the current user's authorization. The v0.3.1 request does not authorize an automatic commit or push. Preserve existing changes and history.
 - The owner's explicit local-PNG display policy supersedes the earlier display-only licensing gate above; all redistribution permissions remain unverified. Preserve assets, provenance and the opening README disclaimer.
 
 ## v0.2.0 presentation and samples
@@ -46,3 +46,9 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Use centralized Airbus/Boeing type/variant references. Never silently rename historical/custom identity snapshots.
 - Delay severity uses entered whole disruption minutes, never inferred flight causation; preserve historical operational impact independently.
 - Full backups are explicitly unencrypted and separate from report exports. Strict validate/preview/confirm before atomic Restore / Replace; block unsafe versions, keys, IDs, links, stale previews and failures. Never clear storage or partially import. No PDF import or complex merge.
+
+## v0.3.1 presentation rules
+
+- Home action: Log a Handling Task. New/edit/review interface: Handling Record. Formal statistics: Handling Assignments. Preserve Aircraft models, backup JSON keys, local storage and all saved values.
+- Use the shared non-mutating airline ordering helper: default CX/UO/LD then 21 English names A–Z; active search filters matches without pinned unrelated identities. Preserve logos, aliases and custom text.
+- Duty-picker labels show work progress only: Planned → Scheduled, Worked → Worked; absent progress is explicitly not recorded. Never infer Worked from dates or change legacy statistics. Keep HK shift-start date, 24-hour times and overnight (+1).

@@ -81,11 +81,11 @@ describe('v0.3.0 dependent aircraft identity and duty selection', () => {
   });
   it('formats overnight and incomplete duties without invented values, preserving legacy states', () => {
     const d = seedDatabase().duties[1];
-    expect(dutyOptionText(d)).toBe('2026-Oct-15 22:00–06:00(+1) · Confirmed/Worked');
+    expect(dutyOptionText(d)).toBe('2026-Oct-15 22:00–06:00(+1) · Worked');
     expect(
       dutyOptionText({ ...d, start: '', end: '', status: 'Draft', workState: undefined }),
-    ).toBe('2026-Oct-15 —–— · Draft/Legacy');
-    expect(dutyOptionText(seedDatabase().duties[2])).toContain('Confirmed/Planned');
+    ).toBe('2026-Oct-15 —–— · Work state not recorded');
+    expect(dutyOptionText(seedDatabase().duties[2])).toContain('Scheduled');
   });
   it('supports mouse, keyboard, Escape and wrapped option labels in a labeled combobox', async () => {
     const user = userEvent.setup(),
@@ -100,7 +100,7 @@ describe('v0.3.0 dependent aircraft identity and duty selection', () => {
     await user.keyboard('{Escape}');
     expect(box).toHaveAttribute('aria-expanded', 'false');
     await user.click(box);
-    await user.click(screen.getByRole('option', { name: /Confirmed\/Planned/ }));
+    await user.click(screen.getByRole('option', { name: /Scheduled/ }));
     expect(onChange).toHaveBeenLastCalledWith('sample-planned');
   });
 });

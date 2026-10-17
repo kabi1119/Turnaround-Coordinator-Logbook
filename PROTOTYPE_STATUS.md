@@ -1,4 +1,12 @@
-# TCO Logbook v0.3.0 Pre-release status
+# TCO Logbook v0.3.1 Pre-release status
+
+## v0.3.1 terminology, airline ordering and Duty labels — 2026-10-18 (Hong Kong)
+
+Started on clean main / f5a2a11 (v0.3.0). Final bilingual Handling Task/Record/Assignment terminology is wired to Home, entry/review/detail actions and Statistics. One non-mutating shared ordering helper presents CX/UO/LD then 21 English-name A–Z choices; active search has no unrelated pinned entries. Duty labels show Scheduled/Worked or explicit unknown progress, preserving times/overnight markers and all underlying states/statistics. Both new/edit forms share the same airline component.
+
+No model/schema/key/record migration, dependency/service change, PNG/provenance change, commit or push. v0.3.0 full JSON backup compatibility and LAN UUID remain. See docs/V0_3_1_ACCEPTANCE.md for checks and owner acceptance; previous sections below are historical.
+
+Verification: **200 tests passed / 16 files**; lint zero warnings, TypeScript/Vite build and format check passed; npm audit **0 vulnerabilities**. Edge in an isolated temporary synthetic profile completed **196 layout checks** across 320/375/390/393/414/430/1440 px, both languages and Light/Dark: Home action, new/edit/review dialogs, airline/Duty options and Statistics. All 24 logos loaded; emulated touch selected HK Express; LAN HTTP ran with randomUUID absent; review/cancel interactions left stored records unchanged. No detected horizontal overflow or runtime exceptions. Real iPhone Safari/Chrome, screen reader and physical touch/keyboard remain owner acceptance. No commit, push, staged changes or user-browser reset.
 
 ## v0.3.0 Aircraft entry, mobile UX and data management — 2026-10-18 (Hong Kong)
 

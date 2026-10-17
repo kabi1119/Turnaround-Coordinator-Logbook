@@ -33,7 +33,7 @@ export default function AircraftDetails({
   const identity = findAirline(a.airline) || findLocalAirline(a.airline);
   return (
     <>
-      <span className="eyebrow">{t('AIRCRAFT ASSIGNMENT', '航機處理紀錄')}</span>
+      <span className="eyebrow">{t('HANDLING RECORD', '航機處理紀錄')}</span>
       <div className="detail-airline">
         <AirlineLogo airline={a.airline} size="lg" decorative />
         <h2 className="detail-title">{c.title}</h2>

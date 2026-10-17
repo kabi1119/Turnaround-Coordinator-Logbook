@@ -57,11 +57,16 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
       <div className="page-heading">
         <div>
           <span className="eyebrow">ANALYSE / UNDERSTAND</span>
-          <h1>{t('Every assignment,\na bigger picture.', '每項紀錄，\n構成更完整的圖像。')}</h1>
+          <h1>
+            {t(
+              'Every handling assignment,\na bigger picture.',
+              '每項航機處理任務，\n構成更完整的圖像。',
+            )}
+          </h1>
           <p>
             {t(
-              'Your personal logbook in numbers. One turnaround is always one assignment.',
-              '以數字回顧個人紀錄；一次完整過站始終只算一項。',
+              'Your personal logbook in numbers. One Full Turnaround is always one handling assignment.',
+              '以數字回顧個人紀錄；一次完整過站始終只算一項航機處理任務。',
             )}
           </p>
         </div>
@@ -79,12 +84,12 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
       <div className="metrics surface-dark">
         <Metric
           value={s.logged}
-          label={t('Total Aircraft Logged', '航機記錄總數')}
+          label={t('Handling Assignments Logged', '航機處理任務（記錄）')}
           detail={t('Primary + Supporting + Training', '主要 + 支援 + 訓練')}
         />
         <Metric
           value={s.handled}
-          label={t('Total Aircraft Handled', '航機處理總數')}
+          label={t('Handling Assignments Handled', '航機處理任務（已處理）')}
           detail={t('Primary + Supporting', '主要 + 支援')}
         />
         <Metric
@@ -94,7 +99,7 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
         />
       </div>
       <div className="section-title">
-        <h2>{t('Assignment insights', '處理紀錄分析')}</h2>
+        <h2>{t('Handling Assignments', '航機處理任務')}</h2>
         <Select
           label={t('Breakdown & ranking scope', '分類及排名範圍')}
           options={[
@@ -110,7 +115,10 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
         <section className="panel">
           <SectionTitle
             title={t('Handling Type', '處理類型')}
-            subtitle={t('Three mutually exclusive assignment types', '三種互斥的處理紀錄類型')}
+            subtitle={t(
+              'Three mutually exclusive handling assignment types',
+              '三種互斥的航機處理任務類型',
+            )}
           />
           <Bars items={s.types.map((x) => [l(x.type), x[scope]])} />
           <p className="muted">
@@ -129,8 +137,8 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
           />
           <p className="muted">
             {t(
-              'Confirmed assignments only. Drafts and Trash are excluded.',
-              '只計已確認紀錄，排除草稿及垃圾桶。',
+              'Confirmed handling assignments only. Drafts and Trash are excluded.',
+              '只計已確認的航機處理任務，排除草稿及垃圾桶。',
             )}
           </p>
         </section>
@@ -244,7 +252,7 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
         </div>
         <div>
           <strong>{s.disrupted}</strong>
-          <span>{t('Assignments with events', '有事件的處理紀錄')}</span>
+          <span>{t('Handling assignments with events', '有事件的航機處理任務')}</span>
         </div>
       </div>
       <p className="muted">
