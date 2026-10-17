@@ -1,4 +1,23 @@
-# Prototype v0.1.3 status
+# Prototype v0.1.4 status
+
+## v0.1.4 implementation — 2026-10-17 (Hong Kong)
+
+Built on the clean, committed v0.1.3 baseline 4e607f4 on main. Current owner request authorizes a new local v0.1.4 commit after checks; no push, amend, history rewrite, visibility change or deployment. Work is exclusively in Turnaround-Coordinator-Logbook.
+
+- AirlineCombobox replaces native datalist: exactly 24 local image/name/IATA options; searchable name/code/aliases; editable historical/custom text; arrows, Enter, Escape, mouse/touch and focus behavior. AirlineLogo retains code fallback and separate unresolved legal status.
+- seedDatabase now generates exactly 24 Confirmed synthetic assignments, one per catalogue airline, on 24 distinct fixed HK dates (12 August–16 October 2026). Flights, registrations and bays are explicitly DEMO; selected gate times and independent statuses demonstrate existing features. Appropriate type illustrations include B737-800 and A330-300F entry options. Original eight variant choices are frozen in legacySeed to preserve recognition fingerprints.
+- Six original duties and three Journal payloads/IDs remain; nineteen date-specific demo duties are added, giving 25 duties. All nine role/type combinations remain represented. Counts derive from actual rows: 24 Logged, 18 Handled, 9 Primary, eight per handling type. Home/Statistics label the unchanged current-demo subset separately from overall totals.
+- Settings safe refresh previews replacements/generated rows and dates, new duties/required journals, retained Journal aircraft references and disruption counts. Full recursive match against frozen v0.1.1–v0.1.3 payloads is required. No automatic migration/reset/write on load. Existing duties/journals/settings/custom records remain; eligible Aircraft IDs are retained while their scenario content/date/Duty may change as explicitly previewed. Repeated refresh does not duplicate records/events. Edited/deleted-field/unknown target IDs, duplicate IDs or different-date/trashed required duties block the whole transaction. A stale preview also fails safely.
+- Clock typography is 24 px time / 14 px date desktop and 18 px / 12 px mobile. Asia/Hong_Kong seconds, current-system-time recomputation, resume/focus cleanup and isolated renders are preserved.
+- Home replaces only the redundant section New Duty shortcut with bilingual View All Previous Duties. Small modal reuses duty-row/Badge/Modal and existing details callbacks; sorts by past HK start time, retains same-day shifts and Planned/Worked labels, excludes future and Trash, and includes an empty state. Prominent duty actions and five tabs remain.
+- docs/VERSIONING.md, README and AGENTS document the owner's custom multi-digit vMAJOR.MINOR.PATCH[letter], explicit production approval, scope-based future proposals and version-first English release commits. Package/root lock version is 0.1.4; no dependency change.
+- README opening disclaimer, source-available/non-open-source terms, all PNG bytes/provenance and unresolved rights remain intact. Historical entries below describe earlier releases.
+
+Executed verification: **118 tests passed across 12 files**; lint zero warnings, TypeScript/Vite build passed, format:check passed, npm audit **0 vulnerabilities**. Isolated Windows headless Edge passed seven widths in both themes, keyboard/emulated-touch logo selection, cancellation and reviewed legacy refresh with custom records preserved, idempotency, duty-history ordering/detail access, overnight batch save/reload and stable detail scroll through clock updates. No runtime exception or external HTTP asset request. Representative screenshots were visually inspected; QA artifacts remain ignored under .checkpoints. Full results: docs/V0_1_4_ACCEPTANCE.md.
+
+Real iPhone/Safari and physical touch remain untested. Ambiguous required IDs deliberately block refresh rather than overwrite potential user edits; fixed synthetic dates do not roll forward automatically. Legacy Draft duties without work progress show Not Recorded in the new history instead of inferring completed work. No automatic storage migration, browser-data reset or deployment runs. The v0.1.4 local commit is created only after final staging review and successful checks; its hash/body are reported in delivery, without pushing.
+
+## Historical v0.1.3 status
 
 Updated: 2026-10-17 (Asia/Hong_Kong). Baseline: approved PRD v1.5 + prototype implementation brief. This is a frontend demonstration with synthetic data only. No Phase 2 work has started.
 

@@ -34,6 +34,9 @@ import Radar from './components/Radar';
 import AircraftSummary from './features/AircraftDetails';
 import BatchDutyEditor from './features/BatchDutyEditor';
 import HongKongClock from './components/HongKongClock';
+import DutyHistory from './features/DutyHistory';
+import { previousDuties } from './domain/roster';
+import DemoScope from './components/DemoScope';
 type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
 type Overlay =
   | { type: 'add' }
@@ -42,6 +45,7 @@ type Overlay =
   | { type: 'duty'; id?: string }
   | { type: 'dutyDetail'; id: string }
   | { type: 'batchDuty' }
+  | { type: 'dutyHistory' }
   | { type: 'journal'; id?: string }
   | { type: 'report' }
   | { type: 'history'; registration: string }
@@ -105,9 +109,7 @@ function Workspace({
     active = db.aircraft
       .filter((a) => a.status !== 'Trashed')
       .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
-  const recentDuty = db.duties
-    .filter((d) => d.status !== 'Trashed')
-    .sort((a, b) => b.date.localeCompare(a.date) || b.start.localeCompare(a.start))[0];
+  const recentDuty = previousDuties(db.duties)[0];
   const close = () => setOverlay(null);
   const openAircraft = (a: Aircraft) => setOverlay({ type: 'detail', id: a.id });
   const detail =
@@ -157,7 +159,7 @@ function Workspace({
         </div>
       </header>
       <div className="demo-strip">
-        <span className="live-dot" /> {t('PROTOTYPE v0.1.3', '原型 v0.1.3')}
+        <span className="live-dot" /> {t('PROTOTYPE v0.1.4', '原型 v0.1.4')}
         <span>·</span>
         {t('SYNTHETIC DEMO DATA', '合成示範資料')}
         <span className="desktop-only">
@@ -220,14 +222,18 @@ function Workspace({
                 detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
               />
             </div>
+            <DemoScope rows={db.aircraft} />
             <div className="home-columns">
               <div>
                 <SectionTitle
                   title={t('Most recent Duty', '最近更次')}
                   action={
-                    <button className="text-button" onClick={() => setOverlay({ type: 'duty' })}>
-                      {t('New Duty', '新增更次')}
-                      <Plus size={16} />
+                    <button
+                      className="text-button"
+                      onClick={() => setOverlay({ type: 'dutyHistory' })}
+                    >
+                      {t('View All Previous Duties', '查看過往全部更次')}
+                      <ArrowRight size={16} />
                     </button>
                   }
                 />
@@ -374,7 +380,7 @@ function Workspace({
         )}
         <footer className="page-footer">
           TCO LOGBOOK{' '}
-          <span>v0.1.3 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
+          <span>v0.1.4 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
         </footer>
       </main>
       <nav className="app-navigation" aria-label={t('Main navigation', '主導覽')}>
@@ -460,6 +466,13 @@ function Workspace({
           onClose={close}
           commit={commit}
           onSaved={() => setToast(t('Saved on this device (prototype)', '已儲存在此裝置（原型）'))}
+        />
+      )}
+      {overlay?.type === 'dutyHistory' && (
+        <DutyHistory
+          duties={db.duties}
+          onClose={close}
+          onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
         />
       )}
       {overlay?.type === 'batchDuty' && <BatchDutyEditor db={db} onClose={close} commit={commit} />}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import { emptyAircraft, restrictivePrivacy, roles } from '../src/domain/model';
 import type { Aircraft, Privacy } from '../src/domain/model';
 import {

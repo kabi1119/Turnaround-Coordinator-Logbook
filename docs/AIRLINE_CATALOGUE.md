@@ -1,4 +1,4 @@
-# v0.1.3 owner-defined airline catalogue
+# Owner-defined airline catalogue — current v0.1.4
 
 This is the owner's requested default selection, **not a verified or exhaustive HAS handling customer list**. The single source is src/data/airlineCatalogue.ts; registry, search, local PNG mappings and reference exports derive from it. No current airline operational relationship is inferred.
 
@@ -33,13 +33,15 @@ NH / ANA, SQ, HX and EK are excluded only from default suggestions and fresh syn
 
 New owner-defined entries have no invented verification date or official identity source; the catalogue document is their scope reference. Original nine reference records and rights evidence remain in historicalAirlineReferences. Every legal permission remains unverified/not-established. No third-party permission is inferred from display or membership.
 
-## Conservative legacy-demo refresh
+## Reviewed v0.1.4 dataset refresh
 
-Fresh seedDatabase uses only selected names from this catalogue, preserving 18 assignments, duty/journal IDs and all role/type/status scenarios. A historical eight-name fixture is used only to recognize the exact legacy payload.
+Fresh seedDatabase creates exactly one assignment per identity on 24 distinct fixed Hong Kong dates; all 24 are Confirmed. It retains the six historical Duty and three Journal payloads/IDs, adds nineteen date-specific demo duties and preserves a two-shift date and overnight example. Flights, registrations, bays and notes are explicitly synthetic. Type examples are illustrations, not live fleet assertions or HAS customer claims. All nine role/handling combinations are covered; derived totals are 24 Logged, 18 Handled and 9 Primary.
 
-No automatic migration runs. Settings offers a review with old → new airline, date and count. Full recursive content equality against a known legacy synthetic fixture is required, not just a predictable ID or DEMO prefix. Edited records, changed/deleted private fields, unknown properties, custom IDs and deleted records are skipped. Confirmation rechecks eligibility and changes only each approved airline field. Duty/Journal payloads, IDs, links, counts and all other Aircraft fields remain unchanged; no samples are inserted. Repeating refresh creates no duplicate and changes nothing further.
+No automatic migration runs. Settings → Refresh obsolete demo airlines previews full scenario replacements, generated rows and dates, new duty/journal counts, retained Journal references and replaced/generated disruption counts. Confirmation keeps Aircraft IDs and existing Journal references, but replaces eligible scenario content (including airline/date/Duty). All existing duties/journals and unrelated aircraft remain unchanged. Missing required demo duties/journals are previewed before insertion. A second refresh creates no duplicate rows/events.
 
-When an old sample cannot be reliably distinguished, leave it unchanged. Users can edit it normally. Do not use Seed/Reset to refresh a mixed collection: those pre-existing actions replace the dataset after confirmation and are separately labeled in Settings.
+Only full recursive equality to frozen v0.1.1–v0.1.3 fixtures permits replacement, never ID/DEMO labels alone. Edited/deleted-field/unknown payloads occupying a required ID, duplicate target IDs or different-date/trashed required duties block the entire refresh. A database change since preview also blocks confirmation. Unknown custom IDs remain untouched, including out-of-catalogue names. Therefore an ambiguous legacy collection may require owner review and is not falsely reported as cleaned. The exact unchanged v0.1.4 demo subset is labeled separately from overall statistics.
+
+legacySeed.ts and the old airline-only refresh helper remain compatibility fixtures; the current UI uses demoDatasetRefresh.ts. Do not use Seed/Reset on a mixed collection: those pre-existing confirmed actions replace the entire collection.
 
 ## Logo presentation
 

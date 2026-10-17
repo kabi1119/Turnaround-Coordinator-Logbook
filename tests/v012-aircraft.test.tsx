@@ -4,7 +4,8 @@ import { AircraftCard } from '../src/components/ui';
 import AircraftDetails from '../src/features/AircraftDetails';
 import { emptyAircraft } from '../src/domain/model';
 import type { Privacy } from '../src/domain/model';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import { aircraftTimes } from '../src/domain/time';
 import App from '../src/App';
 import { STORAGE_KEY } from '../src/lib/storage';

@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
 import AircraftEditor from '../src/features/AircraftEditor';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import { emptyAircraft } from '../src/domain/model';
 import type { Database } from '../src/domain/model';
 import { STORAGE_KEY, writeDatabase } from '../src/lib/storage';
@@ -228,11 +229,11 @@ describe('App navigation, persistence and privacy', () => {
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(19);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(25);
     expect(screen.getByRole('status')).toHaveTextContent('Saved on this device (prototype)');
     view.unmount();
     render(<App />);
-    expect(screen.getAllByText('18')).not.toHaveLength(0);
+    expect(screen.getAllByText('25')).not.toHaveLength(0);
   });
   it('Privacy disable previews impact and archives by default; reset/seed require explicit confirm', async () => {
     const user = userEvent.setup();
@@ -247,17 +248,17 @@ describe('App navigation, persistence and privacy', () => {
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
     expect(stored.settings.privacy.registration).toBe(false);
-    expect(stored.aircraft[0].registration).toBe('DEMO-001');
+    expect(stored.aircraft[0].registration).toBe('DEMO-7C-001');
     await user.click(screen.getByRole('button', { name: 'Reset Demo Data · empty' }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(18);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(24);
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(18);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(24);
     await user.click(screen.getByRole('button', { name: 'Reset Demo Data · empty' }));
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(0);
     await user.click(screen.getByRole('button', { name: 'Seed Demo Data' }));
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(18);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(24);
   });
   it('Browser storage failures do not claim save success', () => {
     const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {

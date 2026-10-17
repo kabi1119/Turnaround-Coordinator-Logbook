@@ -2,7 +2,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import { STORAGE_KEY } from '../src/lib/storage';
 import Logbook from '../src/features/Logbook';
 import { ReportPreview } from '../src/features/Settings';
@@ -57,6 +58,7 @@ describe('Cross-feature regression workflows', () => {
   });
   it('Journal can be created with multi-links, searched by competency, edited and unlinked without aircraft count changes', async () => {
     const user = userEvent.setup();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedDatabase()));
     render(<App />);
     await user.click(screen.getByRole('button', { name: 'Journal' }));
     await user.click(screen.getByRole('button', { name: 'New Journal' }));

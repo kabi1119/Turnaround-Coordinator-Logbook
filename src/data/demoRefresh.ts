@@ -1,5 +1,5 @@
 import type { Aircraft, Database } from '../domain/model';
-import { seedDatabase } from './seed';
+import { legacySeedDatabase as seedDatabase } from './legacySeed';
 
 /** Historical fixture only; never used by the default entry catalogue or fresh seed. */
 export const legacyDemoAirlines = [

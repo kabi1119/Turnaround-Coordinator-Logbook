@@ -91,7 +91,7 @@ export default function Settings({
       <div className="notice prototype-notice">
         <Shield size={24} />
         <div>
-          <strong>{t('Prototype v0.1.3 · Demo Data', '原型 v0.1.3 · 示範資料')}</strong>
+          <strong>{t('Prototype v0.1.4 · Demo Data', '原型 v0.1.4 · 示範資料')}</strong>
           <p>
             {t(
               'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. These controls are demonstrations, not security guarantees or employer permission.',

@@ -1,6 +1,22 @@
 import type { Database, Duty } from './model';
 import { hkToday } from './model';
 
+export function previousDuties(duties: Duty[], now = Date.now()) {
+  const today = hkToday(new Date(now));
+  return duties
+    .filter(
+      (d) =>
+        d.status !== 'Trashed' &&
+        d.date &&
+        d.date <= today &&
+        (!d.start || Date.parse(`${d.date}T${d.start}:00+08:00`) <= now),
+    )
+    .sort(
+      (a, b) =>
+        b.date.localeCompare(a.date) || b.start.localeCompare(a.start) || a.id.localeCompare(b.id),
+    );
+}
+
 export function monthDates(month: string) {
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return [];
   const [year, mon] = month.split('-').map(Number);

@@ -2,10 +2,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import AirlineLogo from '../src/components/AirlineLogo';
 import * as registry from '../src/data/airlines';
-import { airlines, demoAirlines } from '../src/data/reference';
+import { airlines, legacyDemoCatalogue as demoAirlines } from '../src/data/reference';
 import type { AirlineReference } from '../src/data/airlines';
 import App from '../src/App';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import { STORAGE_KEY } from '../src/lib/storage';
 import { displayLogoPath } from '../src/data/localAirlineLogos';
 

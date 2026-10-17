@@ -1,0 +1,90 @@
+.airline-combobox {
+  position: relative;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+.airline-combobox .field {
+  margin-bottom: 7px;
+}
+.airline-combobox-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.airline-combobox-field > input {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+}
+.airline-combobox-field > button {
+  flex: 0 0 44px;
+  padding: 10px;
+}
+.airline-combobox-field .airline-identity {
+  flex: 0 0 auto;
+}
+.airline-options {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 4px);
+  width: 100%;
+  max-height: min(360px, 45dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px #0003;
+}
+.airline-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.airline-option > .airline-identity {
+  flex: 0 0 auto;
+}
+.airline-option > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.airline-option > strong {
+  flex: 0 0 24px;
+  color: var(--muted);
+}
+.airline-option:hover,
+.airline-option.highlighted,
+.airline-option[aria-selected='true'] {
+  background: var(--bg);
+  outline: 2px solid var(--line);
+  outline-offset: -2px;
+}
+.duty-history-row {
+  width: 100%;
+  margin: 8px 0;
+  text-align: left;
+  flex-wrap: wrap;
+}
+.duty-history-row > span:first-child {
+  flex: 1;
+  min-width: 150px;
+}
+.demo-scope {
+  line-height: 1.6;
+}
+@media (max-width: 767px) {
+  .airline-option {
+    gap: 8px;
+    font-size: 14px;
+  }
+  .home-columns .section-title {
+    flex-wrap: wrap;
+  }
+}

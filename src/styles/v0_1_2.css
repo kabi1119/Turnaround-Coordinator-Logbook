@@ -9,12 +9,12 @@
   gap: 2px;
   text-align: right;
   color: var(--text);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.35;
   font-variant-numeric: tabular-nums;
 }
 .hk-clock time {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 650;
   white-space: nowrap;
 }
@@ -84,11 +84,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .hk-clock {
-    font-size: 10px;
-    max-width: 128px;
+    font-size: 12px;
+    max-width: 144px;
   }
   .hk-clock time {
-    font-size: 16px;
+    font-size: 18px;
   }
   .header-right {
     gap: 6px;
@@ -114,6 +114,6 @@
     font-size: 6px;
   }
   .hk-clock {
-    max-width: 110px;
+    max-width: 130px;
   }
 }

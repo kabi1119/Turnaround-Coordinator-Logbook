@@ -9,7 +9,8 @@ import {
   completedDuty,
 } from '../src/domain/roster';
 import { stats, trashDuty, restoreDuty } from '../src/domain/selectors';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import { loadDatabase, STORAGE_KEY, writeDatabase } from '../src/lib/storage';
 import BatchDutyEditor from '../src/features/BatchDutyEditor';
 import DutyEditor from '../src/features/DutyEditor';

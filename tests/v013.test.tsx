@@ -3,7 +3,8 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { airlineCatalogue, searchAirlines, displayLogoPath } from '../src/data/airlineCatalogue';
 import { airlineRegistry, findAirline } from '../src/data/airlines';
-import { seedDatabase } from '../src/data/seed';
+// Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
+import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
 import {
   legacyDemoAirlines,
   demoAirlineRefreshPlan,
@@ -63,14 +64,15 @@ describe('v0.1.3 owner-defined catalogue', () => {
     expect(searchAirlines('AirAsia').map((a) => a.iata)).toEqual(['AK', 'D7', 'QZ', 'Z2']);
     expect(findAirline('HX')?.name).toBe('Hong Kong Airlines');
   });
-  it('Entry datalist exposes all 24 by default, filters codes and keeps custom/historical text editable', () => {
+  it('Entry combobox exposes all 24 by default, filters codes and keeps custom/historical text editable', () => {
     const db = seedDatabase();
     const view = render(
       <AircraftEditor db={db} commit={() => true} onClose={() => {}} onSaved={() => {}} />,
     );
-    expect(document.querySelectorAll('#airlines option')).toHaveLength(24);
+    fireEvent.click(screen.getByRole('combobox', { name: 'Airline *' }));
+    expect(within(screen.getByRole('listbox')).getAllByRole('option')).toHaveLength(24);
     fireEvent.change(screen.getByLabelText('Airline *'), { target: { value: 'LD' } });
-    expect(document.querySelector('#airlines option')).toHaveAttribute('value', 'Air Hong Kong');
+    expect(screen.getByRole('option', { name: 'Air Hong Kong LD' })).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Airline *'), {
       target: { value: 'DEMO custom carrier' },
     });
@@ -153,20 +155,18 @@ describe('Conservative, reviewed demo-airline refresh', () => {
       commit = vi.fn(() => true),
       close = vi.fn();
     const view = render(<DemoAirlineRefresh db={db} commit={commit} onClose={close} />);
-    const confirm = screen.getByRole('button', { name: 'Confirm demo airline refresh' });
+    const confirm = screen.getByRole('button', { name: 'Confirm 24-airline demo refresh' });
     expect(confirm).toBeDisabled();
     expect(commit).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(close).toHaveBeenCalledOnce();
     expect(commit).not.toHaveBeenCalled();
     fireEvent.click(
-      screen.getByLabelText(
-        'I reviewed these synthetic samples and approve only the listed airline changes.',
-      ),
+      screen.getByLabelText('I reviewed the replacements, new dates and relationship impact.'),
     );
     fireEvent.click(confirm);
     expect(commit).toHaveBeenCalledOnce();
-    expect((commit.mock.calls[0] as unknown as [typeof db])[0].aircraft).toHaveLength(18);
+    expect((commit.mock.calls[0] as unknown as [typeof db])[0].aircraft).toHaveLength(24);
     view.unmount();
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
