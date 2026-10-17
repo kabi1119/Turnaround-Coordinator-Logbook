@@ -167,6 +167,7 @@ Open the Windows LAN address printed by Vite on the phone; allow private-network
 - **v0.1.2:** Complete applicable Aircraft details and gate-time card summaries; reviewed monthly/batch planned duties with conflict checks; owner-enabled local PNGs with independent rights status; live Hong Kong device clock.
 - **v0.1.3:** Larger margin-aware logo presentation, unified 24-airline defaults, conservative reviewed legacy-demo airline refresh and targeted modal scroll/compositing changes.
 - **v0.1.4:** Accessible image combobox, one synthetic assignment per 24 catalogue airlines on distinct dates, reviewed dataset refresh, prominent HKT clock, previous-duty history and permanent version/commit conventions.
+- **v0.1.5 (documentation only):** Added an equivalent Traditional Chinese (Hong Kong) README and an English-language precedence notice; application features remain at v0.1.4.
 - **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, full import/restore, Service Worker/offline reload and validated iOS PWA installation.
 - **Verification:** Local Edge viewport/layout and new workflow checks completed; actual iPhone/Safari, physical touch/keyboard, download and print acceptance remains pending. No deployment has been performed.
 
@@ -209,3 +210,226 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 **Planned only, subject to separate approval:** policy/provider/cost decisions, real authentication, durable backend storage, offline synchronization/conflicts, public aircraft lookup, validated import/restore, encrypted backups and production/iPhone PWA acceptance. These are future phases of the approved PRD, not delivered v0.1.4 features.
 
 v0.1.4 remains a local frontend prototype. OCR/Excel roster import, HR integration, cloud services and production features remain deferred.
+
+## Language Precedence
+
+This README is provided in English and Traditional Chinese (Hong Kong) for accessibility and reference. Both versions are intended to convey the same information. **In the event of any discrepancy, ambiguity, or inconsistency between the two versions, the English version shall prevail.**
+
+---
+
+## 免責聲明與獨立項目聲明
+
+**TCO Logbook 是一個獨立、非商業性質的個人軟件項目，開發目的為學習、作品集展示及航空愛好。**
+
+**本項目與以下機構並無任何從屬、贊助、背書、授權或其他官方關聯：**
+
+- **HAS by Cathay（香港機場地勤服務有限公司，Hong Kong Airport Services Limited）**
+- **國泰航空（Cathay Pacific Airways）**
+- **華民航空（Air Hong Kong）**
+- **香港快運航空（Hong Kong Express／HK Express）**
+- **香港機場管理局（Airport Authority Hong Kong）**
+- **任何其他航空公司、機場營運機構、地勤服務公司或航空相關組織**
+
+TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營運系統。
+
+本項目提及航空公司名稱、機場設施、機型、航空公司識別碼、標誌或其他航空術語，均僅用作識別、參考、示範或教育用途。
+
+所有第三方航空公司名稱、商標、標誌及其他品牌資產，均屬其各自權利持有人所有。項目出現任何航空公司品牌元素，均不代表存在商業關係、認可、贊助或官方授權。
+
+**本免責聲明本身並不授予複製或再分發第三方知識產權的許可；該等資產仍受適用權利及許可條款約束。**
+
+所有公開發佈的示範紀錄及營運情境均為虛構資料，並非 HAS 或任何航空公司的官方營運資料庫。本項目無意公開分發僱主機密資料、真實乘客資料、公司內部文件或專有營運紀錄。
+
+**TCO Logbook 是個人軟件原型，不得用作航空公司、機場或地勤服務機構的官方營運系統、安全關鍵系統或正式生產環境的航空管理系統。**
+
+---
+
+# TCO Logbook
+
+**個人航空營運紀錄及職涯發展助手。**
+
+TCO Logbook 是一個獨立開發的航空主題網頁應用程式原型，用於整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.1.4** 在本機執行，使用虛構示範資料。
+
+## 關於本項目
+
+本項目源於對航空及地面營運的興趣，探索如何透過有系統的個人紀錄，將經驗整理成具意義的統計數據和職涯反思。項目適合航空愛好者，以及對現代化、適合手機使用的數碼 Logbook 感興趣的人士。
+
+這是一個非商業個人作品集項目，並非受任何航空機構委託、為其開發或獲其認可。
+
+## 功能特色
+
+- **航機處理紀錄（Aircraft Handling Logbook）：** 支援 Full Turnaround（完整過站）、Departure Only（僅離港）及 Arrival Only（僅抵港）任務；Primary Coordinator（主要協調員）、Supporting Coordinator（支援協調員）及 Training / Observation（培訓／觀察）角色；Draft（草稿）及 Confirmed（已確認）紀錄。可記錄航空公司與機型，以及在示範私隱控制下選填註冊編號、航班及停機位資料。每次儲存 Aircraft 紀錄前均須經過 Review → Confirm & Save；抵港與離港狀態分別記錄。
+- **更次管理（Duty Management）：** 支援同一天多個更次、選填上下班時間、跨午夜更次歸類，以及關聯航機紀錄。將 Duty 移至垃圾桶不會刪除其航機紀錄；還原時可經明確確認後重新連結。
+- **主頁儀表板（Dashboard）：** 顯示 Home 統計總數、最近活動及支援減少動態效果偏好設定的裝飾性雷達動畫。該雷達並非即時雷達或航班追蹤功能。
+- **統計（Statistics）：** 日期及組合篩選、航空公司／機型排名、每月趨勢、角色分佈，以及三種互斥的處理類型。一次 Full Turnaround 只計算一筆任務。Logged 包含 Training；Handled 與職涯協調任務統計則排除 Training。Primary 是 Handled 的子集，不應額外加在 Handled 總數之上。
+- **職涯日誌（Career Journal）：** 支援獨立或關聯式反思、STAR 結構欄位、能力標籤、Draft／Confirmed 狀態及可選填的自行申報成果。Journal 紀錄不會增加航機處理任務數量。
+- **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須確認的 Seed／Reset 操作。這些是示範工具，不是完整備份或自動匿名化功能。
+- **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
+
+## v0.1.4 改進內容
+
+- **附圖片的航空公司組合選擇框：** 24 個目錄選項均顯示本機 Logo、完整名稱及 IATA 代碼。可按名稱／代碼搜尋，以方向鍵、Enter、Escape 操作，亦可保留歷史／自訂文字。關閉的選擇欄位會預覽已選航空公司；滑鼠及觸控使用相同選取邏輯。
+- **24 個日期的 24 筆虛構航機任務：** 目錄內每間航空公司各一筆，全部為 Confirmed，涵蓋九種角色／處理類型組合，並使用明顯虛構的航班號及註冊編號。固定的香港日期橫跨 2026 年 8 月 12 日至 10 月 16 日。依據資料計算的總數為 **24 Logged / 18 Handled / 9 Primary**；三種處理類型各有 8 筆任務。另有 25 個 Duty（包括原本六個、同一天兩更及一個通宵更次範例）與 3 篇 Journal。
+- **安全更新示範資料：** Settings → **Refresh obsolete demo airlines** 會先預覽整個情境資料的替換內容、產生的紀錄、新增 Duty，以及對 Journal／突發事件的影響。v0.1.1–v0.1.3 未改動的樣本，會以完整資料內容相等作識別。ID 及 Journal 參照維持不變；情境日期、航空公司、時間及 Duty 關聯則可能按預覽更改。既有 Duty／Journal 內容、無關紀錄及設定維持不變。如必要 ID 曾被編輯／無法辨識，或出現日期不符／已移至垃圾桶的 Duty 衝突，整個交易會被阻止，不會覆寫任何資料。重複更新不會累積重複紀錄。切勿使用 Seed／Reset 更新混合了個人紀錄的資料集合。
+- **主頁儀表板：** HKT 時鐘字體加大至桌面 24 px／手機 18 px；Home → **View All Previous Duties** 可開啟按香港更次開始日期倒序排列的歷史紀錄，並顯示詳情及 Planned／Worked 標籤。未來更次仍在 Logbook 顯示。Add Duty、Batch Add Duties 及中央 Add 分頁保留。
+- **版本管理政策：** [VERSIONING.md](docs/VERSIONING.md) 定義項目擁有者自訂的 `vMAJOR.MINOR.PATCH[letter]` 格式（並非嚴格遵循 SemVer）、正式版批准機制，以及版本號置前的英文 Release Commit 格式。往後開發會按更新規模建議版本號，已同意的版本不得擅自更改。
+
+Home 及 Statistics 會將整體總數與未經修改的 v0.1.4 示範資料子集分開說明。已編輯、歷史及自訂紀錄仍計入整體總數。瀏覽器既有儲存資料會原樣載入，不會自動更新、遷移或重設。詳見 [v0.1.4 驗收清單](docs/V0_1_4_ACCEPTANCE.md)。
+
+## 過往 v0.1.3 改進內容
+
+- **更清晰的航空公司 Logo：** 桌面卡片圖片框為 112 × 56 px、手機為 96 × 52 px；詳細資料框為 144 × 72／128 × 64 px；Compact 顯示維持 56 × 36 px。程式會測量圖片中帶有留白的可見內容邊界，再調整 CSS 位置及等比例縮放，避免透明或中性背景留白令 Logo 顯得太細。24 張原始 PNG 與授權紀錄均不變，亦沒有產生衍生圖片。
+- **使用者指定的 24 間航空公司目錄：** 由同一份航空公司身份／資產資料來源支援預設選項、IATA／名稱／別名搜尋、Registry 及 PNG 對應。NH／SQ／HX／EK 不再出現在預設選項及新生成的示範紀錄，但歷史／自訂紀錄仍可查看及編輯。列入目錄不等於已核實其與 HAS 的客戶關係。詳見 [航空公司目錄](docs/AIRLINE_CATALOGUE.md)。
+- **安全更新舊示範資料：** Settings → Refresh obsolete demo airlines 只預覽與未修改的舊版虛構測試資料在完整內容上相符的紀錄。確認後僅更改清單中的航空公司欄位。已編輯／自訂／無法識別的樣本，以及經私隱功能刪除的欄位，均不會只憑 ID 或 DEMO 標記推斷；亦不會清除任何紀錄、關聯或儲存內容。更新操作具冪等性。原有 Seed／Reset 仍屬獨立且需明確確認的替換操作。
+- **詳細資料捲動：** 移除即時背景模糊效果，在任何 Modal 開啟時暫停裝飾性雷達，並在最後一個巢狀 Modal 關閉前鎖定背景頁面捲動。時鐘原本已獨立運作；測試確認時鐘跳秒不會令 Home 的詳細資料重新渲染或重設捲動位置。簡短 Edge 效能紀錄未能重現所回報的硬件掉幀，因此這些調整只是減少已確認可避免的運算負擔，並非保證所有裝置均達到某個 FPS。
+
+詳見 [v0.1.3 驗收及效能分析備註](docs/V0_1_3_ACCEPTANCE.md)。下方較早期的 v0.1.2 操作流程仍然適用。
+
+## v0.1.2 操作流程
+
+### Aircraft 詳情與 Recent Aircraft 時間
+
+Recent Aircraft 卡片會優先顯示適用航段的實際 AIBT／AOBT。如只有表定資料，則明確標示 Scheduled SIBT／SOBT。不會以 Duty、建立或更新時間冒充航機時間。缺少時間會顯示 Time not recorded；因私隱設定停用的資料則明確標示為隱藏。翌日發生的事件會保留其正確日期。
+
+開啟 Aircraft 卡片後，可分組查看任務、抵港、離港、Duty／Journal 關聯、完整突發事件資料、筆記及紀錄活動。航班號、註冊編號、停機位及航段資料仍受 Settings 私隱開關控制；只應在虛構示範或獲適當授權的情況下啟用。編輯 Aircraft 時仍必須經過 Review／Double-check。
+
+### 每月／批次更表
+
+在 Home 選擇 **Add Duty** 或 **Batch Add Duties**；中央 Add 導航分頁維持不變。
+
+1. 選擇月份／年份及多個日曆日期。已選日期及待儲存項目可以跨月。
+2. 選擇 Day／Evening／Night／Custom，自行輸入開始與結束時間，並明確確認更次時數。系統不提供任何官方或預設的僱主更次時間。
+3. 套用範本。可為其他範本／日期重複操作；儲存前可逐筆修改或移除待處理項目，並加入虛構筆記。
+4. 覆核日期、類型、時間、翌日結束日期及衝突。完全相同的更次必須修改或移除；時段重疊則須另行明確確認保留為獨立更次。
+5. 確認一次後，將所有項目儲存至本機。若寫入儲存空間失敗，待處理項目會保留供重試；系統不會因日期相同而取代已存在的 Duty。
+
+批次建立的 Duty 為 **Confirmed + Planned**：Confirmed 指紀錄狀態，Planned 指實際工作進度。即使日期已過，Planned 亦不會計入 Worked Duty Shifts。完成更次後可於 Duty → Edit Duty 明確標記為 Worked；未來或未完成的更次不能新標記為 Worked。航機任務數量的計算獨立於 Duty 的工作進度。
+
+Duty 日期一律以香港時間的更次開始日期為準。如結束時間早於開始時間，則視為翌日結束，包括跨月／跨年；開始與結束時間相同則會被拒絕。Day／Evening／Night 僅屬個人標籤。範本只會在目前批次視窗開啟期間保留，並非永久範本庫。
+
+舊版 v0.1.1 Duty 如果沒有新的選填 `workState` 欄位，會保留原本按 Confirmed Duty 統計的含義。系統不會自動改寫資料、重設或重新生成種子資料。要存取同一份 localStorage，請使用相同的瀏覽器來源（origin）及 Port；重新命名 Repository 不會令資料跨來源搬移。舊版 App 不理解 Planned 工作進度，因此更表紀錄應使用 v0.1.2 或更新版本。
+
+### 本機航空公司 Logo
+
+全部 24 張現有本機 PNG 均設有明確、區分大小寫的顯示對應。Aircraft 卡片／詳情、Logbook、航空公司排名及現有選擇預覽均重用 AirlineLogo。即使 AirAsia／Jetstar 使用共通品牌圖片，仍以名稱／代碼獨立識別實際航空公司。圖片停用、無效、不可使用或載入失敗時，會改用代碼／名稱顯示。沒有下載新圖片。
+
+**啟用顯示不等於取得法律使用許可。** 所有先前未核實的授權及來源仍維持未核實狀態；README 免責聲明與第三方通知仍然適用。
+
+### 香港即時時鐘
+
+Header 透過 `Asia/Hong_Kong` 顯示香港日期、星期及 HH:mm:ss HKT。系統每秒及在分頁恢復／重新取得焦點時，會以裝置當前時間重新計算；只有時鐘元件會更新。準確度取決於裝置時鐘，並未與權威時間伺服器同步。
+
+## 截圖／預覽
+
+使用虛構資料完成手動視覺驗收後，會加入截圖。目前尚未加入或連結任何截圖。
+
+請按下列步驟在本機執行原型。[v0.1.2 驗收清單](docs/V0_1_2_ACCEPTANCE.md) 涵蓋全部新操作流程。本機 Edge 已在淺色及深色主題下測試七種視窗寬度，以及批次儲存／重新載入和分組詳情，未發現水平溢出。但這些檢查不代表已完成實體 iPhone／Safari 驗收。
+
+## 技術架構
+
+React 19、TypeScript 5.9、Vite 7、原生 CSS／設計 Token、Lucide React 圖示，以及瀏覽器 localStorage。測試使用 Vitest 4、jsdom 及 React Testing Library。ESLint 和 Prettier 用於程式碼檢查。項目沒有後端框架或外部資料服務。
+
+## 開始使用
+
+請使用 **Node.js 24 LTS**、npm、Git 及較新的 Edge／Chrome 瀏覽器。準備工作已在 Node.js 24.20.0 測試。毋須設定環境變數、帳戶或資料庫。
+
+如要首次取得 Repository，並已擁有存取權限：
+
+```powershell
+git clone https://github.com/kabi1119/Turnaround-Coordinator-Logbook.git
+cd Turnaround-Coordinator-Logbook
+npm.cmd ci
+npm.cmd run dev
+```
+
+如已在 Windows 擁有本機 Project，請在 `C:\Projects\Turnaround-Coordinator-Logbook` 開啟 PowerShell；有需要時先執行 `npm.cmd ci`，然後執行 `npm.cmd run dev`。使用 `npm.cmd` 可以避開 PowerShell 的 `npm.ps1` 執行原則問題，而不需改動系統政策。
+
+開啟 Vite 顯示的網址，通常為 `http://127.0.0.1:5173/`；如果 Port 已被佔用，請以終端機實際顯示的網址為準。按 `Ctrl+C` 停止。
+
+### 檢查及本機 Build 預覽
+
+```powershell
+npm.cmd audit
+npm.cmd run test
+npm.cmd run lint
+npm.cmd run build
+npm.cmd run format:check
+npm.cmd run preview
+```
+
+Tests 會執行一次；`npm.cmd run test:watch` 會啟動監察模式。Build 會進行 TypeScript 檢查，並將檔案寫入被 Git 忽略的 `dist/`，不會進行部署。Preview 通常使用 `http://127.0.0.1:4173/`。在其他作業系統可用 `npm` 代替 `npm.cmd`。
+
+### 試用原型
+
+1. 查看 Home 上三種不同統計總數及最近的虛構紀錄。
+2. 新增 Aircraft；在 Review 畫面選擇 Back to Edit 或取消，然後再明確確認儲存。
+3. 試看 `2026-10-16` 的兩個 Duty，以及 `2026-10-15` 的通宵 Duty。
+4. 在 Settings 啟用選填的虛構資料欄位，測試獨立航段狀態、航班號及自訂停機位。
+5. 切換 Timeline／Calendar、組合篩選條件及查看 Statistics。
+6. 新增 Journal 反思紀錄；匯出前在 Privacy Preview 覆核選定的故事。
+7. 只有在閱讀替換確認內容後，才使用 Seed Demo Data 或 Reset Demo Data。
+
+### iPhone／區域網絡測試
+
+iPhone 上的 localhost 指向 iPhone 本身。要在同一個可信任 Wi-Fi 網絡測試，可選擇執行：
+
+```powershell
+npm.cmd run dev -- --host 0.0.0.0
+```
+
+在手機開啟 Vite 顯示的 Windows 區域網絡網址；只在需要時允許防火牆的私人網絡存取。這會向同一網絡開放開發伺服器，並非公開網站託管。區域網絡 HTTP 測試並不等於經驗證的 HTTPS／iOS PWA 環境。
+
+## 項目狀態
+
+- **v0.1.0：** 初始互動式前端原型及核心領域操作流程。
+- **v0.1.1：** 視覺／主題改進、裝飾性雷達、響應式導航，以及航空公司參考資料／Fallback 元件。公開準備工作亦更新了文件及開發測試工具鏈。
+- **v0.1.2：** 完整顯示適用的 Aircraft 詳情與停機位相關時間摘要；經覆核的每月／批次 Planned Duty，附設衝突檢查；由擁有者啟用的本機 PNG，授權狀態獨立記錄；香港裝置時鐘即時顯示。
+- **v0.1.3：** 更大的 Logo 顯示、按圖片邊距調整、統一的 24 間航空公司預設目錄、保守且須覆核的舊 Demo 航空公司更新，以及針對 Modal 捲動／合成繪製的優化。
+- **v0.1.4：** 可無障礙操作的圖片組合選擇框、24 間航空公司各一筆且分佈於不同日期的虛構任務、經覆核的資料集更新、更突出的 HKT 時鐘、過往 Duty 歷史，以及永久版本號／Commit 規則。
+- **v0.1.5（僅文件更新）：** 新增內容對應的繁體中文（香港）README 及英文版本優先聲明；應用程式功能仍維持 v0.1.4。
+- **尚未實作：** 正式後端、真實身份驗證／Passkey、雲端同步、加密備份、完整匯入／還原、Service Worker／離線重新載入，以及經驗證的 iOS PWA 安裝。
+- **驗證：** 已完成本機 Edge 不同視窗尺寸／排版及新功能流程檢查；實體 iPhone／Safari、實際觸控／鍵盤、下載及列印驗收仍有待完成。項目尚未部署。
+
+已批准的 PRD 描述的是更完整的未來產品，並不代表所有正式版功能已經完成。詳見 [原型狀態](PROTOTYPE_STATUS.md)、[人工驗收](docs/MANUAL_ACCEPTANCE.md) 及 [公開準備](docs/PUBLICATION_PREPARATION.md)。
+
+## 私隱與資料處理
+
+公開示範只能使用虛構資料。v0.1.4 的初始示範資料包含 25 個 Duty、在 24 個不同日期的 24 筆 Confirmed Aircraft 任務，以及 3 篇 Journal。原本的 18 筆任務測試資料只保留作歷史識別及相容性測試。
+
+修改內容儲存在此瀏覽器來源（origin）的**未加密 localStorage**，Key 為 `tco-logbook-demo-v0.1`。Local Storage 並非安全的正式雲端儲存、身份驗證、存取控制或備份。清除瀏覽器資料、私人瀏覽模式或儲存失敗都可能導致資料遺失；不同瀏覽器、裝置、Port 及來源各自使用獨立資料。尚未實作多分頁衝突處理。
+
+請勿輸入機密工作紀錄、員工／乘客資料、內部截圖或專有程序。任何真實工作用途均須先取得適當授權；原型的私隱開關並不構成該等授權。
+
+選填欄位群組預設停用。**封存／隱藏只會保留但不顯示底層資料，不會實際刪除或加密。** 明確的本機欄位刪除功能是另一項獨立操作。先前已下載的副本不受 App 控制。
+
+私隱篩選及報告欄位白名單**不會自動清理 Journal 任意自由文字中的敏感內容**。分享前應逐篇覆核故事及匯出內容。JSON 包含選定的統計及故事；CSV 只包含數量統計；瀏覽器 PDF 是列印流程。以上均非安全的完整備份或經僱主核實的報告。三十日垃圾桶適用期限只是示範規則，並非自動清除或資料保留保證。
+
+## 航空公司品牌及商標聲明
+
+項目擁有者決定在預期公開的作品集版本中保留 `public/assets/airlines/` 內**現有的 24 張航空公司 PNG**。**其公開再分發許可仍未核實。** 保留圖片是擁有者的發布決定，不構成獲授權的證據；非商業用途及本免責聲明均不等於取得許可。
+
+目前提供的來源頁可識別 CX（Seeklogo）、LH（PlusPNG）及 9G（CDNLogo）。其他圖片的確切下載頁未知；擁有者表示大部分來自 Seeklogo。提供下載的網站不一定是權利持有人。
+
+由擁有者啟用的圖片顯示清單，現已獨立於未變更的法律授權紀錄，對應全部 24 張原始 PNG。缺少、停用、無效或載入失敗的圖片，會以代碼／名稱作替代顯示；沒有將任何未核實的許可標記為已獲批准。**Vite 的 public 目錄內的圖片會被複製進 Build，即使元件沒有顯示，也可以直接存取。** 因此未來 Build 會包含這批保留的圖片。執行時不會向下載來源網站發出請求。
+
+詳見完整的 [圖片資產審核](docs/AIRLINE_ASSET_AUDIT.md) 及 [校驗碼清單](docs/AIRLINE_ASSET_INVENTORY.json)。CX、LD（華民航空）及 HX（香港航空）是不同航空公司。由擁有者指定的 24 間航空公司預設目錄，並非完整的香港國際機場或 HAS 停機坪／TCO 客戶名單；原有歷史參考紀錄另行保留，並未核實任何地勤服務關係。
+
+## 原始碼與使用條款
+
+本 Repository 擬公開供個人作品集、教育性閱讀及示範用途。實際 GitHub 可見性由擁有者另外管理。
+
+**目前並無就 TCO Logbook 原創原始碼授予任何開源軟件許可。**
+
+除適用法律或 GitHub 服務條款另有規定外，項目原創程式碼的所有權利均予保留。Repository 公開可見本身不代表授予廣泛的使用、修改、再分發或商業再授權權利。GitHub 平台條款下適用的查看及 Fork 權限不受影響。
+
+第三方套件、商標、標誌及其他資產仍受各自許可及權利約束，本聲明不會重新授權該等內容。詳見 [第三方聲明](THIRD_PARTY_NOTICES.md)。項目並未新增獨立的 `LICENSE` 檔案。
+
+## 開發路線圖
+
+**僅屬計劃，須另行批准：** 公司政策／供應商／成本決策、真實身份驗證、持久後端儲存、離線同步與衝突處理、公開航機資料查詢、經驗證的匯入／還原、加密備份，以及正式版／iPhone PWA 驗收。這些是已批准 PRD 的未來階段，並非已交付的 v0.1.4 功能。
+
+v0.1.4 仍是本機前端原型。OCR／Excel 更表匯入、人力資源系統整合、雲端服務及正式生產功能均繼續延後。
+
+## 語言版本效力
+
+本 README 同時提供英文及繁體中文（香港）版本，以方便不同語言的讀者閱讀及參考。兩個版本旨在傳達相同內容。**如兩個版本之間出現任何差異、歧義或不一致之處，概以英文版本為準。**
