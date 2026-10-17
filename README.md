@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.1 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.2 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -47,7 +47,11 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
 
-## v0.3.1 focused interface refinements
+## v0.3.2 QR asset integrity
+
+I have reconciled the inventory to my intentional QR.png replacement: **13,649 bytes, 600×600**. Only the QR size/checksum fields changed; the image, other 23 PNGs, provenance and unverified redistribution status remain unchanged. The shared runtime logo normalization continues to fit the replacement proportionally. The asset integrity test is retained unchanged; no storage migration, automatic commit or push.
+
+## Historical v0.3.1 focused interface refinements
 
 I use **Log a Handling Task** for the Home action, **Handling Record** for new/edit/review/detail interfaces and **Handling Assignments** for Statistics. Aircraft remains the identity/category term; I have not renamed TypeScript models, stored fields or backup keys. Full Turnaround still counts once.
 
@@ -56,6 +60,8 @@ The shared airline ordering helper shows **CX, UO, LD**, then the other 21 catal
 Duty choices show only work progress: Planned appears as **Scheduled**, Worked as **Worked**, and missing historical progress as **Work state not recorded**. I preserve YYYY-MMM-DD, 24-hour time, overnight (+1), missing-time values and underlying record/work states. Past dates never imply Worked. v0.3.0 JSON backup/restore, existing records/preferences and LAN HTTP compatibility remain unchanged.
 
 See [v0.3.1 acceptance](docs/V0_3_1_ACCEPTANCE.md) for verification and manual mobile checks. No automatic commit/push or deployment.
+
+Runtime logo normalization measures actual visible artwork with an offscreen canvas, including conservative white-canvas handling for the supplied opaque PNGs. I keep the original files unchanged, use proportional wide/emblem/tall fitting in every shared logo frame, and retain image-error fallbacks. Small QR/PX display-only adjustments do not alter airline identity or permissions. See [logo presentation details](docs/AIRLINE_CATALOGUE.md#logo-presentation).
 
 ## Historical v0.3.0 Aircraft entry and local data management
 
@@ -286,7 +292,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.1 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.2 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -304,7 +310,11 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
 
-## v0.3.1 介面細節改進
+## v0.3.2 QR 資產完整性
+
+我已將資產清單對應至我刻意替換的 QR.png：**13,649 bytes、600×600**。只更正 QR 的大小／校驗碼欄位；圖片、其他 23 張 PNG、來源及未核實的再分發許可狀態均保留。共用 Logo 正規化繼續等比例呈現替換圖片，資產完整性測試原樣保留。不會遷移儲存資料、自動 Commit 或 Push。
+
+## 過往 v0.3.1 介面細節改進
 
 我將 Home 操作統一為 **記錄航機處理任務**，新增／編輯／覆核及詳情介面使用 **航機處理紀錄**，Statistics 則使用 **航機處理任務**。Aircraft／航機仍是身份／分類用語；我沒有更改 TypeScript 模型、儲存欄位或備份 Key。完整過站仍只計一項任務。
 
@@ -313,6 +323,8 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 更次清單只顯示工作進度：Planned 顯示為 **Scheduled／已排班**，Worked 顯示為 **Worked／已工作**，歷史缺值則顯示 **未記錄工作進度**。我保留 YYYY-MMM-DD、24 小時制、通宵 (+1)、缺少時間及底層紀錄／工作狀態，不會因日期已過而推斷為已工作。v0.3.0 JSON 備份／還原、既有紀錄／偏好及 LAN HTTP 相容處理維持不變。
 
 詳見 [v0.3.1 驗收](docs/V0_3_1_ACCEPTANCE.md)的驗證及手機檢查流程。不會自動 Commit／Push 或部署。
+
+Logo 現於載入後透過離屏 Canvas 量測實際可見內容，並保守處理現有不透明白底 PNG。我保留原始檔案，以寬字標／徽章／直長圖案的等比例策略套用至所有共用 Logo 框，亦保留載入失敗替代顯示。QR／PX 的小幅顯示調整不改動航空公司身份或許可。詳見 [Logo 呈現方式](docs/AIRLINE_CATALOGUE.md#logo-presentation)。
 
 ## 過往 v0.3.0 航機輸入及本機資料管理
 

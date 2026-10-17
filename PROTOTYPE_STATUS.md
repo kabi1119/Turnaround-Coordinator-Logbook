@@ -1,4 +1,22 @@
-# TCO Logbook v0.3.1 Pre-release status
+# TCO Logbook v0.3.2 Pre-release status
+
+## v0.3.2 owner-authorized QR inventory reconciliation — 2026-10-18 (Hong Kong)
+
+Owner confirmed the intentional current QR replacement. Valid PNG signature/chunk CRCs and decoded scanline size verified; 600×600, 8-bit indexed-color PNG, non-interlaced. Visual inspection matches the Qatar Airways wordmark/oryx composition; this is visual identification, not new official authenticity or redistribution authorization.
+
+QR.png: **13,649 bytes**, SHA-256 **09fdc6d5411580700fd5384628d3dd59944665e622610dc4b5acfdb668f2ea6d**. Only QR's bytes/sha256 inventory fields are reconciled. Other 23 entries/checksums and all provenance/rights fields remain unchanged. The prior QR inventory mismatch below is historical and superseded by this explicit owner-approved correction. No PNG or existing normalization code is modified. Version/UI/package now v0.3.2; no storage/model migration, dependency change, commit or push.
+
+Final quality checks: **214 passed / 17 files**, including the unchanged asset integrity test and all 14 normalization tests; lint, TypeScript/Vite build and format check passed; npm audit **0 vulnerabilities**. Start/end snapshots confirm all 24 PNGs are unchanged, every non-QR inventory entry is identical, only QR bytes/sha256 changed, provenance/permission fields remain intact and normalization source/tests are unchanged. Built QR matches the source checksum.
+
+Fresh isolated Edge on a private LAN HTTP dev server verified the actual preserved QR image in Light/Dark at 375 and 1440 px. Visible normalized content is about 90.23×25.88 inside 96×52 (mobile), 105.59×30.28 inside 112×56 (desktop); centered, unclipped, no axis distortion or runtime exceptions. The existing 5173 server/owner browser data were untouched. Physical iPhone/Safari remains owner acceptance.
+
+## Local PNG normalization follow-up — 2026-10-18 (Hong Kong)
+
+Started at main / 8985911 (v0.3.1a), preserving the owner's existing unstaged QR.png edit. Runtime offscreen canvas measurement supersedes stale static bounds, with alpha-first and conservative opaque-white-canvas handling. Centered fixed-frame proportional fitting has wide/emblem/tall profiles and small display-only QR/PX overrides. All existing logo consumers reuse AirlineLogo; ordinary contain and code-error fallbacks remain. No automatic release-number change, PNG/provenance/legal metadata edit, database change, commit or push.
+
+Real Edge PNG verification: all 24 sources × sm/md/lg at 375/1440 px in Light/Dark (288 frames), plus Home/detail/Statistics/dropdown/selected preview. Bounds stay centered inside each frame; axis scales agree within CSS rounding. QR's current visible content measures 544×156 inside a 600×600 white canvas; the stale fixture was 552×521. Mobile medium visible width improves from approximately 41.8 px to 90.2 px, while the outer 96×52 frame stays fixed. Gallery screenshots were visually inspected; QR is balanced alongside CX/LD and BI/LH/PX/RJ. Exactly 24 cached canvas pixel reads despite reused sizes/consumers. Image error preserved the code badge and frame width; no runtime exceptions. Physical iPhone/Safari acceptance remains pending.
+
+Historical normalization-only checks before v0.3.2: **213 passed / 1 failed (214 tests, 17 files)**; all 14 new normalization tests passed. The unchanged assets.test.ts assertion exposed the intentional QR replacement versus the old 21,174-byte inventory. No test was weakened or PNG reverted. The owner subsequently authorized the v0.3.2 metadata reconciliation above; the full suite now passes. All earlier PNG/provenance preservation observations describe that earlier task snapshot, not a prohibition on the subsequently approved QR size/hash correction.
 
 ## v0.3.1 terminology, airline ordering and Duty labels — 2026-10-18 (Hong Kong)
 

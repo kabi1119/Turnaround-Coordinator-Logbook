@@ -1,4 +1,6 @@
-/** Read-only measured artwork bounds, padded by 6 source pixels. Original PNGs are unchanged.
+/** Historical v0.1.3 fixture, not used for runtime rendering; replacements can make it stale.
+ * Runtime measurements now come from lib/normalizeLogo.ts. Original PNGs are unchanged.
+ * Read-only measured artwork bounds, padded by 6 source pixels.
  * Near-white/neutral checkerboard background is excluded from measurement, not edited. */
 const measured: Record<string, [number, number, number, number, number, number]> = {
   '7C': [600, 600, 24, 244, 552, 111],

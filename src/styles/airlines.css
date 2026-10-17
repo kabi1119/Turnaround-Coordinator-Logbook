@@ -95,26 +95,32 @@
     --logo-height: 64px;
   }
 }
-.airline-logo.has-bounds {
-  --art-scale: min(
-    calc((var(--logo-width) - 12px) / var(--bounds-w)),
-    calc((var(--logo-height) - 12px) / var(--bounds-h))
+.airline-logo-normalized {
+  position: absolute;
+  inset: 0;
+}
+.airline-logo.is-normalized {
+  --normalized-width: min(
+    calc((var(--logo-width) - 2px) * var(--fill-width)),
+    calc((var(--logo-height) - 2px) * var(--fill-height) * var(--visible-ratio))
   );
 }
-.airline-logo.has-bounds img {
+.airline-logo.is-normalized .airline-logo-normalized {
+  inset: auto;
+  width: var(--normalized-width);
+  height: calc(var(--normalized-width) / var(--visible-ratio));
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.airline-logo.is-normalized img {
   position: absolute;
   padding: 0;
   max-width: none;
-  width: calc(var(--source-w) * var(--art-scale));
-  height: calc(var(--source-h) * var(--art-scale));
-  left: calc(
-    (var(--logo-width) - var(--bounds-w) * var(--art-scale)) / 2 - var(--bounds-x) *
-      var(--art-scale)
-  );
-  top: calc(
-    (var(--logo-height) - var(--bounds-h) * var(--art-scale)) / 2 - var(--bounds-y) *
-      var(--art-scale)
-  );
+  width: var(--image-width);
+  height: var(--image-height);
+  left: var(--image-left);
+  top: var(--image-top);
 }
 @media print {
   body {

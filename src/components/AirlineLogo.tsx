@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { logoBounds } from '../data/logoBounds';
+import { measureLogo, logoFitting } from '../lib/normalizeLogo';
+import type { LogoBounds } from '../lib/normalizeLogo';
+import { airlineLogoRendering } from '../data/airlineLogoRendering';
 import { findAirline } from '../data/airlines';
 import { displayLogoPath, findLocalAirline } from '../data/localAirlineLogos';
 import { useT } from '../i18n';
@@ -19,41 +21,58 @@ export default function AirlineLogo({
   const entry = findAirline(airline) || findLocalAirline(airline),
     src = displayLogoPath(entry);
   const [failedSource, setFailedSource] = useState<string | null>(null);
+  const [measured, setMeasured] = useState<{ src: string; bounds: LogoBounds } | null>(null);
   const t = useT();
   const name = entry?.name || airline || t('Airline not selected', '未選航空公司');
   const code = entry?.iata || '—';
   const label = `${name}${entry ? ` (${code})` : ''}`;
   const image = Boolean(src && failedSource !== src);
-  const bounds = image ? logoBounds(entry?.iata) : undefined;
+  const bounds = image && measured?.src === src ? measured.bounds : undefined;
+  const overrides = airlineLogoRendering[code];
+  const fitting = bounds ? logoFitting(bounds, overrides) : undefined;
   const boundsStyle = bounds
     ? ({
-        '--source-w': bounds[0],
-        '--source-h': bounds[1],
-        '--bounds-x': bounds[2],
-        '--bounds-y': bounds[3],
-        '--bounds-w': bounds[4],
-        '--bounds-h': bounds[5],
+        '--visible-ratio': bounds.width / bounds.height,
+        '--fill-width': fitting!.fillWidth,
+        '--fill-height': fitting!.fillHeight,
+        '--image-width': `${(bounds.sourceWidth / bounds.width) * 100}%`,
+        '--image-height': `${(bounds.sourceHeight / bounds.height) * 100}%`,
+        '--image-left': `${(-bounds.x / bounds.width) * 100}%`,
+        '--image-top': `${(-bounds.y / bounds.height) * 100}%`,
       } as CSSProperties)
     : undefined;
   return (
     <span className={`airline-identity airline-size-${size}`}>
       <span
-        className={`airline-logo ${image ? 'has-image' : 'code-fallback'} ${bounds ? 'has-bounds' : ''}`}
+        className={`airline-logo ${image ? 'has-image' : 'code-fallback'} ${bounds ? 'is-normalized' : ''}`}
         style={boundsStyle}
+        data-logo-fit={fitting?.fit}
+        data-logo-measurement={bounds?.method}
         role={decorative ? undefined : 'img'}
         aria-label={decorative ? undefined : label}
         aria-hidden={decorative || undefined}
         title={label}
       >
         {image ? (
-          <img
-            src={src!}
-            alt=""
-            width="72"
-            height="40"
-            decoding="async"
-            onError={() => setFailedSource(src)}
-          />
+          <span className="airline-logo-normalized">
+            <img
+              src={src!}
+              alt=""
+              width="72"
+              height="40"
+              decoding="async"
+              onLoad={(e) => {
+                const next = measureLogo(e.currentTarget, overrides?.trimLightBackground !== false);
+                if (next && src)
+                  setMeasured((previous) =>
+                    previous?.src === src && previous.bounds === next
+                      ? previous
+                      : { src, bounds: next },
+                  );
+              }}
+              onError={() => setFailedSource(src)}
+            />
+          </span>
         ) : (
           <span>{code}</span>
         )}
