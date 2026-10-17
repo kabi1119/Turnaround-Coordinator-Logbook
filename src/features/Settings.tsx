@@ -15,6 +15,7 @@ import { seedDatabase } from '../data/seed';
 import { useLabel, useT } from '../i18n';
 import { airlineRegistry, approvedLogoPath } from '../data/airlines';
 import AirlineLogo from '../components/AirlineLogo';
+import DemoAirlineRefresh from './DemoAirlineRefresh';
 import { localAirlineLogos, displayLogoPath } from '../data/localAirlineLogos';
 const privacyLabels: Record<PrivacyKey, [string, string]> = {
   registration: ['Registration', '機身註冊'],
@@ -58,6 +59,7 @@ export default function Settings({
   onAircraftRestore: (id: string) => void;
 }) {
   const t = useT();
+  const [refreshDemo, setRefreshDemo] = useState(false);
   const [privacy, setPrivacy] = useState<PrivacyKey | null>(null),
     [action, setAction] = useState<'archive' | 'delete'>('archive'),
     [reset, setReset] = useState<'empty' | 'seed' | null>(null),
@@ -89,7 +91,7 @@ export default function Settings({
       <div className="notice prototype-notice">
         <Shield size={24} />
         <div>
-          <strong>{t('Prototype v0.1.2 · Demo Data', '原型 v0.1.2 · 示範資料')}</strong>
+          <strong>{t('Prototype v0.1.3 · Demo Data', '原型 v0.1.3 · 示範資料')}</strong>
           <p>
             {t(
               'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. These controls are demonstrations, not security guarantees or employer permission.',
@@ -102,8 +104,8 @@ export default function Settings({
         <SectionTitle
           title={t('Local airline library', '本機航空公司資料庫')}
           subtitle={t(
-            'Verified name/code references. Logo permission and handling affiliation are reviewed separately.',
-            '名稱及代碼有來源；標誌授權與地勤關係分開審核。',
+            'Owner-defined default catalogue. Historical references are retained separately; inclusion does not verify HAS handling affiliation or logo rights.',
+            '擁有人自訂的預設目錄；舊參考資料另行保留。收錄不代表已核實 HAS 地勤關係或標誌權利。',
           )}
         />
         <p className="muted">
@@ -214,6 +216,15 @@ export default function Settings({
       </section>
       <section className="panel">
         <SectionTitle title={t('Local demo data', '本機示範資料')} />
+        <button onClick={() => setRefreshDemo(true)}>
+          {t('Refresh obsolete demo airlines', '更新過時示範航空公司')}
+        </button>
+        <p className="muted">
+          {t(
+            'Preview only unchanged legacy synthetic samples; preserve user-created and edited records. This does not reset storage.',
+            '只預覽未修改的舊版虛構範例，保留自訂及已修改紀錄，不會重設儲存。',
+          )}
+        </p>
         <div className="actions left">
           <button onClick={() => setReset('empty')}>
             <RotateCcw size={17} />
@@ -354,6 +365,9 @@ export default function Settings({
             )}
           </p>
         </Confirm>
+      )}
+      {refreshDemo && (
+        <DemoAirlineRefresh db={db} commit={commit} onClose={() => setRefreshDemo(false)} />
       )}
       {restore && (
         <Confirm

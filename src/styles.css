@@ -1104,7 +1104,7 @@ dialog.wide {
 }
 dialog::backdrop {
   background: #102f3c70;
-  backdrop-filter: blur(4px);
+  backdrop-filter: none;
 }
 .modal-head {
   position: sticky;

@@ -195,6 +195,9 @@
     transform: rotate(360deg);
   }
 }
+.modal-open .radar-sweep {
+  animation-play-state: paused;
+}
 @media (max-width: 767px) {
   .flight-visual {
     --radar-size: 220px;

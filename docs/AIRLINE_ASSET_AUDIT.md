@@ -1,4 +1,10 @@
-# Airline asset audit — v0.1.2 local display integration
+# Airline asset audit — v0.1.3 catalogue and presentation
+
+## v0.1.3 update
+
+The default registry now derives from the owner's 24-entry src/data/airlineCatalogue.ts, shared with selection/search and local PNG mappings. The former nine references remain as historicalAirlineReferences with their original provenance/permission evidence; exclusions from default selection do not delete records. See [AIRLINE_CATALOGUE.md](AIRLINE_CATALOGUE.md) for current names, aliases and scope. No HAS customer relationship or new legal approval is claimed.
+
+Responsive frames and padded read-only artwork bounds improve visible size without altering PNG bytes or producing derivative images. CX/UO/LH/LD/JL/QR were visually inspected. Original source pages, checksum inventory and every unresolved redistribution permission below remain unchanged. References below to the nine-entry v0.1.2 registry describe the historical architecture, superseded by this section.
 
 Reviewed: **2026-10-17 (Asia/Hong_Kong)**. Owner request: preserve all existing PNG files for the intended public source-available portfolio release. This decision supersedes the earlier recommendation to exclude them; **it does not establish third-party permission**.
 

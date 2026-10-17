@@ -11,6 +11,8 @@ import { useLabel, useT } from '../i18n';
 import type { Aircraft, Privacy } from '../domain/model';
 import { cardText, hasArrival, hasDeparture } from '../domain/selectors';
 import { aircraftTimes } from '../domain/time';
+let openModals = 0;
+let previousOverflow = '';
 export function Modal({
   title,
   children,
@@ -28,9 +30,18 @@ export function Modal({
   useEffect(() => {
     const el = ref.current;
     const previous = document.activeElement as HTMLElement | null;
+    if (openModals++ === 0) {
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.classList.add('modal-open');
+    }
     el?.showModal();
     return () => {
       el?.close();
+      if (--openModals === 0) {
+        document.body.style.overflow = previousOverflow;
+        document.documentElement.classList.remove('modal-open');
+      }
       previous?.focus();
     };
   }, []);

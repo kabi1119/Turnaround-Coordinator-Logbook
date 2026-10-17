@@ -1,13 +1,13 @@
 import { airlineRegistry } from './airlines';
 export const airlines = airlineRegistry.map((entry) => entry.name);
-// Keep v0.1's synthetic fixture identities/order stable; registry updates never rewrite history.
+// Current synthetic fixture airline choices; IDs/scenarios/relationships remain stable.
 export const demoAirlines = [
   'Cathay Pacific',
   'HK Express',
-  'Hong Kong Airlines',
-  'Singapore Airlines',
-  'ANA',
-  'Emirates',
+  'Air Hong Kong',
+  'Jeju Air',
+  'STARLUX Airlines',
+  'Korean Air',
   'Qatar Airways',
   'Lufthansa',
 ];

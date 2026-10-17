@@ -157,7 +157,7 @@ function Workspace({
         </div>
       </header>
       <div className="demo-strip">
-        <span className="live-dot" /> {t('PROTOTYPE v0.1.2', '原型 v0.1.2')}
+        <span className="live-dot" /> {t('PROTOTYPE v0.1.3', '原型 v0.1.3')}
         <span>·</span>
         {t('SYNTHETIC DEMO DATA', '合成示範資料')}
         <span className="desktop-only">
@@ -374,7 +374,7 @@ function Workspace({
         )}
         <footer className="page-footer">
           TCO LOGBOOK{' '}
-          <span>v0.1.2 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
+          <span>v0.1.3 / {t('DEMO ONLY · STORED ON THIS DEVICE', '僅示範 · 儲存於此裝置')}</span>
         </footer>
       </main>
       <nav className="app-navigation" aria-label={t('Main navigation', '主導覽')}>

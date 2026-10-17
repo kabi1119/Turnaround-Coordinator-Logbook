@@ -1,3 +1,4 @@
+import { airlineCatalogue } from './airlineCatalogue';
 /** Branding/reference metadata only. Never describes a user's actual handling history. */
 export interface AirlineReference {
   name: string;
@@ -57,7 +58,7 @@ function reference(
   };
 }
 // Retain the existing reference airlines. This is deliberately not an exhaustive HKIA/HAS list.
-export const airlineRegistry: AirlineReference[] = [
+export const historicalAirlineReferences: AirlineReference[] = [
   reference('Cathay Pacific', 'CX', 'https://www.cathaypacific.com/'),
   reference('HK Express', 'UO', 'https://www.hkexpress.com/'),
   reference(
@@ -96,9 +97,23 @@ export const airlineRegistry: AirlineReference[] = [
     identitySourceUrl: 'https://www.iata.org/en/about/members/airline-list/air-hong-kong/607/',
   },
 ];
+/** Owner-defined default catalogue; inclusion does not verify a handling customer or legal rights. */
+export const airlineRegistry: AirlineReference[] = airlineCatalogue.map((identity) => {
+  const prior = historicalAirlineReferences.find((entry) => entry.iata === identity.iata);
+  const base = prior || {
+    ...reference(identity.name, identity.iata, ''),
+    identitySourceUrl: 'docs/AIRLINE_CATALOGUE.md',
+    verifiedOn: '',
+  };
+  return {
+    ...base,
+    name: identity.name,
+    aliases: [...new Set([...identity.aliases, ...base.aliases, ...(prior ? [prior.name] : [])])],
+  };
+});
 export function findAirline(value: string): AirlineReference | undefined {
   const query = value.trim().toLocaleLowerCase('en');
-  return airlineRegistry.find((a) =>
+  return [...airlineRegistry, ...historicalAirlineReferences].find((a) =>
     [a.name, a.iata, ...a.aliases].some((n) => n.toLocaleLowerCase('en') === query),
   );
 }

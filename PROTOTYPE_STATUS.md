@@ -1,8 +1,28 @@
-# Prototype v0.1.2 status
+# Prototype v0.1.3 status
 
 Updated: 2026-10-17 (Asia/Hong_Kong). Baseline: approved PRD v1.5 + prototype implementation brief. This is a frontend demonstration with synthetic data only. No Phase 2 work has started.
 
-## v0.1.2 implementation — 2026-10-17 (Hong Kong)
+## v0.1.3 implementation — 2026-10-17 (Hong Kong)
+
+Built on committed v0.1.2 c0070ab on main; working tree was clean at start. No amend/reset/history rewrite/commit/push, visibility change or deployment. Only the current Turnaround-Coordinator-Logbook checkout is used. No dependency upgrades or production services are added.
+
+- One owner-defined catalogue supplies exactly the 24 requested identities, default suggestions, IATA/name/alias search and PNG mappings. NH/SQ/HX/EK are removed from defaults/fresh samples, while historical lookup and custom entry remain available. Original nine source/legal records remain preserved separately; new catalogue entries have no fabricated verification date/source or HAS affiliation.
+- Fresh synthetic fixtures keep 18 assignments, duty/journal relationships and all role/type/status scenarios, substituting only allowed airlines. No automatic storage migration runs. Settings provides a preview/confirmation refresh for exact complete legacy-fixture matches; only approved airline fields change. User edits, deleted fields, custom IDs and unknown payloads are excluded. IDs/links/counts remain stable; retries are idempotent and no records are added/deleted. Existing Seed/Reset replacement controls remain separate.
+- Measured all 24 source PNG bounds without changing files. CSS uses padded artwork bounds and uniform sizing in compact, card/list and detail frames (desktop cards 112×56, detail 144×72; phone cards 96×52, detail 128×64). Empty neutral/transparent margins are not treated as artwork; original aspect ratios and all visible artwork are retained. No derivative image or pixel edit, no new download or permission change. Representative CX/UO/LH/LD/JL/QR were visually reviewed in Edge light/dark.
+- Inspected clock/effects/scroll and profiled Chromium traces before/after. The clock was already isolated; no scroll/layout loop was found. Baseline headless run did not reproduce the reported stutter. Confirmed background conditions were animated radar plus blur(4px). Removed backdrop blur, paused radar while any nested modal is open, and lock/restore body scrolling with nested-modal accounting. No speculative memoization, virtualization or GPU hacks.
+- Short trace callback P95: baseline 16.8 ms, final 16.7 ms; final callback max 33.2 ms versus 16.8 baseline. Paint CPU totals 1.899 ms baseline / 0.918 ms final, but run variation is substantial (intermediate A/B up to 2.321 ms). These are not GPU FPS or proof of a universal speedup. Full conditions/results at docs/V0_1_3_ACCEPTANCE.md.
+- Edge observed scrollTop 200 preserved across clock ticks, background position unchanged, overflow lock active, blur none, radar paused. Representative gallery passed seven widths in both themes with loaded images/no horizontal overflow. Actual iPhone/Safari and owner's original hardware/input stutter still require manual acceptance.
+- Added 10 tests for exact catalogue/exclusions/search, real editor compatibility, new seed scope, conservative refresh/idempotence/links, actual Home detail render isolation, nested modal/focus/Escape and padded bounds. Existing role/type/status/review/roster/privacy regressions remain. Catalogue policy assertions were updated to the owner's new requirements; permission assertions retained. Final command results are recorded below after execution.
+
+Final verification: npm.cmd run test **100/100 passed across 11 files**; npm.cmd run lint **passed, zero warnings**; npm.cmd run build **passed**; npm.cmd run format:check **passed**; npm.cmd audit **0 known vulnerabilities**. Git whitespace check passed. All 24 original PNGs and dist copies match the unchanged inventory hashes; README disclaimer is still first and THIRD_PARTY_NOTICES.md is unchanged. Local QA scripts were fixed to meet the existing lint rules rather than disabling rules.
+
+Actual Home/card/detail and batch regression checks also passed seven widths in both themes: no horizontal overflow/clock collision, loaded logos, grouped mobile detail, two Planned duties persisted/reloaded while 18 Aircraft and 3 Journals remained; no runtime exceptions or external app requests. Original PNGs were not overwritten, renamed or deleted. The separate Edge instance and local server were stopped.
+
+Final Git state: main, HEAD c0070ab8ecf025c0afc1cba7b013f2282b6b1620 unchanged; 18 modified tracked paths and 7 new untracked source/test/document paths, nothing staged. No automatic commit/push or other remote/history mutation.
+
+Known limits: refresh deliberately skips edited/unrecognized old samples; no blanket data cleanup. Browser datalist appearance depends on the browser. Copyright/trademark permissions remain unresolved; source-available disclaimer/notices remain intact. Performance traces are short, headless and GPU-disabled, not a guarantee for normal Edge or iPhone. No actual measured GPU FPS claim is made. Earlier v0.1.2 sections are historical.
+
+## Historical v0.1.2 implementation — 2026-10-17 (Hong Kong)
 
 This section supersedes older workflow/display/version statements below. Work was performed exclusively in C:\Projects\Turnaround-Coordinator-Logbook; the retired checkout was not accessed. Initial Git state: clean main, HEAD f6322c9, origin https://github.com/kabi1119/Turnaround-Coordinator-Logbook.git. No automatic staging, commit, push, history rewrite, visibility change or deployment.
 

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
+import { logoBounds } from '../data/logoBounds';
 import { findAirline } from '../data/airlines';
 import { displayLogoPath, findLocalAirline } from '../data/localAirlineLogos';
 import { useT } from '../i18n';
@@ -22,10 +24,22 @@ export default function AirlineLogo({
   const code = entry?.iata || '—';
   const label = `${name}${entry ? ` (${code})` : ''}`;
   const image = Boolean(src && failedSource !== src);
+  const bounds = image ? logoBounds(entry?.iata) : undefined;
+  const boundsStyle = bounds
+    ? ({
+        '--source-w': bounds[0],
+        '--source-h': bounds[1],
+        '--bounds-x': bounds[2],
+        '--bounds-y': bounds[3],
+        '--bounds-w': bounds[4],
+        '--bounds-h': bounds[5],
+      } as CSSProperties)
+    : undefined;
   return (
     <span className={`airline-identity airline-size-${size}`}>
       <span
-        className={`airline-logo ${image ? 'has-image' : 'code-fallback'}`}
+        className={`airline-logo ${image ? 'has-image' : 'code-fallback'} ${bounds ? 'has-bounds' : ''}`}
+        style={boundsStyle}
         role={decorative ? undefined : 'img'}
         aria-label={decorative ? undefined : label}
         aria-hidden={decorative || undefined}

@@ -21,11 +21,11 @@ import {
   saveAircraft,
   visibleAircraft,
 } from '../domain/selectors';
-import { airlines, demoBays, variants } from '../data/reference';
+import { demoBays, variants } from '../data/reference';
 import { Confirm, Field, Modal, Select, TextArea, Badge } from '../components/ui';
 import { useLabel, useT } from '../i18n';
 import AirlineLogo from '../components/AirlineLogo';
-import { airlineRegistry } from '../data/airlines';
+import { searchAirlines } from '../data/airlineCatalogue';
 export interface EditorProps {
   db: Database;
   existing?: Aircraft;
@@ -340,17 +340,14 @@ export default function AircraftEditor({
           <Field
             label={t('Airline *', '航空公司 *')}
             list="airlines"
+            autoComplete="off"
             value={a.airline}
             onChange={(e) => patch({ airline: e.target.value })}
             placeholder={t('Search or enter airline', '搜尋或輸入航空公司')}
           />
           <datalist id="airlines">
-            {airlines.map((x) => (
-              <option
-                key={x}
-                value={x}
-                label={`${airlineRegistry.find((entry) => entry.name === x)?.iata || ''} · ${x}`}
-              />
+            {searchAirlines(a.airline).map((entry) => (
+              <option key={entry.iata} value={entry.name} label={`${entry.iata} · ${entry.name}`} />
             ))}
           </datalist>
           {a.airline && (

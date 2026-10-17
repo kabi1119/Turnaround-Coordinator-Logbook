@@ -1,7 +1,7 @@
 import { emptyAircraft, handlingTypes, newLeg, restrictivePrivacy, roles } from '../domain/model';
 import type { Database, Journal } from '../domain/model';
 import { demoAirlines as airlines, variants } from './reference';
-export function seedDatabase(): Database {
+export function seedDatabase(airlineNames: readonly string[] = airlines): Database {
   const duties: Database['duties'] = [
     {
       id: 'd1',
@@ -58,7 +58,7 @@ export function seedDatabase(): Database {
     return {
       ...emptyAircraft(d.date, d.id),
       id: `a${i + 1}`,
-      airline: airlines[i % airlines.length],
+      airline: airlineNames[i % airlineNames.length],
       variant: v.name,
       family: v.family,
       icao: v.icao,

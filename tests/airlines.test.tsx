@@ -10,7 +10,7 @@ import { STORAGE_KEY } from '../src/lib/storage';
 import { displayLogoPath } from '../src/data/localAirlineLogos';
 
 const approvedFixture = (): AirlineReference => ({
-  ...structuredClone(registry.airlineRegistry[0]),
+  ...structuredClone(registry.findAirline('CX')!),
   logo: {
     localPath: '/assets/airlines/test-only.svg',
     sourceUrl: 'https://example.test/official-brand',
@@ -40,10 +40,10 @@ describe('Verified airline reference and local-only logo policy', () => {
     expect(demoAirlines).toEqual([
       'Cathay Pacific',
       'HK Express',
-      'Hong Kong Airlines',
-      'Singapore Airlines',
-      'ANA',
-      'Emirates',
+      'Air Hong Kong',
+      'Jeju Air',
+      'STARLUX Airlines',
+      'Korean Air',
       'Qatar Airways',
       'Lufthansa',
     ]);
@@ -60,8 +60,13 @@ describe('Verified airline reference and local-only logo policy', () => {
   });
   it('Keeps handling affiliation separate and unverified; no fabricated HAS relationship or implied logo permission', () => {
     for (const a of registry.airlineRegistry) {
-      expect(a.identitySourceUrl).toMatch(/^https:\/\//);
-      expect(a.verifiedOn).toBe('2026-10-17');
+      if (registry.historicalAirlineReferences.some((entry) => entry.iata === a.iata)) {
+        expect(a.identitySourceUrl).toMatch(/^https:\/\//);
+        expect(a.verifiedOn).toBe('2026-10-17');
+      } else {
+        expect(a.identitySourceUrl).toBe('docs/AIRLINE_CATALOGUE.md');
+        expect(a.verifiedOn).toBe('');
+      }
       expect(a.handling.status).toBe('unverified');
       expect(a.handling.notes).toContain('passenger');
       expect(a.logo.permission).toBe('not-established');
@@ -76,7 +81,7 @@ describe('Verified airline reference and local-only logo policy', () => {
         ))}
       </>,
     );
-    expect(container.querySelectorAll('img')).toHaveLength(5);
+    expect(container.querySelectorAll('img')).toHaveLength(24);
     for (const a of registry.airlineRegistry) {
       const identity = screen.getByRole('img', { name: `${a.name} (${a.iata})` });
       if (displayLogoPath(a))
