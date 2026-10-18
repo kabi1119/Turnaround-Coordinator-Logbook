@@ -41,6 +41,9 @@ export default function FlightNumberField({
           onChange={(e) => onChange(flightEntry(airline, e.target.value))}
           autoCapitalize="characters"
           autoComplete="off"
+          inputMode="text"
+          enterKeyHint="next"
+          spellCheck={false}
           aria-required="true"
           aria-invalid={Boolean(error)}
           aria-describedby={`${id}-hint${error ? ` ${id}-error` : ''}`}

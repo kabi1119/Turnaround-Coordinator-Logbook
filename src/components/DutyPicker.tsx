@@ -1,4 +1,5 @@
 import { useId, useRef, useState, useEffect } from 'react';
+import { revealListOption } from '../lib/modalInteraction';
 import type { Duty } from '../domain/model';
 import { useT, useLabel } from '../i18n';
 import { dutyOptionText } from '../domain/roster';
@@ -36,7 +37,7 @@ export default function DutyPicker({
     setOpen(false);
   };
   useEffect(() => {
-    if (open) document.getElementById(`${uid}-${active}`)?.scrollIntoView({ block: 'nearest' });
+    if (open) revealListOption(document.getElementById(`${uid}-${active}`));
   }, [open, active, uid]);
   useEffect(() => {
     if (!open) return;

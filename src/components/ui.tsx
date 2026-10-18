@@ -12,6 +12,8 @@ import type { Aircraft, Privacy } from '../domain/model';
 import { cardText, hasArrival, hasDeparture } from '../domain/selectors';
 import { aircraftTimes } from '../domain/time';
 import { handlingDisplayStatus, untitledDraft } from '../domain/handlingForm';
+import { modalScrollArea } from '../lib/modalInteraction';
+import { useModalViewport } from '../lib/useModalViewport';
 let openModals = 0;
 let previousOverflow = '';
 export function Modal({
@@ -35,6 +37,9 @@ export function Modal({
   useEffect(() => {
     const el = ref.current;
     const previous = document.activeElement as HTMLElement | null;
+    const parent = previous?.closest('dialog');
+    const parentArea = parent ? modalScrollArea(parent) : null;
+    const parentScroll = parentArea?.scrollTop;
     if (openModals++ === 0) {
       previousOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
@@ -47,18 +52,11 @@ export function Modal({
         document.body.style.overflow = previousOverflow;
         document.documentElement.classList.remove('modal-open');
       }
-      previous?.focus();
+      if (previous?.isConnected) previous.focus({ preventScroll: true });
+      if (parentArea && parentScroll !== undefined) parentArea.scrollTop = parentScroll;
     };
   }, []);
-  useEffect(() => {
-    if (!sheet || !window.visualViewport) return;
-    const viewport = window.visualViewport;
-    const update = () =>
-      ref.current?.style.setProperty('--sheet-viewport-height', `${viewport.height}px`);
-    update();
-    viewport.addEventListener('resize', update);
-    return () => viewport.removeEventListener('resize', update);
-  }, [sheet]);
+  useModalViewport(ref);
   return (
     <dialog
       ref={ref}

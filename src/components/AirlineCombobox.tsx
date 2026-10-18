@@ -4,6 +4,7 @@ import AirlineLogo from './AirlineLogo';
 import { searchAirlines } from '../data/airlineCatalogue';
 import { useT } from '../i18n';
 import { RequiredLabel } from './ui';
+import { revealListOption } from '../lib/modalInteraction';
 
 /** Editable combobox: custom/historical text is never coerced into a catalogue option. */
 export default function AirlineCombobox({
@@ -25,14 +26,22 @@ export default function AirlineCombobox({
   const activeId =
     open && active >= 0 && options[active] ? `${id}-${options[active].iata}` : undefined;
   useEffect(() => {
-    if (activeId) document.getElementById(activeId)?.scrollIntoView?.({ block: 'nearest' });
+    if (activeId) revealListOption(document.getElementById(activeId));
   }, [activeId]);
+  useEffect(() => {
+    if (open) input.current?.dispatchEvent(new Event('modal-field-reveal', { bubbles: true }));
+  }, [open]);
   const choose = (name: string) => {
     onChange(name);
     setOpen(false);
     setSearch(false);
     setActive(-1);
-    input.current?.focus();
+    // Pointer selection on a touch device must not reopen an already dismissed keyboard.
+    if (
+      document.activeElement !== input.current &&
+      !window.matchMedia?.('(any-pointer: coarse)').matches
+    )
+      input.current?.focus({ preventScroll: true });
   };
   return (
     <div

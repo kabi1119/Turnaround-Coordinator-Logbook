@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.2 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.3 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -46,6 +46,14 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Career Journal:** Standalone or linked reflections, STAR-style fields, competencies, Draft/Confirmed status and optional self-reported outcomes. Journal entries do not increase aircraft handling counts.
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
+
+## v0.4.3 iPhone Keyboard and Form Interactions
+
+Shared dialogs now use a stable header and one independently scrollable content surface. A lifecycle-scoped Visual Viewport controller accounts for visible height and top offset, checks focused fields only on focus or after viewport settling, and respects manual scrolling and pinch zoom. With meaningful visual/layout occlusion while an editable field is focused, sticky save actions flow at the end of the form instead of covering inputs; no action is hidden or disabled. Without Visual Viewport, normal window dimensions provide the fallback.
+
+Text fields support Next/Done without implicit form submission; multiline Notes retain line breaks, and flight numbers retain alphanumeric input and fixed IATA prefixes. Touch airline choices avoid refocusing a dismissed input. Nested review and record navigation restore the content surface with prevent-scroll focus restoration. Native date/time/select pickers keep their own behavior while receiving visibility protection. Mobile controls retain at least 16 px text without restricting user zoom. These shared improvements also apply to Duty, batch and Journal dialogs; all v0.4.2 validation, privacy, Draft/Pending/Confirmed, data and radar rules remain unchanged.
+
+Windows Edge viewport simulations are not physical iPhone Safari or installed-PWA keyboard tests. See [v0.4.3 investigation, evidence and real-device checklist](docs/V0_4_3_ACCEPTANCE.md).
 
 ## v0.4.2 Handling Form and Duty Status Refinement
 
@@ -326,7 +334,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.2 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.3 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -343,6 +351,14 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **職涯日誌（Career Journal）：** 支援獨立或關聯式反思、STAR 結構欄位、能力標籤、Draft／Confirmed 狀態及可選填的自行申報成果。Journal 紀錄不會增加航機處理任務數量。
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
+
+## v0.4.3 iPhone 鍵盤及表單互動改進
+
+共用視窗改為穩定標題及單一內容捲動區。Visual Viewport 處理會考慮可視高度與頂部位移，只在焦點改變或可視範圍穩定後檢查欄位，尊重手動捲動及雙指縮放。當可編輯欄位取得焦點且可視範圍明顯受遮擋時，儲存列改為排在內容末端，不遮蓋輸入，也不隱藏或停用任何儲存功能；沒有 Visual Viewport 時使用視窗尺寸作後備。
+
+文字欄位支援 Next／Done，不會由 Enter 直接提交；多行筆記仍可換行，航班編號保留字母尾碼及固定 IATA 前綴。觸控選取航空公司不再額外聚焦已失焦的輸入。巢狀覆核及紀錄導覽會回復內容捲動位置，焦點回復使用 preventScroll。原生日期／時間／選單保留自身操作並獲可視範圍保護。手機輸入文字至少 16 px，不限制使用者縮放。改善亦適用於共用視窗的更次、批次及日誌，v0.4.2 驗證、私隱、生命週期、資料及雷達規則均不變。
+
+Windows Edge 的可視範圍模擬不代表已通過實體 iPhone Safari 或已安裝 PWA 鍵盤測試。詳見 [v0.4.3 調查、驗證及實機清單](docs/V0_4_3_ACCEPTANCE.md)。
 
 ## v0.4.2 處理表單及更次狀態改進
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { modalScrollArea } from './modalInteraction';
 
 /** In-memory return trail only; records and browser storage remain authoritative elsewhere. */
 export function useRecordNavigation<T extends { type: string }>() {
@@ -8,12 +9,12 @@ export function useRecordNavigation<T extends { type: string }>() {
   const key = current ? JSON.stringify(current) : '';
   const remember = () => {
     const dialog = [...document.querySelectorAll<HTMLDialogElement>('dialog[open]')].at(-1);
-    if (key && dialog) scrolls.current.set(key, dialog.scrollTop);
+    if (key && dialog) scrolls.current.set(key, modalScrollArea(dialog).scrollTop);
   };
   useEffect(() => {
     if (!key) return;
     const dialog = [...document.querySelectorAll<HTMLDialogElement>('dialog[open]')].at(-1);
-    if (dialog) dialog.scrollTop = scrolls.current.get(key) || 0;
+    if (dialog) modalScrollArea(dialog).scrollTop = scrolls.current.get(key) || 0;
   }, [key]);
   const open = (next: T | null) => {
     remember();

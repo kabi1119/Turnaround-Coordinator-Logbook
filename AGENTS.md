@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.4.2 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.3 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.4.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.3 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -101,3 +101,12 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Schema/key remain unchanged. Strict backup identity validation also accepts known aircraft type + missing variant in Draft / trashed former Draft, without weakening Confirmed identity validation or reference checks.
 - Home titles now mean Upcoming (future day), Today's Scheduled Shift (today pre-start/unknown hours), Current Shift (complete active scheduled interval). Retain Scheduled label, HKT overnight start date, explicit overlapping/tied choices and distinct Next Shift; never infer actual attendance/Worked. Full Calendar closes with its existing X, retaining source/month/date; no second Return to Home action.
 - Preserve v0.4.1 stable gutter and radar safeguards, assets/privacy/disclaimers, existing sample data and local-only scope. See docs/V0_4_2_ACCEPTANCE.md. No automatic commit/push. Suggested title: v0.4.2 - Refine Handling Forms and Duty Status Logic.
+
+## v0.4.3 keyboard and form UX
+
+- Shared Modal uses a stable header and one .modal-body scroll surface. Record return trails and nested dialogs remember this surface, never the background document. Preserve root stable scrollbar space and reference-counted body lock.
+- Use the lifecycle-scoped Visual Viewport hook for height/offset fitting and focused-field visibility. No polling, per-keystroke measurements, global React keyboard state or continuous animation loop. Coalesce settling events, do not recenter visible fields, respect manual scroll, skip pinch-zoom correction and cancel all listeners/queued work on cleanup.
+- Keyboard inference requires editable focus, a touch/small layout and substantial visual/layout occlusion. Do not infer it from every resize. Prefer accessible save actions flowing below content to hiding controls; native date/time/select behavior stays intact. No hardcoded keyboard height or user-zoom restriction.
+- Single-line text Next/Done must not implicitly submit; multiline Notes keep newlines and IME composition is respected. Preserve alphanumeric flight suffixes and fixed prefixes. Touch airline choice must not unnecessarily refocus input; dropdown arrows scroll only their list.
+- Shared behavior covers Handling, Duty/batch and Journal forms. Keep mobile editable text >=16px, portrait/landscape usability, Reduced Motion, v0.4.2 lifecycle/privacy/business rules and existing sample data unchanged. No schema/asset/dependency/backend change.
+- Report physical iPhone Safari/Chrome and Home Screen PWA testing separately from Edge viewport simulations. See docs/V0_4_3_ACCEPTANCE.md. No automatic commit/push. Suggested title: v0.4.3 - Optimize iPhone Keyboard and Form Interactions.

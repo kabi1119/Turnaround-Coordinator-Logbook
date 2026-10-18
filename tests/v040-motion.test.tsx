@@ -47,10 +47,10 @@ describe('v0.4.0 preserved navigation and authoritative presentation', () => {
       )!,
     );
     const duty = screen.getByRole('dialog');
-    duty.scrollTop = 250;
+    duty.querySelector('.modal-body')!.scrollTop = 250;
     fireEvent.click(within(duty).getByRole('button', { name: /Cathay Pacific/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Back to Duty' }));
-    expect(screen.getByRole('dialog').scrollTop).toBe(250);
+    expect(screen.getByRole('dialog').querySelector('.modal-body')!.scrollTop).toBe(250);
   });
   it('A saved progress edit updates Duty, Full Calendar, Logbook and Statistics without reload', () => {
     const db = initialize(),

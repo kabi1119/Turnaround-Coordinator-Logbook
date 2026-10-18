@@ -42,6 +42,7 @@ import {
 } from '../domain/handlingForm';
 import { validDutyDate } from '../domain/dutyCalendar';
 import { useCalendarNow } from '../lib/useCalendarNow';
+import { focusModalField } from '../lib/modalInteraction';
 export interface EditorProps {
   db: Database;
   existing?: Aircraft;
@@ -168,8 +169,7 @@ export default function AircraftEditor({
       const invalid = confirmedHandlingIssues(a, p);
       if (invalid.length) {
         const control = form.current?.elements.namedItem(invalid[0].field) as HTMLElement | null;
-        control?.focus();
-        control?.scrollIntoView({ block: 'center', behavior: 'instant' });
+        if (control) focusModalField(control);
         return;
       }
     }

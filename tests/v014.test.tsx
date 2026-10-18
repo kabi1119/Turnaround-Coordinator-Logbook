@@ -67,6 +67,13 @@ describe('v0.1.4 image combobox', () => {
   it('ArrowUp scrolls the last mounted option into view; Escape retains the editor', () => {
     const close = vi.fn();
     const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
+      this: Element,
+    ) {
+      return this.getAttribute('role') === 'listbox'
+        ? new DOMRect(0, 100, 200, 100)
+        : new DOMRect(0, 220, 200, 64);
+    });
     render(
       <AircraftEditor db={seedDatabase()} commit={() => true} onClose={close} onSaved={() => {}} />,
     );
@@ -75,10 +82,8 @@ describe('v0.1.4 image combobox', () => {
     expect(
       document.getElementById(input.getAttribute('aria-activedescendant')!)!,
     ).toHaveTextContent('SWISS International Air Lines');
-    expect(scroll).toHaveBeenLastCalledWith({ block: 'nearest' });
-    expect(scroll.mock.contexts.at(-1)).toBe(
-      document.getElementById(input.getAttribute('aria-activedescendant')!),
-    );
+    expect(screen.getByRole('listbox').scrollTop).toBe(84);
+    expect(scroll).not.toHaveBeenCalled();
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(input).toHaveAttribute('aria-expanded', 'false');
     expect(close).not.toHaveBeenCalled();

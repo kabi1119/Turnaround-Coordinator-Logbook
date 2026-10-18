@@ -55,6 +55,7 @@ function setup(existing?: Aircraft, db = testDatabase()) {
       onClose={() => {}}
     />,
   );
+  if (!existing) change('Handling Date · Hong Kong', '2026-10-18');
   return {
     ...view,
     db,
