@@ -4,7 +4,7 @@ import globals from 'globals';
 import hooks from 'eslint-plugin-react-hooks';
 import refresh from 'eslint-plugin-react-refresh';
 export default ts.config(
-  { ignores: ['dist', 'node_modules'] },
+  { ignores: ['dist', 'node_modules', '.wrangler'] },
   js.configs.recommended,
   ...ts.configs.recommended,
   {

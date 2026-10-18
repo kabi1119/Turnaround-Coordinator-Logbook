@@ -1,4 +1,12 @@
-# TCO Logbook v0.4.3 Pre-release status
+# TCO Logbook v0.4.4 Pre-release status
+
+## v0.4.4 Cloudflare static-hosting preparation — 2026-10-19 (Hong Kong)
+
+Started on clean main / 5d40651 (v0.4.3), matching public origin HEAD. Verified the public GitHub repository/default main through its API. Added pinned Wrangler 4.151.1, minimal static-only configuration for dist, SPA fallback, response security/noindex policy, local emulator and quality-gated deployment scripts. No Worker backend, auth/cloud database, record upload, schema/key migration, reset, ID/link/fixture/logo/provenance changes or Git history modifications. Native Git main-production/development-preview instructions, rollback, origin-specific backup transfer, offline limitations and future stable-domain/auth decisions are documented.
+
+Status: **Configured but not deployed**. Wrangler whoami explicitly reports no authentication. No account/GitHub authorization, remote branch build settings or public HTTPS URL was established. No temporary account, commit or push. Physical iPhone/HTTPS acceptance remains pending. All 24 PNG permissions remain unverified and must be considered before website publication; existing owner-enabled public portfolio asset policy is unchanged.
+
+Verification: npm ci succeeded; 346 tests / 25 files passed (8 new deployment safety cases), lint/build/format/static checks passed; npm audit reported zero vulnerabilities. Wrangler dry-run read 35 asset files and no bindings. Local Workers/Edge passed 24 layout checks at 375/1440 widths in Light/Dark, five-tab navigation, mandatory Draft review/save, reload/direct-navigation persistence, unchanged original records and zero startup exceptions/CSP violations. Served PNGs match all 24 inventory checksums. SPA missing-asset paths return HTML 200 with nosniff, not executable JS; exact entry asset existence is separately checked. Reachable-history scan examined 429 text blobs without common credential-pattern matches, but found non-noreply identity metadata in b68fe8d and 7606ddc; no history was rewritten. See [deployment audit/acceptance](docs/V0_4_4_ACCEPTANCE.md) and [setup guide](docs/CLOUDFLARE_DEPLOYMENT.md).
 
 ## v0.4.3 iPhone Keyboard & Form UX Optimization — 2026-10-19 (Hong Kong)
 

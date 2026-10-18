@@ -11,3 +11,7 @@ The current repository is Turnaround-Coordinator-Logbook. The retired TCO-Logboo
 - Re-run tests, lint, build, format:check and audit against a reviewed release candidate. Actual iPhone/Safari and physical interaction acceptance remains separate; see V0_1_2_ACCEPTANCE.md.
 
 Technical verification does not resolve copyright/trademark risk or authorize real workplace use. Any future publication/deployment/Git operation requires the owner's separate instruction.
+
+## v0.4.4 hosting update
+
+The owner now authorizes preparation of Cloudflare Workers Static Assets online testing from the existing public GitHub source. This supersedes the historical no-deployment scope only for static hosting. See [deployment guide](CLOUDFLARE_DEPLOYMENT.md) and [current audit/acceptance](V0_4_4_ACCEPTANCE.md). Account authorization and public HTTPS verification remain pending; unresolved image permissions and historical identity exposure are explicitly recorded. No visibility change or automatic Git publication is performed.

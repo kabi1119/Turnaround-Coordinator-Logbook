@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { readFileSync, readdirSync } from 'node:fs';
 export default defineConfig({
-  server: { watch: { ignored: ['**/.checkpoints/**'] } },
+  server: { watch: { ignored: ['**/.checkpoints/**', '**/.wrangler/**'] } },
   define: {
     __LOCAL_AIRLINE_FILES__: JSON.stringify(
       readdirSync(new URL('./public/assets/airlines/', import.meta.url)).filter((name) =>

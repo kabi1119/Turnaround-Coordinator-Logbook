@@ -10,3 +10,8 @@ coverage/
 *.local
 test-results/
 .DS_Store
+
+# Local Wrangler state and credentials
+.wrangler/
+.dev.vars
+.dev.vars.*

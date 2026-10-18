@@ -29,7 +29,15 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.3 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.4 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.4.4 Cloudflare online-preview preparation
+
+Static-only Cloudflare Workers configuration, quality-gated build/deploy scripts and security headers are provided. **Configured but not deployed:** no authorized account or verified HTTPS URL is available in this session. The GitHub source repository is public; Cloudflare native Git setup must select main for production and separate development branches for previews.
+
+**Changing from localhost/LAN to HTTPS does not transfer or synchronize browser records.** Back up before moving origins; use the existing reviewed Full JSON Restore deliberately. Storage schema, IDs, links and lifecycle rules are unchanged. No auth/database/cloud sync is added; offline availability is not guaranteed. All 24 retained airline images still have unverified redistribution permissions.
+
+See [Cloudflare setup, Windows commands, branch configuration, security and rollback](docs/CLOUDFLARE_DEPLOYMENT.md) and [online/iPhone acceptance](docs/V0_4_4_ACCEPTANCE.md).
 
 ## About the Project
 

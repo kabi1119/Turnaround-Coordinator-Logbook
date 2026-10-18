@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.4.3 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.4 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.4.3 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -110,3 +110,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Single-line text Next/Done must not implicitly submit; multiline Notes keep newlines and IME composition is respected. Preserve alphanumeric flight suffixes and fixed prefixes. Touch airline choice must not unnecessarily refocus input; dropdown arrows scroll only their list.
 - Shared behavior covers Handling, Duty/batch and Journal forms. Keep mobile editable text >=16px, portrait/landscape usability, Reduced Motion, v0.4.2 lifecycle/privacy/business rules and existing sample data unchanged. No schema/asset/dependency/backend change.
 - Report physical iPhone Safari/Chrome and Home Screen PWA testing separately from Edge viewport simulations. See docs/V0_4_3_ACCEPTANCE.md. No automatic commit/push. Suggested title: v0.4.3 - Optimize iPhone Keyboard and Form Interactions.
+
+## v0.4.4 static HTTPS hosting
+
+- The owner authorizes Cloudflare Workers Static Assets hosting preparation/deployment only; this supersedes the historical local-hosting restriction without authorizing a backend, authentication, database or synchronization. GitHub source is public; never change visibility.
+- Preserve schema, storage key, records, samples, IDs/links, all lifecycle/privacy/statistics rules and all original PNG/provenance bytes. Never migrate/reset/reseed on deployment. Different origins/devices have separate storage.
+- Use wrangler.jsonc, pinned Wrangler, dist assets and no Worker script. Follow docs/CLOUDFLARE_DEPLOYMENT.md and docs/V0_4_4_ACCEPTANCE.md. Native Git main/preview branch settings require account authorization; never equate local configuration with a live deployment.
+- Keep preview noindex/security headers tested against actual build, including inline React styles, print and logo normalization. No secrets in frontend or Git. Unverified airline redistribution permissions remain unresolved. No automatic commit/push or history rewrite.
