@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "tco-logbook",
+  "name": "app",
   "compatibility_date": "2026-10-12",
   "workers_dev": true,
   "preview_urls": true,
