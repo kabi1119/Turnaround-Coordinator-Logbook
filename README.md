@@ -29,7 +29,13 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.6 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.5.0 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.5.0 Offline-first foundation
+
+After a successful online installation, the production PWA caches its complete verified application shell for offline launch, navigation and local record creation/editing. Updates wait until old app windows close; they never forcibly reload an unfinished form. Record data remains in the existing device-local store, separate from application caches. Stale-tab writes and unreadable/stale backup exports are blocked. No backend, authentication or synchronization is added.
+
+Browser storage and offline caches can still be cleared or evicted; keep private full JSON backups. First-time offline use is not supported. Save work and close all app windows before reopening to adopt an installed update. Physical iPhone/Home Screen testing remains separate. See [architecture, acceptance and limits](docs/V0_5_0_ACCEPTANCE.md). This branch is not automatically pushed or deployed.
 
 ## v0.4.6 Radar Scan Coverage and Center Marker
 

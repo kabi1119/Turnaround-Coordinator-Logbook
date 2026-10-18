@@ -20,7 +20,8 @@ import {
 import type { Aircraft, Database } from './domain/model';
 import { canRestore, normalizeRegistration, stats, trashDuty } from './domain/selectors';
 import { LanguageContext, useLabel, useT } from './i18n';
-import { loadDatabase, writeDatabase } from './lib/storage';
+import { readDatabase, persistDatabase, STORAGE_KEY } from './lib/storage';
+import OfflineSetup from './pwa/OfflineSetup';
 import { AircraftCard, Badge, Confirm, Empty, Metric, Modal, SectionTitle } from './components/ui';
 import AircraftEditor from './features/AircraftEditor';
 import DutyEditor from './features/DutyEditor';
@@ -53,11 +54,11 @@ type Overlay =
   | { type: 'history'; registration: string }
   | null;
 export default function App() {
-  const [loaded] = useState(loadDatabase);
+  const [loaded] = useState(readDatabase);
   const [db, setDb] = useState(loaded.db);
   return (
     <LanguageContext.Provider value={db.settings.language}>
-      <Workspace db={db} setDb={setDb} loadError={loaded.error} />
+      <Workspace db={db} setDb={setDb} loadError={loaded.error} snapshot={loaded.snapshot} />
     </LanguageContext.Provider>
   );
 }
@@ -65,10 +66,12 @@ function Workspace({
   db,
   setDb,
   loadError,
+  snapshot,
 }: {
   db: Database;
   setDb: (db: Database) => void;
   loadError: string;
+  snapshot: string | null | undefined;
 }) {
   const t = useT(),
     l = useLabel();
@@ -88,6 +91,8 @@ function Workspace({
     } | null>(null);
   const [visited, setVisited] = useState<Page[]>(['home']);
   const positions = useRef<Partial<Record<Page, number>>>({});
+  const storedSnapshot = useRef(snapshot);
+  const unreadableStorage = useRef(Boolean(loadError));
   const [saveSequence, setSaveSequence] = useState(0);
   const { closing: detailClosing, close: closeDetail } = useMotionClose(close);
   useLayoutEffect(() => {
@@ -107,22 +112,44 @@ function Workspace({
     const timer = setTimeout(() => setToast(''), 4500);
     return () => clearTimeout(timer);
   }, [toast, saveSequence]);
+  useEffect(() => {
+    const changed = (event: StorageEvent) => {
+      if (event.key !== STORAGE_KEY && event.key !== null) return;
+      setToast('');
+      setStorageError(
+        t(
+          'Local data changed in another tab. Reload before saving; current edits have not been saved.',
+          '另一分頁已更改本機資料。請重新載入後再儲存；目前修改尚未儲存。',
+        ),
+      );
+    };
+    window.addEventListener('storage', changed);
+    return () => window.removeEventListener('storage', changed);
+  }, [t]);
   function commit(next: Database, explicitReset = false) {
-    if (loadError && storageError && !explicitReset) {
+    if (unreadableStorage.current && !explicitReset) {
       setToast('');
       setStorageError(loadError);
       return false;
     }
-    if (!writeDatabase(next)) {
+    const result = persistDatabase(next, storedSnapshot.current);
+    if (!result.ok) {
       setToast('');
       setStorageError(
-        t(
-          'Could not write browser storage. Changes have not been saved.',
-          '未能寫入瀏覽器儲存空間，修改尚未儲存。',
-        ),
+        result.reason === 'conflict'
+          ? t(
+              'Local data changed in another tab. Nothing was saved. Review the other tab and reload before retrying.',
+              '另一分頁已更改本機資料，未儲存任何修改。請檢查另一分頁並重新載入後再試。',
+            )
+          : t(
+              'Could not write browser storage. Changes have not been saved.',
+              '未能寫入瀏覽器儲存空間，修改尚未儲存。',
+            ),
       );
       return false;
     }
+    storedSnapshot.current = result.snapshot;
+    unreadableStorage.current = false;
     setDb(next);
     setSaveSequence((n) => n + 1);
     setStorageError('');
@@ -182,6 +209,7 @@ function Workspace({
         </div>
       </header>
       <main id="main-content">
+        <OfflineSetup />
         {storageError && (
           <div className="notice amber" role="alert">
             {storageError}
@@ -354,7 +382,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.4.6 {t('Pre-release', '預發佈')} ·{' '}
+            v0.5.0 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -377,7 +405,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.4.6 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.5.0 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

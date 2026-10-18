@@ -97,6 +97,16 @@ export default function BackupManager({
   }
   function download() {
     try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw !== null && JSON.stringify(JSON.parse(raw)) !== JSON.stringify(db)) {
+        setError(
+          t(
+            'Stored data changed or cannot be read. Backup was not created. Reload and review your local data first.',
+            '已儲存資料有變動或無法讀取，未建立備份。請先重新載入並檢查本機資料。',
+          ),
+        );
+        return;
+      }
       const backup = createBackup(db),
         content = JSON.stringify(backup, null, 2);
       if (new TextEncoder().encode(content).byteLength > MAX_BACKUP_BYTES)
@@ -117,7 +127,14 @@ export default function BackupManager({
       setMode(null);
       setSuccess(true);
     } catch (e) {
-      showError(e);
+      if (e instanceof BackupError) showError(e);
+      else
+        setError(
+          t(
+            'Could not read or export local data. No backup was created and existing data was not changed.',
+            '未能讀取或匯出本機資料。未建立備份，既有資料沒有更改。',
+          ),
+        );
     }
   }
   function apply() {

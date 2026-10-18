@@ -106,31 +106,66 @@ function validDatabase(value: unknown): value is Database {
     )
   );
 }
-export function loadDatabase(): { db: Database; error: string } {
+export function readDatabase(): {
+  db: Database;
+  error: string;
+  snapshot: string | null | undefined;
+} {
+  let snapshot: string | null | undefined;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = (snapshot = localStorage.getItem(STORAGE_KEY));
     if (!raw) {
       const db = seedDatabase();
       for (const key of Object.keys(db.settings.privacy) as (keyof typeof db.settings.privacy)[])
         db.settings.privacy[key] = true;
-      return { db, error: '' };
+      return { db, error: '', snapshot };
     }
     const value = JSON.parse(raw);
     if (!validDatabase(value)) throw new Error('Unsupported local data');
-    return { db: value, error: '' };
+    return { db: value, error: '', snapshot };
   } catch {
     return {
       db: seedDatabase(),
+      snapshot,
       error:
         'Saved data could not be read. Temporary fictional samples are shown; the stored copy has not been overwritten. Use Settings to manage local data.',
     };
   }
 }
+/** Keep the established loader contract for older callers and backups. */
+export function loadDatabase(): { db: Database; error: string } {
+  const { db, error } = readDatabase();
+  return { db, error };
+}
 export function writeDatabase(db: Database): boolean {
+  return persist(db).ok;
+}
+type WriteResult =
+  { ok: true; snapshot: string } | { ok: false; reason: 'invalid' | 'conflict' | 'unavailable' };
+/** One-key write, with a conservative stale-page guard. Not a cross-tab transaction. */
+export function persistDatabase(db: Database, expected: string | null | undefined): WriteResult {
+  return persist(db, { expected });
+}
+function persist(db: Database, guard?: { expected: string | null | undefined }): WriteResult {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    return true;
+    const serialized = JSON.stringify(db);
+    const decoded: unknown = JSON.parse(serialized);
+    if (!validDatabase(decoded)) return { ok: false, reason: 'invalid' };
+    for (const rows of [decoded.aircraft, decoded.duties, decoded.journals]) {
+      if (
+        rows.some((row) => !row.id.trim()) ||
+        new Set(rows.map((row) => row.id)).size !== rows.length
+      )
+        return { ok: false, reason: 'invalid' };
+    }
+    if (guard) {
+      if (guard.expected === undefined) return { ok: false, reason: 'unavailable' };
+      if (localStorage.getItem(STORAGE_KEY) !== guard.expected)
+        return { ok: false, reason: 'conflict' };
+    }
+    localStorage.setItem(STORAGE_KEY, serialized);
+    return { ok: true, snapshot: serialized };
   } catch {
-    return false;
+    return { ok: false, reason: 'unavailable' };
   }
 }

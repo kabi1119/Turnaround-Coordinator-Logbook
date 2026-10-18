@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { readFileSync, readdirSync } from 'node:fs';
+import { buildOffline } from './scripts/build-offline.mjs';
 export default defineConfig({
   server: { watch: { ignored: ['**/.checkpoints/**', '**/.wrangler/**'] } },
   define: {
@@ -12,6 +13,13 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    {
+      name: 'offline-shell',
+      apply: 'build',
+      closeBundle() {
+        buildOffline();
+      },
+    },
     {
       name: 'third-party-notices',
       apply: 'build',

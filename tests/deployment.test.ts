@@ -21,6 +21,7 @@ function fixture() {
     'manifest.webmanifest',
     'airplane.svg',
     'THIRD_PARTY_NOTICES.txt',
+    'sw.js',
   ])
     writeFileSync(join(root, 'dist', name), 'fixture');
   for (let n = 0; n < 24; n++)
@@ -54,11 +55,12 @@ describe('static deployment boundary', () => {
     for (const key of ['main', 'd1_databases', 'kv_namespaces', 'vars'])
       expect(config).not.toHaveProperty(key);
   });
-  it('allows existing inline layout styles but disallows inline scripts, embedding and network uploads', () => {
+  it('allows same-origin worker assets and layout styles but disallows inline scripts and embedding', () => {
     const headers = readFileSync('public/_headers', 'utf8');
     expect(headers).toContain("style-src 'self' 'unsafe-inline'");
     expect(headers).toContain("script-src 'self';");
-    expect(headers).toContain("connect-src 'none'");
+    expect(headers).toContain("connect-src 'self'");
+    expect(headers).toContain("worker-src 'self'");
     expect(headers).toContain("frame-ancestors 'none'");
     expect(headers).toContain('X-Content-Type-Options: nosniff');
     expect(headers).toContain('X-Robots-Tag: noindex');

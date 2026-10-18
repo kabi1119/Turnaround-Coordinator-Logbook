@@ -1,4 +1,14 @@
-# TCO Logbook v0.4.6 Pre-release status
+# TCO Logbook v0.5.0 Pre-release status
+
+## v0.5.0 Offline-first Foundation — 2026-10-19 (Hong Kong)
+
+Started from clean main / 1cf8cbf on isolated feature/v0.5.0-offline-foundation. Added a production Service Worker with a bounded, SHA-256-verified app shell, all 24 local airline images and existing-icon PNG PWA variants. Cached navigation normalizes Cloudflare's index.html redirect while retaining verified bytes and security headers. No forced activation/reload, arbitrary runtime cache, operational-data cache or upload. Updates wait until old clients close; activation cleans only owned obsolete caches. No dependency, schema/key, sample, record-ID, relationship, business-rule, airline/provenance or Worker configuration change.
+
+Single-key writes now validate serialized shape and unique IDs, reject unreadable initial storage or a changed snapshot, and show success only after persistence. Cross-tab events warn without discarding edits; this reduces stale overwrites but is not a cross-tab transaction. Full backup export rejects unreadable/stale data. Existing strict preview/confirm/replace and supported backup format remain intact.
+
+Verification: **385 tests / 28 files passed** (8 targeted additions), lint, production build, static guard, formatting and Wrangler dry-run passed; npm audit **0 vulnerabilities**. Native isolated Edge/local Workers installed all **33** offline assets. With the HTTP server stopped, reload, existing records, all tabs, empty reviewed Draft creation, edit/reload/stable ID, unchanged confirmed counts, Duty editing, full JSON export/restore and malformed rejection passed. Simulated quota failure preserved storage, showed no false success and retained retryable review; retry created no duplicate. Calendar smoke passed. A simulated next worker waited with an unsaved form intact, activated after closing its client, preserved all local records and an unrelated cache, and removed only the old app cache. A browser-discovered redirected-navigation defect was fixed and regression-covered before final acceptance.
+
+Mandatory A–F are satisfied for local release. No push, merge or production deployment. Physical iPhone Safari/Chrome/Home Screen and real airplane-mode/OS-eviction acceptance remain owner tasks. First use requires complete online installation; browser cache/storage retention is not guaranteed. Keep private full JSON backups. Noncritical status/update UI is deferred to v0.5.1. See docs/V0_5_0_ACCEPTANCE.md.
 
 ## v0.4.6 Radar Scan Coverage and Center Marker — 2026-10-19 (Hong Kong)
 

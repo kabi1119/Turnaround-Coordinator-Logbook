@@ -48,6 +48,10 @@ v0.4.2 retains envelope/storage schema 1 and introduces no migration. Incomplete
 
 Only **Restore / Replace** is provided. No partial merge, guessed dependencies or automatic import. Existing report exports show: "This file is a report export, not a full backup." Unsupported future formats are rejected. Existing local data loading remains separate and permissive; strict restore validation never silently rewrites it. Unknown unsupported legacy fields or orphaned links can block backup/restore and need manual correction; no values are invented to make a file pass.
 
+## v0.5.0 persistence guard
+
+The format/schema remain unchanged. Normal application writes compare the last successfully read/written raw storage snapshot before replacing it. A stale tab or unavailable initial read is blocked, without clearing the stored copy or losing the retryable form. Export also rejects unreadable or changed browser data instead of presenting temporary samples as a user's backup. These guards are not cross-tab transactions. Offline asset updates never modify record storage; the existing strict restore review and explicit replacement remain required.
+
 ## Limits
 
 Unencrypted files are not authenticated/tamper-proof or employer-verified. User-authored free text may contain sensitive content and must be reviewed. Same-origin localStorage remains device/browser-specific; localhost and LAN IP are separate stores. Restore is an explicit way to transfer a complete supported collection, not live synchronization. A separate full backup file is the recovery path after an intentionally confirmed replacement. Multi-tab conflict checks reduce stale restores but are not a transaction protocol across concurrently writing tabs; avoid simultaneous edits during restore. Browser download behavior and physical iPhone file-picker acceptance require device testing.

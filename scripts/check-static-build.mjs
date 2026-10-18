@@ -10,6 +10,7 @@ const required = [
   'manifest.webmanifest',
   'airplane.svg',
   'THIRD_PARTY_NOTICES.txt',
+  'sw.js',
 ];
 const failures = [];
 for (const path of required) {
