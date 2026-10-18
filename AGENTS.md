@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.4.4 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.5 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.4.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.5 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -117,3 +117,9 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Preserve schema, storage key, records, samples, IDs/links, all lifecycle/privacy/statistics rules and all original PNG/provenance bytes. Never migrate/reset/reseed on deployment. Different origins/devices have separate storage.
 - Use wrangler.jsonc, pinned Wrangler, dist assets and no Worker script. Follow docs/CLOUDFLARE_DEPLOYMENT.md and docs/V0_4_4_ACCEPTANCE.md. Native Git main/preview branch settings require account authorization; never equate local configuration with a live deployment.
 - Keep preview noindex/security headers tested against actual build, including inline React styles, print and logo normalization. No secrets in frontend or Git. Unverified airline redistribution permissions remain unresolved. No automatic commit/push or history rewrite.
+
+## v0.4.5 radar geography
+
+- Visual-only Home radar update: square geographic viewport, local Natural Earth 1:50m vectors and a consistent Mercator HKG anchor shared by icon, rings and sweep. Preserve CSS animation identity/duration, document/inactive/modal safeguards and reduced motion. No per-frame React/projection loop or map API.
+- Preserve Worker app, wrangler.jsonc/dist/SPA/security headers, all storage/schema/IDs/relationships/business rules and airline assets. Geography is public-domain data; it does not change the source-available app policy or airline permissions. See docs/RADAR_GEOGRAPHY.md and docs/V0_4_5_ACCEPTANCE.md.
+- Do not automatically commit, push or claim v0.4.5 deployment. Existing HTTPS v0.4.4 baseline and local tests are distinct from a newly verified release and physical iPhone acceptance.

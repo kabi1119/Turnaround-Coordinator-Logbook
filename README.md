@@ -29,11 +29,17 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.4 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.5 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.4.5 Radar Map Visual & Geographic Refinement
+
+Home now uses a responsive square geographic viewport with local Natural Earth 1:50m land/coastline vectors. India, East/Southeast Asia, Japan and northern Indonesian islands retain consistent Mercator positioning. The existing circular sweep/rings share the projected Hong Kong anchor, with HKG / VHHH beneath the Plane icon. Reduced motion and established pause rules remain unchanged. No map API, new runtime dependency or data migration. See [geography, public-domain attribution and regeneration](docs/RADAR_GEOGRAPHY.md) and [verification/real-device acceptance](docs/V0_4_5_ACCEPTANCE.md).
+
+The existing HTTPS preview at https://app.tcologbook.workers.dev/ responded successfully and showed v0.4.4 during this session. **v0.4.5 is locally verified, not yet remotely deployed.** Worker app and the current Git/Cloudflare workflow are preserved.
 
 ## v0.4.4 Cloudflare online-preview preparation
 
-Static-only Cloudflare Workers configuration, quality-gated build/deploy scripts and security headers are provided. **Configured but not deployed:** no authorized account or verified HTTPS URL is available in this session. The GitHub source repository is public; Cloudflare native Git setup must select main for production and separate development branches for previews.
+Static-only Cloudflare Workers configuration, quality-gated build/deploy scripts and security headers are provided. At initial v0.4.4 preparation, the site was configured but not deployed. The owner subsequently aligned Worker **app** in v0.4.4a and the existing HTTPS URL has now been checked; the newer v0.4.5 release still awaits publication. The GitHub source repository is public; Cloudflare native Git setup must select main for production and separate development branches for previews.
 
 **Changing from localhost/LAN to HTTPS does not transfer or synchronize browser records.** Back up before moving origins; use the existing reviewed Full JSON Restore deliberately. Storage schema, IDs, links and lifecycle rules are unchanged. No auth/database/cloud sync is added; offline availability is not guaranteed. All 24 retained airline images still have unverified redistribution permissions.
 

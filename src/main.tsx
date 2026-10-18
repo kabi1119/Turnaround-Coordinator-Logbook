@@ -16,3 +16,4 @@ import './styles/v0_4_0.css';
 import './styles/v0_4_1.css';
 import './styles/v0_4_2.css';
 import './styles/v0_4_3.css';
+import './styles/v0_4_5.css';

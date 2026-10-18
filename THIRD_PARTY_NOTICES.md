@@ -95,3 +95,7 @@ All airline names, trademarks, logos and other brand assets remain the property 
 ## Distribution
 
 The Vite build emits a copy of this file as THIRD_PARTY_NOTICES.txt alongside the frontend. Retain applicable notices with redistributed software. Copying this notice does not clear unresolved brand-asset permissions.
+
+## Geographic data — Natural Earth (v0.4.5)
+
+Made with Natural Earth. The radar derives regional land/coastline vectors from Natural Earth 1:50m data, which its authors place in the public domain, including modification and electronic redistribution. Source commit, SHA-256 values, projection and simplification are recorded in docs/RADAR_GEOGRAPHY.md. Terms: https://www.naturalearthdata.com/about/terms-of-use/. This public-domain status applies only to that geographic data; it does not authorize original project code or any airline branding.

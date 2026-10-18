@@ -1,4 +1,12 @@
-# TCO Logbook v0.4.4 Pre-release status
+# TCO Logbook v0.4.5 Pre-release status
+
+## v0.4.5 Radar Map Visual & Geographic Refinement — 2026-10-19 (Hong Kong)
+
+Started on clean main / f44b9aa (v0.4.4a). Reused Radar, its visibility lifecycle and existing six-second CSS sweep/pause/reduced-motion policies. The responsive geographic canvas is now square, with just two local static SVG paths from pinned, checksum-verified public-domain Natural Earth 1:50m land/coastline data. Offline generation clips/simplifies to 75–150 E, 5 S–57.1539818 N using a uniform spherical Mercator scale. The northern extent is a deliberate square/proportion trade-off, avoiding excess southern coverage. HKG (113.918 E, 22.308 N) projects to 51.8907% / 62.7996%; the existing icon, decorative circular rings and sweep share that point, with a clear HKG / VHHH label below. No geographic recalculation or React update per animation frame, runtime map API, new package or heavy GIS library. Approximately 72KB regional data; JS gzip increases by approximately 28KB. Source/rights and deterministic regeneration are documented in docs/RADAR_GEOGRAPHY.md.
+
+Verification: **370 tests passed / 26 files**, including 24 new geographic cases; lint, build, format:check, static checks and Wrangler dry-run passed; npm audit **0 vulnerabilities**. Isolated Edge against local Workers passed **32** layout/motion combinations across 320×800, 390×844, 844×390 and 1440×1000, both languages/themes and motion preferences. Measured square geometry, common marker/disc/icon centers, contained circular rings, label alignment, modal/inactive pause behavior and unchanged saved data. Zero startup exceptions, CSP violations or external requests. Actual mobile/desktop radar screenshots were inspected. Additional sampled CSS transforms progress while static-map mutations remain zero; Reduced Motion remains static. This is not a physical iPhone or frame-rate verification.
+
+No model/schema/key/record/ID/link/backup/privacy/business rule/sample/airline asset changes. wrangler.jsonc, Worker app, dist, SPA/security and deployment workflow are unchanged. Existing https://app.tcologbook.workers.dev/ returned HTTPS 200 and v0.4.4; **v0.4.5 has not been committed, pushed or deployed** by this session. Physical iPhone Safari/Chrome/Home Screen, actual mobile scroll smoothness and v0.4.5 remote acceptance remain owner tasks. See docs/V0_4_5_ACCEPTANCE.md.
 
 ## v0.4.4 Cloudflare static-hosting preparation — 2026-10-19 (Hong Kong)
 

@@ -1,12 +1,16 @@
 # v0.4.4 — Cloudflare Workers Static Assets
 
+## Current v0.4.4a hosting update
+
+The owner committed the Worker rename to **app** in f44b9aa. During v0.4.5 development, https://app.tcologbook.workers.dev/ returned HTTPS 200 and the served bundle displayed v0.4.4. Preserve the existing Git integration and account subdomain. v0.4.5 has not been published by this session. The original no-authorization status below records the initial preparation session, not the current site availability.
+
 ## Verified repository and architecture
 
 Source: https://github.com/kabi1119/Turnaround-Coordinator-Logbook — **public**, default branch **main**, inspected at `5d40651` before this release. `package.json`'s `private: true` prevents npm publication; it does not describe GitHub visibility. No visibility changes, GitHub Pages, commits or pushes are performed by this implementation.
 
 React 19 / TypeScript / Vite 7, npm lockfile, Node **24** recommended (Wrangler requires >=22). `npm run build` runs `tsc -b && vite build` and emits **dist/**. All navigation is in-memory React state, not URL-based routing. SPA fallback returns the application shell for direct document navigation; it does not make tab state bookmarkable. Public asset paths are root-relative and case-sensitive. There is a manifest, but **no service worker or guaranteed offline launch**.
 
-`wrangler.jsonc` pins a supported compatibility date, names the Worker `tco-logbook`, enables workers.dev/version preview URLs and points Static Assets at `./dist` with `single-page-application` fallback. There is no Worker script, database binding or backend. Name availability and the actual workers.dev subdomain remain account-dependent. No public URL has been confirmed.
+`wrangler.jsonc` pins a supported compatibility date, names the Worker `app`, enables workers.dev/version preview URLs and points Static Assets at `./dist` with `single-page-application` fallback. There is no Worker script, database binding or backend. Name availability and the actual workers.dev subdomain remain account-dependent. No public URL has been confirmed.
 
 **Status: configured locally; not deployed.** Wrangler reported “You are not authenticated.” No temporary account is used. Native Git integration and remote branch settings cannot be configured without the owner's Cloudflare/GitHub authorization.
 
@@ -19,7 +23,7 @@ Before changing origins, use Settings → Full JSON Backup, keep the unencrypted
 ## First deployment and native Git builds
 
 1. Sign in to your Cloudflare account in the dashboard. Use Workers & Pages → Create application → connect/import an existing Git repository (Workers, **not Pages**). Authorize the Cloudflare GitHub app only for `kabi1119/Turnaround-Coordinator-Logbook`. Do not change repository visibility. Stay on the available free plan; stop if paid approval is requested.
-2. Select project name **tco-logbook**, repository root `/`, production branch **main**. If the name is already used, inspect the existing Worker before replacing anything; choose and consistently update an owner-approved name if needed.
+2. Select project name **app**, repository root `/`, production branch **main**. If the name is already used, inspect the existing Worker before replacing anything; choose and consistently update an owner-approved name if needed.
 3. Use npm/lockfile dependency installation, Node **24** (`NODE_VERSION=24` in build settings if necessary), with devDependencies available. Set Build command to **`npm run check:release`**, Deploy command to **`npx wrangler deploy`**. The quality gate tests, lints, builds, checks deployable assets and checks formatting before publishing. It must succeed before the Deploy step. Do not use a Pages “output directory” workflow or add a competing GitHub Actions workflow.
 4. Settings → Build → Branch control: keep **main** as production; enable preview builds for approved development branches. Use feature/release branches and a reviewed PR to main; do not develop directly on a branch that automatically publishes. For new Workers, use Cloudflare's current **`npx wrangler preview`** preview command, which does not promote to production. Existing projects may offer the older version-URL workflow; inspect settings before changing it, since switching preview models can be irreversible. `preview_urls` alone does not configure Git branch builds.
 5. Review the public exposure and unresolved logo permissions below before activating the first build. After the owner commits/pushes the reviewed release, run/retry the Git build. A successful build does not prove a successful deployment: verify the deployment log, active version, HTTPS URL and acceptance tests separately. A failed build must leave the previous successful active deployment in place; confirm this in Deployments.

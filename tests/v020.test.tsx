@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
 import Radar from '../src/components/Radar';
+import { HKG_POINT } from '../src/lib/radarProjection';
 import { seedDatabase } from '../src/data/seed';
 import { v014SeedDatabase } from '../src/data/v014Seed';
 import { legacySeedDatabase } from '../src/data/legacySeed';
@@ -211,7 +212,7 @@ describe('v0.2.0 pre-release presentation', () => {
       'Turnaround Coordinator Logbook',
     );
     expect(container.querySelector('.demo-strip')).toBeNull();
-    expect(container.querySelector('.nav-context')).toHaveTextContent('v0.4.4 Pre-release');
+    expect(container.querySelector('.nav-context')).toHaveTextContent('v0.4.5 Pre-release');
     const nav = screen.getByRole('navigation');
     for (const page of ['Home', 'Logbook', 'Statistics', 'Journal']) {
       fireEvent.click(within(nav).getByRole('button', { name: page }));
@@ -231,12 +232,13 @@ describe('v0.2.0 pre-release presentation', () => {
   });
   it('Renders a decorative local map with all requested regions and an independent CSS sweep', () => {
     const { container } = render(<Radar />);
-    expect(
-      [...container.querySelectorAll('[data-region]')].map((p) => p.getAttribute('data-region')),
-    ).toEqual(['china', 'korea', 'japan', 'taiwan', 'philippines', 'vietnam']);
+    expect(container.querySelector('.map-coastline')?.getAttribute('d')?.length).toBeGreaterThan(
+      1000,
+    );
     expect(container.querySelector('image, iframe, canvas, [href]')).toBeNull();
     expect(container.querySelector('.flight-visual')).toHaveAttribute('aria-hidden', 'true');
-    expect(container.querySelector('.map-hkg')).toHaveAttribute('cx', '220');
+    expect(container.querySelector('.map-hkg')).toHaveAttribute('cx', String(HKG_POINT[0]));
+    expect(container.querySelector('.radar-airport-label')).toHaveTextContent('HKG / VHHH');
     expect(container.querySelector('.radar-sweep')).not.toBeNull();
   });
 });

@@ -1,0 +1,60 @@
+/* Only the geographic viewport is square; the HKG-centered radar remains circular. */
+.flight-visual {
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 1;
+  min-height: 0;
+  justify-self: end;
+}
+.east-asia-map {
+  aspect-ratio: 1;
+}
+.map-land {
+  fill: #639f8d26;
+  stroke: none;
+}
+.map-coastline {
+  fill: none;
+  stroke: #a5d5c28a;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.radar-disc {
+  width: var(--radar-diameter);
+  left: var(--radar-x);
+  top: var(--radar-y);
+  overflow: visible;
+  clip-path: none;
+}
+.radar-grid {
+  overflow: hidden;
+}
+.radar-airport-label {
+  position: absolute;
+  top: calc(50% + 32px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  padding: 3px 5px;
+  border-radius: 2px;
+  background: #102f34e8;
+  color: #f7f5ed;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+@media (max-width: 767px) {
+  .flight-visual {
+    max-width: 380px;
+    justify-self: center;
+  }
+  .radar-caption {
+    left: 16px;
+  }
+  .coordinate {
+    right: 16px;
+  }
+}
