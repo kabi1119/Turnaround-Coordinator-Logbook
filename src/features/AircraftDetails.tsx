@@ -8,6 +8,11 @@ import { Badge } from '../components/ui';
 import { useLabel, useT } from '../i18n';
 import { aircraftModel } from '../data/aircraftCatalogue';
 import { delaySeverity } from '../domain/delaySeverity';
+import {
+  confirmedHandlingIssues,
+  handlingDisplayStatus,
+  untitledDraft,
+} from '../domain/handlingForm';
 
 export default function AircraftDetails({
   a: raw,
@@ -36,17 +41,28 @@ export default function AircraftDetails({
       <span className="eyebrow">{t('HANDLING RECORD', '航機處理紀錄')}</span>
       <div className="detail-airline">
         <AirlineLogo airline={a.airline} size="lg" decorative />
-        <h2 className="detail-title">{c.title}</h2>
+        <h2 className="detail-title">
+          {untitledDraft(a) ? t('Untitled Draft', '未命名草稿') : c.title}
+        </h2>
       </div>
       <p>
         {l(a.role)} · {a.variant}
         {p.registration && a.registration ? ` (${a.registration})` : ''}
       </p>
       <div className="tags">
-        <Badge tone="teal">{l(a.status)}</Badge>
+        <Badge tone="teal">{l(handlingDisplayStatus(a))}</Badge>
         <Badge>{l(a.handling)}</Badge>
         {!duty && <Badge tone="amber">{t('Unlinked', '未連結')}</Badge>}
       </div>
+      {raw.status === 'Confirmed' &&
+        (!raw.actualHandling || confirmedHandlingIssues(raw, p).length > 0) && (
+          <p className="notice amber">
+            {t(
+              'This saved Confirmed record needs review under current completion rules. Its original status and values have not been changed.',
+              '此已儲存的已確認紀錄須按現行完成規則覆核；原有狀態及數值未被更改。',
+            )}
+          </p>
+        )}
       <section className="detail-section">
         <h3>{t('Assignment Information', '處理紀錄資料')}</h3>
         <dl className="review-list">

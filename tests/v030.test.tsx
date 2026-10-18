@@ -1,3 +1,4 @@
+import { attestHandlingReview } from './handlingHelpers';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -74,9 +75,9 @@ describe('v0.3.0 dependent aircraft identity and duty selection', () => {
       icao: 'OLD',
     };
     render(<AircraftTypeFields a={a} onChange={patch} />);
-    expect(screen.getByLabelText('Aircraft Variant · historical/custom')).toHaveValue(a.variant);
+    expect(screen.getByLabelText('Aircraft Variant · historical/custom *')).toHaveValue(a.variant);
     expect(patch).not.toHaveBeenCalled();
-    await user.type(screen.getByLabelText('Aircraft Variant · historical/custom'), ' X');
+    await user.type(screen.getByLabelText('Aircraft Variant · historical/custom *'), ' X');
     expect(patch).toHaveBeenCalledWith({ variant: a.variant + 'X' });
   });
   it('formats overnight and incomplete duties without invented values, preserving legacy states', () => {
@@ -140,6 +141,7 @@ describe('v0.3.0 disruption duration, not inferred flight causation', () => {
     expect(screen.getByText('Moderate')).toBeInTheDocument();
     expect(screen.getByText(/Historical operational impact/)).toHaveTextContent('Minor');
     fireEvent.click(screen.getByText('Save & Close'));
+    attestHandlingReview();
     fireEvent.click(screen.getByText('Confirm & Save'));
     expect(commit).toHaveBeenCalledOnce();
     expect(

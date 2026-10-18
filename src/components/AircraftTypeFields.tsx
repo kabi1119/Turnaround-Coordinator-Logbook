@@ -6,9 +6,11 @@ import { useT } from '../i18n';
 export default function AircraftTypeFields({
   a,
   onChange,
+  errors = {},
 }: {
   a: Aircraft;
   onChange: (part: Partial<Aircraft>) => void;
+  errors?: { aircraftType?: string; variant?: string };
 }) {
   const t = useT(),
     model = aircraftModel(a),
@@ -19,7 +21,9 @@ export default function AircraftTypeFields({
   return (
     <div className="aircraft-type-fields">
       <Select
+        name="aircraftType"
         label={t('Aircraft Type *', '航機型號 *')}
+        error={errors.aircraftType}
         placeholder={t('Select aircraft type', '選擇航機型號')}
         value={type ? model : legacy ? 'legacy' : ''}
         options={[
@@ -43,13 +47,17 @@ export default function AircraftTypeFields({
       />
       {!type && legacy ? (
         <Field
-          label={t('Aircraft Variant · historical/custom', '航機子型號 · 歷史／自訂')}
+          name="variant"
+          label={t('Aircraft Variant · historical/custom *', '航機子型號 · 歷史／自訂 *')}
+          error={errors.variant}
           value={a.variant}
           onChange={(e) => onChange({ variant: e.target.value })}
         />
       ) : (
         <Select
+          name="variant"
           label={t('Aircraft Variant *', '航機子型號 *')}
+          error={errors.variant}
           disabled={!type}
           placeholder={t('Select variant', '選擇子型號')}
           options={options}

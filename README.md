@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.1 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.2 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -46,6 +46,14 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Career Journal:** Standalone or linked reflections, STAR-style fields, competencies, Draft/Confirmed status and optional self-reported outcomes. Journal entries do not increase aircraft handling counts.
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
+
+## v0.4.2 Handling Form and Duty Status Refinement
+
+The Handling form now follows date/Duty, airline, explicitly selected handling type, applicable flight numbers, aircraft type/variant and role. Red required indicators and specific accessible validation apply to Confirmed saves; an empty business Draft remains valid and still requires review. Known catalogue airlines have fixed IATA prefixes; enter 1–4 digits with an optional letter. Matching pasted prefixes are normalized once, airline changes retain each number/suffix, and conflicting or unfamiliar text is preserved with guidance. Custom airlines use a full-number input without an invented prefix.
+
+Future Handling must be saved as Draft and displays **Pending**. Time never confirms it. To complete it later, fill applicable enabled fields, use a non-future Hong Kong date and explicitly attest actual handling in the mandatory Review Sheet. Privacy-disabled flights are hidden and excluded from validation, while archived values remain protected. Legacy Confirmed records stay unchanged and inconsistencies are flagged for review. Incomplete structured Drafts remain compatible with full JSON backup/restore; schema 1 is unchanged.
+
+Home now uses **Today's Scheduled Shift** before today's start and **Current Shift** during a complete scheduled interval, each with a distinct **Next Shift** when available. Titles never establish Worked/attendance. The Full Calendar retains its X, selected date and return context; the redundant Return to Home button is removed. Earlier release notes below retain historical wording; these form/lifecycle/title rules supersede it. See [v0.4.2 compatibility and acceptance](docs/V0_4_2_ACCEPTANCE.md).
 
 ## v0.4.1 Home Dashboard and UI Fixes
 
@@ -318,7 +326,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.1 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.2 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -335,6 +343,14 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **職涯日誌（Career Journal）：** 支援獨立或關聯式反思、STAR 結構欄位、能力標籤、Draft／Confirmed 狀態及可選填的自行申報成果。Journal 紀錄不會增加航機處理任務數量。
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
+
+## v0.4.2 處理表單及更次狀態改進
+
+處理表單依序顯示日期／更次、航空公司、明確選擇的處理類型、適用航班編號、航機型號／子型號及角色。紅色必填標記及明確無障礙錯誤只用於已確認儲存；空白業務草稿仍可經覆核儲存。清單航空公司使用固定 IATA 前綴，只須輸入 1–4 位數字及可選字母尾碼；貼上相同前綴只正規化一次，更換航空公司保留各航段數字／尾碼。衝突或未識別文字會保留並提示，自訂航空公司則輸入完整航班編號，不會虛構前綴。
+
+未來處理紀錄只可儲存為草稿，顯示「待處理」，不會隨時間自動確認。稍後完成時須填妥適用且啟用的欄位、使用非未來的香港日期，並在必須的覆核視窗明確勾選已實際處理。私隱設定停用的航班欄位不顯示、不驗證；封存值仍受保護。舊已確認紀錄不會自動改寫，不一致情況會提示覆核。未完成的結構化草稿可完整 JSON 備份／還原，儲存格式仍為 schema 1。
+
+首頁在今日開更前顯示「今日已排更次」，完整排更時段內顯示「當前更次」；如有後續更次則另顯示「下一更次」，不會推斷已工作或打卡。完整月曆保留 X、選定日期及返回來源，只移除重複的返回首頁按鈕。以下歷史版本說明涉及的表單、生命週期及標題規則，以本節為準。詳見 [v0.4.2 相容性及驗收](docs/V0_4_2_ACCEPTANCE.md)。
 
 ## v0.4.1 首頁儀表板及介面修正
 

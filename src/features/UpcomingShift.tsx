@@ -1,5 +1,5 @@
 import type { Aircraft, Duty } from '../domain/model';
-import { homeDutySchedule } from '../domain/homeDuty';
+import { homeDutyPresentation } from '../domain/homeDuty';
 import { shiftRange } from '../domain/roster';
 import { useCalendarNow } from '../lib/useCalendarNow';
 import { Badge } from '../components/ui';
@@ -19,11 +19,13 @@ export default function UpcomingShift({
 }) {
   const t = useT(),
     now = useCalendarNow();
-  const { current, next, remaining } = homeDutySchedule(duties, now);
-  const title = current.length
-    ? t("Today's Scheduled Shift", '今日已排更次')
-    : t('Upcoming Shift', '即將到來的更次');
-  const primary = current.length ? current : next;
+  const { primary, next, remaining, kind } = homeDutyPresentation(duties, now);
+  const title =
+    kind === 'current'
+      ? t('Current Shift', '當前更次')
+      : kind === 'today'
+        ? t("Today's Scheduled Shift", '今日已排更次')
+        : t('Upcoming Shift', '即將到來的更次');
   function hours(d: Duty) {
     return (
       (d.start ? t('Start', '開更') + ' ' + d.start : t('Start not recorded', '未記錄開更時間')) +
@@ -115,7 +117,7 @@ export default function UpcomingShift({
           </p>
         </div>
       )}
-      {current.length > 0 && next.length > 0 && (
+      {next.length > 0 && (
         <section className="panel next-shift" aria-label={t('Next Shift', '下一更次')}>
           <h3>{t('Next Shift', '下一更次')}</h3>
           {next.length > 1 ? (

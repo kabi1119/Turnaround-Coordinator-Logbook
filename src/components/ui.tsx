@@ -11,6 +11,7 @@ import { useLabel, useT } from '../i18n';
 import type { Aircraft, Privacy } from '../domain/model';
 import { cardText, hasArrival, hasDeparture } from '../domain/selectors';
 import { aircraftTimes } from '../domain/time';
+import { handlingDisplayStatus, untitledDraft } from '../domain/handlingForm';
 let openModals = 0;
 let previousOverflow = '';
 export function Modal({
@@ -85,26 +86,53 @@ export function Modal({
     </dialog>
   );
 }
+export function RequiredLabel({ label }: { label: string }) {
+  return label.endsWith(' *') ? (
+    <>
+      {label.slice(0, -1)}
+      <span className="required-marker">*</span>
+    </>
+  ) : (
+    <>{label}</>
+  );
+}
 export function Field({
   label,
+  error,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & { label: string }) {
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string }) {
   const id = useId();
   return (
     <label className="field" htmlFor={id}>
-      <span>{label}</span>
-      <input id={id} {...props} />
+      <span id={`${id}-label`}>
+        <RequiredLabel label={label} />
+      </span>
+      <input
+        id={id}
+        aria-labelledby={`${id}-label`}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
+        aria-required={label.endsWith(' *')}
+        {...props}
+      />
+      {error && (
+        <small id={`${id}-error`} className="field-error">
+          {error}
+        </small>
+      )}
     </label>
   );
 }
 export function Select({
   label,
+  error,
   options,
   placeholder,
   placeholderDisabled = false,
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
+  error?: string;
   options: readonly string[] | { value: string; label: string }[];
   placeholder?: string;
   placeholderDisabled?: boolean;
@@ -113,8 +141,17 @@ export function Select({
   const l = useLabel();
   return (
     <label className="field" htmlFor={id}>
-      <span>{label}</span>
-      <select id={id} {...props}>
+      <span id={`${id}-label`}>
+        <RequiredLabel label={label} />
+      </span>
+      <select
+        id={id}
+        aria-labelledby={`${id}-label`}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
+        aria-required={label.endsWith(' *')}
+        {...props}
+      >
         {placeholder !== undefined && (
           <option value="" disabled={placeholderDisabled}>
             {placeholder}
@@ -132,6 +169,11 @@ export function Select({
           ),
         )}
       </select>
+      {error && (
+        <small id={`${id}-error`} className="field-error">
+          {error}
+        </small>
+      )}
     </label>
   );
 }
@@ -194,7 +236,7 @@ export function AircraftCard({
     <button className="aircraft-card" onClick={onClick}>
       <AirlineLogo airline={a.airline} decorative />
       <span className="aircraft-content">
-        <strong>{c.title}</strong>
+        <strong>{untitledDraft(a) ? t('Untitled Draft', '未命名草稿') : c.title}</strong>
         <span>
           {l(a.role) || t('Role not selected', '未選角色')} ·{' '}
           {a.variant || t('Type not selected', '未選機型')}
@@ -215,7 +257,7 @@ export function AircraftCard({
         </span>
         <span className="card-meta">
           {l(a.handling)} <span>·</span> {a.date || t('Undated', '未定日期')}{' '}
-          {a.status !== 'Confirmed' && <Badge>{l(a.status)}</Badge>}
+          {a.status !== 'Confirmed' && <Badge>{l(handlingDisplayStatus(a))}</Badge>}
           {!a.dutyId && <Badge tone="amber">{t('Unlinked', '未連結')}</Badge>}
         </span>
         {privacy.statuses && (

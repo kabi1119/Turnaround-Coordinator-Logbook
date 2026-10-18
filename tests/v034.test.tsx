@@ -44,10 +44,12 @@ describe('v0.3.4 compact Upcoming Shift', () => {
       <UpcomingShift duties={rows} onDuty={onDuty} onCalendar={onCalendar} />,
     );
     expect(container.querySelector('.calendar-grid')).toBeNull();
-    expect(screen.getByRole('region', { name: 'Upcoming Shift' })).toHaveTextContent(
+    expect(screen.getByRole('region', { name: "Today's Scheduled Shift" })).toHaveTextContent(
       'Start 14:00 · End 22:00 HKT',
     );
-    expect(screen.getByText('1 more scheduled shift in the Full Calendar.')).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Next Shift' })).toHaveTextContent(
+      'Start 23:00 · End 06:00 (+1 day) HKT',
+    );
     fireEvent.click(container.querySelector('.duty-open')!);
     expect(onDuty).toHaveBeenCalledWith(next);
     fireEvent.click(screen.getByRole('button', { name: 'View Full Calendar' }));
@@ -92,7 +94,7 @@ describe('v0.3.4 compact Upcoming Shift', () => {
       render(<UpcomingShift duties={[row]} onDuty={() => {}} onCalendar={() => {}} />);
       expect(screen.queryByText('No upcoming scheduled shifts.')).toBeNull();
       act(() => vi.advanceTimersByTime(60000));
-      expect(screen.getByRole('heading', { name: "Today's Scheduled Shift" })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Current Shift' })).toBeInTheDocument();
       expect(screen.queryByText('In Progress')).toBeNull();
       expect(row.workState).toBe('Planned');
     } finally {
@@ -184,7 +186,7 @@ describe('Full Calendar navigation and structured status legend', () => {
     localStorage.setItem(STORAGE_KEY, bytes);
     const view = render(<App />);
     expect(view.container.querySelector('.calendar-grid')).toBeNull();
-    expect(screen.getByRole('heading', { name: 'Upcoming Shift' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: "Today's Scheduled Shift" })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Fictional calendar preview' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'View Full Calendar' }));
     expect(screen.getByRole('dialog', { name: 'Full Duty Calendar' })).toBeInTheDocument();
@@ -201,7 +203,7 @@ describe('Full Calendar navigation and structured status legend', () => {
     expect(screen.getByRole('dialog', { name: `Duty · ${today}` })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Back to Calendar' }));
     expect(screen.getByRole('dialog', { name: 'Full Duty Calendar' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Return to Home' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(view.container.querySelector('.calendar-grid')).toBeNull();
     expect(localStorage.getItem(STORAGE_KEY)).toBe(bytes);
   });
@@ -217,7 +219,7 @@ describe('Full Calendar navigation and structured status legend', () => {
       within(preview).getByRole('list', { name: 'Calendar status legend' }),
     ).toBeInTheDocument();
     fireEvent.click(within(preview).getByRole('button', { name: 'Close' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Return to Home' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(localStorage.getItem(STORAGE_KEY)).toBe(bytes);
   });
   it('Escape closes only the active fictional preview, keeping Full Calendar and its selected date', () => {
@@ -243,7 +245,7 @@ describe('Full Calendar navigation and structured status legend', () => {
     fireEvent.click(screen.getByRole('button', { name: '查看完整月曆' }));
     expect(screen.getByRole('dialog', { name: '完整更次月曆' })).toBeInTheDocument();
     expect(screen.getByRole('list', { name: '月曆狀態圖例' })).toHaveTextContent('年假');
-    fireEvent.click(screen.getByRole('button', { name: '返回首頁' }));
+    fireEvent.click(screen.getByRole('button', { name: '關閉' }));
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });

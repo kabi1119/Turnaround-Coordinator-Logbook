@@ -50,9 +50,6 @@ export default function FullDutyCalendar({
             {t('Fictional calendar preview', '虛構月曆預覽')}
           </button>
         </div>
-        <div className="actions">
-          <button onClick={onClose}>{t('Return to Home', '返回首頁')}</button>
-        </div>
         <DutyCalendar
           duties={duties}
           month={month}

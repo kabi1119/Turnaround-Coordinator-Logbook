@@ -1,3 +1,4 @@
+import { attestHandlingReview, chooseRequiredHandling } from './handlingHelpers';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -19,6 +20,7 @@ function setupEditor(db = seedDatabase(), existing?: Database['aircraft'][number
 }
 async function core(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('Airline *'), 'Cathay Pacific');
+  chooseRequiredHandling();
   await user.selectOptions(screen.getByLabelText('Aircraft Type *'), 'A350');
   await user.selectOptions(screen.getByLabelText('Aircraft Variant *'), 'A350-1000');
 }
@@ -28,12 +30,13 @@ describe('Mandatory Aircraft Review Sheet', () => {
       { commit } = setupEditor();
     fireEvent.change(screen.getByLabelText('Handling Date · Hong Kong'), { target: { value: '' } });
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('Choose a handling date');
+    expect(screen.getByRole('alert')).toHaveTextContent('Handling Date');
     await user.click(screen.getByRole('button', { name: 'Save Draft' }));
     expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toHaveTextContent(
       'no Duty will be created',
     );
     expect(commit).not.toHaveBeenCalled();
+    attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     const value = commit.mock.calls[0] as unknown as [Database];
     expect(value[0].duties).toHaveLength(6);
@@ -62,6 +65,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
       'button',
       { name: 'Confirm & Save' },
     );
+    attestHandlingReview();
     fireEvent.click(btn);
     fireEvent.click(btn);
     expect(commit).toHaveBeenCalledTimes(1);
@@ -87,6 +91,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.click(screen.getByRole('option', { name: /2026-Oct-15 22:00/ }));
     await user.click(screen.getByRole('button', { name: 'Save & Add Next' }));
     expect(commit).not.toHaveBeenCalled();
+    attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(commit).toHaveBeenCalledTimes(1);
     expect(close).not.toHaveBeenCalled();
@@ -99,10 +104,13 @@ describe('Mandatory Aircraft Review Sheet', () => {
     const user = userEvent.setup(),
       { commit } = setupEditor();
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('Complete the four core');
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Please complete the following required fields:',
+    );
     expect(screen.queryByRole('button', { name: 'Confirm & Save' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Save Draft' }));
     expect(commit).not.toHaveBeenCalled();
+    attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     const value = commit.mock.calls[0] as unknown as [Database];
     expect(value[0].aircraft[0].status).toBe('Draft');
@@ -137,6 +145,8 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     const button = screen.getByRole('button', { name: 'Confirm & Save' });
     expect(button).toBeDisabled();
+    attestHandlingReview();
+    expect(button).toBeDisabled();
     await user.click(screen.getByLabelText('Keep as separate assignment'));
     await user.click(button);
     expect(commit).toHaveBeenCalledTimes(1);
@@ -153,6 +163,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).not.toHaveTextContent(
       existing.registration,
     );
+    attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     const value = commit.mock.calls[0] as unknown as [Database];
     expect(value[0].aircraft.find((a) => a.id === existing.id)?.registration).toBe(
@@ -193,6 +204,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
     expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toHaveTextContent(
       'DEMO-W121L',
     );
+    attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     const value = commit.mock.calls[0] as unknown as [Database];
     expect(value[0].aircraft[0].bay).toBe('DEMO-W121L');
@@ -201,10 +213,10 @@ describe('Mandatory Aircraft Review Sheet', () => {
     const user = userEvent.setup(),
       { commit } = setupEditor();
     await core(user);
-    await user.click(screen.getByText('More Details'));
-    await user.click(screen.getByLabelText(/Actual handling took place/));
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
-    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirm & Save' })).toBeDisabled();
+    expect(screen.getByRole('checkbox', { name: /I confirm this handling/ })).not.toBeChecked();
     expect(commit).not.toHaveBeenCalled();
   });
 });
@@ -239,6 +251,7 @@ describe('App navigation, persistence and privacy', () => {
     await core(user);
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(5);
     expect(screen.getByRole('status')).toHaveTextContent('Saved on this device');

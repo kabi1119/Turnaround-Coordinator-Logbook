@@ -1,6 +1,6 @@
 import type { Database } from '../domain/model';
 import { disruptionCategories, flightStatuses, handlingTypes, roles } from '../domain/model';
-import { validAircraftIdentity } from '../data/aircraftCatalogue';
+import { aircraftCatalogue, validAircraftIdentity } from '../data/aircraftCatalogue';
 
 export const BACKUP_APP = 'turnaround-coordinator-logbook';
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
@@ -186,7 +186,11 @@ export function validateBackupDatabase(value: unknown): asserts value is Databas
     optional(a, 'aircraftType', str);
     if (
       !validAircraftIdentity(a as unknown as Database['aircraft'][number]) &&
-      !(a.aircraftType === '' && a.variant === '' && a.status === 'Draft')
+      !(
+        (a.status === 'Draft' || (a.status === 'Trashed' && a.previousStatus === 'Draft')) &&
+        a.variant === '' &&
+        (a.aircraftType === '' || aircraftCatalogue.some((type) => type.model === a.aircraftType))
+      )
     )
       fail();
     optional(a, 'previousStatus', (v) => member(v, recordStates));

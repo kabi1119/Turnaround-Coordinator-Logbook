@@ -1,3 +1,4 @@
+import { attestHandlingReview, chooseRequiredHandling } from './handlingHelpers';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
@@ -177,6 +178,7 @@ describe('v0.3.1 final bilingual handling terminology', () => {
       fireEvent.click(screen.getByRole('button', { name: action }));
       fireEvent.click(screen.getByRole('button', { name: new RegExp('^' + fresh) }));
       expect(screen.getByRole('dialog', { name: fresh })).toBeInTheDocument();
+      chooseRequiredHandling(language);
       fireEvent.change(
         screen.getByRole('combobox', { name: language === 'en' ? 'Airline *' : '航空公司 *' }),
         { target: { value: 'Cathay Pacific' } },
@@ -192,6 +194,7 @@ describe('v0.3.1 final bilingual handling terminology', () => {
       fireEvent.click(screen.getByText(language === 'en' ? 'Save & Close' : '儲存並關閉'));
       expect(screen.getByRole('dialog', { name: review })).toBeInTheDocument();
       expect(localStorage.getItem(STORAGE_KEY)).toBe(original);
+      attestHandlingReview();
       fireEvent.click(screen.getByText(language === 'en' ? 'Confirm & Save' : '確認並儲存'));
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
       expect(saved.aircraft).toHaveLength(5);

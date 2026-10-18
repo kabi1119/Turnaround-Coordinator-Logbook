@@ -38,6 +38,8 @@ Duty may include optional leave: AL or SL. AL has blank start/end and no duty ho
 
 ## Workflow
 
+v0.4.2 retains envelope/storage schema 1 and introduces no migration. Incomplete Handling Drafts can contain a known aircraft type with a missing variant; strict backups accept this combination for Drafts and trashed records whose previous status was Draft. Confirmed aircraft identity validation remains strict. Older application versions may reject such a partial structured Draft during strict restore; use v0.4.2 or newer. Pending is a display label for future Drafts, never a new serialized status. Existing IDs, hidden/archived values, links and legacy snapshots remain intact. Full backups intentionally contain archived values; privacy-filtered reports remain a separate feature.
+
 1. Settings → Export Full Backup (JSON). Read the unencrypted-data notice and explicitly download. This includes hidden values, unlike reports. Export validates data before creating a file; broken links require review rather than silently dropping content.
 2. Settings → Import Backup (JSON). Choose a .json file, at most 5 MiB (UTF-8); empty/application-json/text-json/plain-text MIME types are accepted where browsers vary. PDF/OCR, arbitrary old raw databases and incomplete report JSON are not restore inputs.
 3. Validation checks app/format/schema versions, allowed keys and field types, dates/times, enums, unique record and event IDs, and all Duty/originalDuty/Aircraft/Journal links. Prototype-related keys are rejected anywhere; JSON is never evaluated. Unknown historical competency strings are retained as plain text. Deep nesting beyond 32 levels, oversized strings and unrecognized fields are rejected.

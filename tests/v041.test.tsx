@@ -122,7 +122,7 @@ describe('v0.4.1 Home Duty cards and linked navigation', () => {
         </LanguageContext.Provider>,
       );
       const currentRegion = screen.getByRole('region', {
-        name: language === 'en' ? "Today's Scheduled Shift" : '今日已排更次',
+        name: language === 'en' ? 'Current Shift' : '當前更次',
       });
       const nextRegion = screen.getByRole('region', {
         name: language === 'en' ? 'Next Shift' : '下一更次',
@@ -162,9 +162,9 @@ describe('v0.4.1 Home Duty cards and linked navigation', () => {
         bytes = JSON.stringify(row),
         write = vi.spyOn(Storage.prototype, 'setItem');
       render(<UpcomingShift duties={[row]} onDuty={() => {}} onCalendar={() => {}} />);
-      expect(screen.getByRole('heading', { name: 'Upcoming Shift' })).toBeInTheDocument();
-      act(() => vi.advanceTimersByTime(60000));
       expect(screen.getByRole('heading', { name: "Today's Scheduled Shift" })).toBeInTheDocument();
+      act(() => vi.advanceTimersByTime(60000));
+      expect(screen.getByRole('heading', { name: 'Current Shift' })).toBeInTheDocument();
       vi.setSystemTime(new Date('2026-11-05T22:01:00+08:00'));
       fireEvent(document, new Event('visibilitychange'));
       expect(screen.getByText('No upcoming scheduled shifts.')).toBeInTheDocument();

@@ -324,7 +324,7 @@ describe('v0.1.4 previous Duty navigation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'View Full Calendar' }));
     expect(screen.getByRole('dialog', { name: 'Full Duty Calendar' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Duty calendar' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Return to Home' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     fireEvent.click(
       within(screen.getByRole('navigation')).getByRole('button', { name: 'Logbook' }),
     );

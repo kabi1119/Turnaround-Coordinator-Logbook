@@ -84,7 +84,7 @@ describe('v0.4.0 preserved navigation and authoritative presentation', () => {
     expect(
       view.container.querySelector(`[data-date="${date}"] [data-duty-marker]`),
     ).toHaveAttribute('data-duty-marker', 'Worked');
-    fireEvent.click(screen.getByRole('button', { name: 'Return to Home' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     nav('Statistics');
     const totals = screen.getByRole('region', { name: 'Duty and leave totals' });
     expect(

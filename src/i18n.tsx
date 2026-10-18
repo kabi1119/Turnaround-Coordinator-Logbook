@@ -26,6 +26,7 @@ export const labels: Record<string, string> = {
   'Supporting Coordinator': '支援協調員',
   'Training / Observation': '訓練／觀察',
   Draft: '草稿',
+  Pending: '待處理',
   Confirmed: '已確認',
   Trashed: '垃圾桶',
   'Not Recorded': '未記錄',

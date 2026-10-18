@@ -1,3 +1,4 @@
+import { attestHandlingReview, chooseRequiredHandling } from './handlingHelpers';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
@@ -18,6 +19,7 @@ const duty = (patch: Partial<Duty> = {}): Duty => ({
   ...patch,
 });
 function core() {
+  chooseRequiredHandling();
   fireEvent.change(screen.getByRole('combobox', { name: 'Airline *' }), {
     target: { value: 'Cathay Pacific' },
   });
@@ -58,6 +60,7 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
     core();
     fireEvent.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(loadDatabase().db.aircraft).toHaveLength(db.aircraft.length);
+    attestHandlingReview();
     fireEvent.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(screen.getByRole('dialog', { name: `Duty · ${row.date}` })).toBeInTheDocument();
     const saved = loadDatabase().db.aircraft[0];
@@ -89,6 +92,7 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
       target: { value: '2026-10-15' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Save & Close' }));
+    attestHandlingReview();
     fireEvent.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(
       (commit.mock.calls[0] as unknown as [Database])[0].aircraft.find((a) => a.id === row.id),
@@ -136,6 +140,7 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
         onClose={() => {}}
       />,
     );
+    attestHandlingReview();
     fireEvent.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(commit).not.toHaveBeenCalled();
     expect(
@@ -152,6 +157,7 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
     const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementationOnce(() => {
       throw Error('quota');
     });
+    attestHandlingReview();
     fireEvent.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(screen.queryByRole('status')).toBeNull();
     expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toBeInTheDocument();

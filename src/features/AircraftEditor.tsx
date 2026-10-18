@@ -5,17 +5,16 @@ import {
   disruptionCategories,
   emptyAircraft,
   flightStatuses,
-  handlingTypes,
   hkToday,
   id,
   roles,
+  newLeg,
 } from '../domain/model';
 import {
   duplicates,
   gateSuggestion,
   hasArrival,
   hasDeparture,
-  isComplete,
   normalizeRegistration,
   resolveDuty,
   saveAircraft,
@@ -32,6 +31,17 @@ import AircraftTypeFields from '../components/AircraftTypeFields';
 import { aircraftModel } from '../data/aircraftCatalogue';
 import { delaySeverity } from '../domain/delaySeverity';
 import { useMotionClose } from '../lib/useMotionClose';
+import FlightNumberField from '../components/FlightNumberField';
+import {
+  changeFlightAirline,
+  confirmedHandlingIssues,
+  handlingDisplayStatus,
+  flightPrefix,
+  flightEntry,
+  type HandlingField,
+} from '../domain/handlingForm';
+import { validDutyDate } from '../domain/dutyCalendar';
+import { useCalendarNow } from '../lib/useCalendarNow';
 export interface EditorProps {
   db: Database;
   existing?: Aircraft;
@@ -51,23 +61,86 @@ export default function AircraftEditor({
   const t = useT(),
     l = useLabel(),
     p = db.settings.privacy;
+  const calendarNow = useCalendarNow(),
+    today = hkToday(new Date(calendarNow));
   const { closing, close: onClose } = useMotionClose(leave);
   const chosen = db.duties.find((d) => d.id === dutyId && d.status !== 'Trashed' && !d.leave);
   const [explicitDuty, setExplicitDuty] = useState(Boolean(existing || chosen));
   const [a, setA] = useState<Aircraft>(() =>
     existing
       ? visibleAircraft(structuredClone(existing), p)
-      : emptyAircraft(
-          chosen?.date || hkToday(),
-          chosen?.id || resolveDuty(hkToday(), db.duties).selected,
-        ),
+      : {
+          ...emptyAircraft(
+            chosen?.date || hkToday(),
+            chosen?.id || resolveDuty(hkToday(), db.duties).selected,
+          ),
+          handling: '',
+          role: '',
+          actualHandling: false,
+        },
   );
   const [review, setReview] = useState<'close' | 'next' | 'draft' | null>(null),
     [error, setError] = useState(''),
     [keep, setKeep] = useState(false),
     [discard, setDiscard] = useState(false);
   const { closing: reviewClosing, close: closeReview } = useMotionClose(() => setReview(null));
-  const saving = useRef(false);
+  const saving = useRef(false),
+    form = useRef<HTMLFormElement>(null);
+  const lastKnownAirline = useRef(a.airline);
+  const [attempted, setAttempted] = useState(false),
+    [performed, setPerformed] = useState(false);
+  const [pendingType, setPendingType] = useState<Aircraft['handling'] | null>(null);
+  const issues = attempted ? confirmedHandlingIssues(a, p, today) : [];
+  const fieldNames: Record<HandlingField, string> = {
+    date: t('Handling Date', '處理日期'),
+    airline: t('Airline', '航空公司'),
+    handling: t('Handling Type', '處理類型'),
+    aircraftType: t('Aircraft Type', '航機型號'),
+    variant: t('Aircraft Variant', '航機子型號'),
+    role: t('My Role', '本人角色'),
+    arrival: t('Arrival Flight Number', '抵港航班編號'),
+    departure: t('Departure Flight Number', '離港航班編號'),
+  };
+  function fieldError(field: HandlingField) {
+    const issue = issues.find((i) => i.field === field);
+    return !issue
+      ? undefined
+      : issue.reason === 'future'
+        ? t(
+            'Future Handling must be saved as Draft (Pending).',
+            '未來處理紀錄必須儲存為草稿（待處理）。',
+          )
+        : issue.reason === 'invalid'
+          ? t('Check this value before confirming.', '確認前請檢查此欄位。')
+          : t('Required for confirmed records.', '已確認紀錄必須填寫。');
+  }
+  function changeAirline(airline: string) {
+    const prior = flightPrefix(a.airline) ? a.airline : lastKnownAirline.current;
+    patch({
+      airline,
+      arrival: { ...a.arrival, flight: changeFlightAirline(prior, airline, a.arrival.flight) },
+      departure: {
+        ...a.departure,
+        flight: changeFlightAirline(prior, airline, a.departure.flight),
+      },
+    });
+    if (flightPrefix(airline)) lastKnownAirline.current = airline;
+  }
+  function changeType(handling: Aircraft['handling']) {
+    const candidate = { ...a, handling };
+    const losesData =
+      existing &&
+      (['arrival', 'departure'] as const).some((key) => {
+        const applicable = key === 'arrival' ? hasArrival(candidate) : hasDeparture(candidate);
+        const old = existing[key];
+        return (
+          !applicable &&
+          Boolean(old.flight || old.scheduled || old.actual || old.status !== 'Not Recorded')
+        );
+      });
+    if (losesData && handling !== existing.handling) setPendingType(handling);
+    else patch({ handling });
+  }
   const patch = (part: Partial<Aircraft>) => setA((prev) => ({ ...prev, ...part }));
   const applicableDuties = db.duties.filter((d) => d.status !== 'Trashed' || d.id === a.dutyId);
   const suggested = resolveDuty(a.date, db.duties);
@@ -86,24 +159,21 @@ export default function AircraftEditor({
   function openReview(mode: 'close' | 'next' | 'draft') {
     setError('');
     if (!validLink()) return;
-    if (!a.date && mode !== 'draft') {
-      setError(
-        t(
-          'Choose a handling date, or save an undated Draft.',
-          '請選擇處理日期，或儲存未定日期草稿。',
-        ),
-      );
+    setAttempted(mode !== 'draft');
+    if (a.date && !validDutyDate(a.date)) {
+      setError(t('Choose a valid Hong Kong date.', '請選擇有效的香港日期。'));
       return;
     }
-    if (mode !== 'draft' && !isComplete(a)) {
-      setError(
-        t(
-          'Complete the four core fields and confirm actual handling, or choose Save Draft.',
-          '請填妥四項核心欄位並確認有實際處理，或選儲存草稿。',
-        ),
-      );
-      return;
+    if (mode !== 'draft') {
+      const invalid = confirmedHandlingIssues(a, p);
+      if (invalid.length) {
+        const control = form.current?.elements.namedItem(invalid[0].field) as HTMLElement | null;
+        control?.focus();
+        control?.scrollIntoView({ block: 'center', behavior: 'instant' });
+        return;
+      }
     }
+    setPerformed(false);
     setKeep(false);
     saving.current = false;
     setReview(mode);
@@ -111,6 +181,35 @@ export default function AircraftEditor({
   function confirmSave() {
     if (saving.current || !review || (matches.length > 0 && !keep)) return;
     if (!validLink()) return;
+    if (a.date && !validDutyDate(a.date)) {
+      setError(t('Choose a valid Hong Kong date.', '請選擇有效的香港日期。'));
+      return;
+    }
+    if (review !== 'draft' && (confirmedHandlingIssues(a, p).length || !performed)) {
+      setError(
+        t(
+          'Return to Edit to resolve the fields, and explicitly confirm that handling occurred.',
+          '請返回修改以修正欄位，並明確確認已實際處理。',
+        ),
+      );
+      return;
+    }
+    if (
+      a.events.some(
+        (e) =>
+          e.journalId &&
+          !db.journals.some((j) => j.id === e.journalId) &&
+          !existing?.events.some((old) => old.id === e.id && old.journalId === e.journalId),
+      )
+    ) {
+      setError(
+        t(
+          'A linked Journal is no longer available. Review the relationship.',
+          '連結的日誌已無法使用，請覆核連結。',
+        ),
+      );
+      return;
+    }
     saving.current = true;
     const now = new Date().toISOString();
     // Disabled values remain archived on edits; only enabled fields accept new values.
@@ -120,27 +219,36 @@ export default function AircraftEditor({
       dutyId: a.dutyId,
       registration: p.registration ? a.registration.trim() : base.registration,
       bay: p.bay ? a.bay.trim().toUpperCase() : base.bay,
-      arrival: {
-        ...a.arrival,
-        flight: p.flights ? a.arrival.flight.trim() : base.arrival.flight,
-        status: p.statuses ? a.arrival.status : base.arrival.status,
-        origin: p.statuses ? a.arrival.origin : base.arrival.origin,
-        scheduled: p.gateTimes ? a.arrival.scheduled : base.arrival.scheduled,
-        actual: p.gateTimes ? a.arrival.actual : base.arrival.actual,
-      },
-      departure: {
-        ...a.departure,
-        flight: p.flights ? a.departure.flight.trim() : base.departure.flight,
-        status: p.statuses ? a.departure.status : base.departure.status,
-        origin: p.statuses ? a.departure.origin : base.departure.origin,
-        scheduled: p.gateTimes ? a.departure.scheduled : base.departure.scheduled,
-        actual: p.gateTimes ? a.departure.actual : base.departure.actual,
-      },
+      arrival: !hasArrival(a)
+        ? existing?.handling === a.handling
+          ? base.arrival
+          : newLeg()
+        : {
+            ...a.arrival,
+            flight: p.flights ? flightEntry(a.airline, a.arrival.flight) : base.arrival.flight,
+            status: p.statuses ? a.arrival.status : base.arrival.status,
+            origin: p.statuses ? a.arrival.origin : base.arrival.origin,
+            scheduled: p.gateTimes ? a.arrival.scheduled : base.arrival.scheduled,
+            actual: p.gateTimes ? a.arrival.actual : base.arrival.actual,
+          },
+      departure: !hasDeparture(a)
+        ? existing?.handling === a.handling
+          ? base.departure
+          : newLeg()
+        : {
+            ...a.departure,
+            flight: p.flights ? flightEntry(a.airline, a.departure.flight) : base.departure.flight,
+            status: p.statuses ? a.departure.status : base.departure.status,
+            origin: p.statuses ? a.departure.origin : base.departure.origin,
+            scheduled: p.gateTimes ? a.departure.scheduled : base.departure.scheduled,
+            actual: p.gateTimes ? a.departure.actual : base.departure.actual,
+          },
       events: a.events.map((e) => ({
         ...e,
         notes: p.disruptionNotes ? e.notes : base.events.find((b) => b.id === e.id)?.notes || '',
       })),
       airline: a.airline.trim(),
+      actualHandling: review === 'draft' ? a.actualHandling : true,
       status: review === 'draft' ? 'Draft' : 'Confirmed',
       createdAt: existing?.createdAt || now,
       updatedAt: now,
@@ -159,7 +267,14 @@ export default function AircraftEditor({
     }
     onSaved();
     if (review === 'next') {
-      setA(emptyAircraft(a.date, record.dutyId));
+      setA({
+        ...emptyAircraft(a.date, record.dutyId),
+        handling: '',
+        role: '',
+        actualHandling: false,
+      });
+      setAttempted(false);
+      setPerformed(false);
       setReview(null);
       setError('');
       saving.current = false;
@@ -303,12 +418,17 @@ export default function AircraftEditor({
         closing={closing}
       >
         <p className="muted">
+          {t('Fields marked with ', '標示 ')}
+          <span className="required-marker">*</span>
           {t(
-            'One assignment. Four core fields. Always review before saving.',
-            '一項處理紀錄。四項核心欄位。每次儲存前必須覆核。',
+            ' are required for confirmed records. Drafts can be incomplete.',
+            ' 的欄位為已確認紀錄必填；草稿可不完整。',
           )}
         </p>
         <form
+          ref={form}
+          noValidate
+          className="handling-form"
           onSubmit={(e) => {
             e.preventDefault();
             openReview('close');
@@ -316,6 +436,8 @@ export default function AircraftEditor({
         >
           <div className="form-grid">
             <Field
+              name="date"
+              error={fieldError('date')}
               label={t('Handling Date · Hong Kong', '處理日期 · 香港')}
               type="date"
               value={a.date}
@@ -341,40 +463,58 @@ export default function AircraftEditor({
               {t('Several Duties exist on this date. Please choose.', '此日期有多個更次，請選擇。')}
             </p>
           )}
-          <AirlineCombobox value={a.airline} onChange={(airline) => patch({ airline })} />
-          {p.flights && (
+          <AirlineCombobox
+            value={a.airline}
+            onChange={changeAirline}
+            error={fieldError('airline')}
+          />
+          <Select
+            name="handling"
+            error={fieldError('handling')}
+            label={t('Handling Type *', '處理類型 *')}
+            placeholder={t('Select handling type', '選擇處理類型')}
+            options={['Full Turnaround', 'Arrival Only', 'Departure Only']}
+            value={a.handling}
+            onChange={(e) => changeType(e.target.value as Aircraft['handling'])}
+          />
+          {p.flights && (hasArrival(a) || hasDeparture(a)) && (
             <div className="form-grid">
               {hasArrival(a) && (
-                <Field
-                  label={t('Arrival Flight Number · optional', '抵港航班編號 · 選填')}
+                <FlightNumberField
+                  name="arrival"
+                  airline={a.airline}
+                  error={fieldError('arrival')}
+                  label={t('Arrival Flight Number *', '抵港航班編號 *')}
                   value={a.arrival.flight}
-                  onChange={(e) => patch({ arrival: { ...a.arrival, flight: e.target.value } })}
+                  onChange={(flight) => patch({ arrival: { ...a.arrival, flight } })}
                 />
               )}{' '}
               {hasDeparture(a) && (
-                <Field
-                  label={t('Departure Flight Number · optional', '離港航班編號 · 選填')}
+                <FlightNumberField
+                  name="departure"
+                  airline={a.airline}
+                  error={fieldError('departure')}
+                  label={t('Departure Flight Number *', '離港航班編號 *')}
                   value={a.departure.flight}
-                  onChange={(e) => patch({ departure: { ...a.departure, flight: e.target.value } })}
+                  onChange={(flight) => patch({ departure: { ...a.departure, flight } })}
                 />
               )}
             </div>
           )}
-          <AircraftTypeFields a={a} onChange={patch} />
-          <div className="form-grid">
-            <Select
-              label={t('Handling Type *', '處理類型 *')}
-              options={handlingTypes}
-              value={a.handling}
-              onChange={(e) => patch({ handling: e.target.value as Aircraft['handling'] })}
-            />
-            <Select
-              label={t('My Role *', '本人角色 *')}
-              options={roles}
-              value={a.role}
-              onChange={(e) => patch({ role: e.target.value as Aircraft['role'] })}
-            />
-          </div>
+          <AircraftTypeFields
+            a={a}
+            onChange={patch}
+            errors={{ aircraftType: fieldError('aircraftType'), variant: fieldError('variant') }}
+          />
+          <Select
+            name="role"
+            error={fieldError('role')}
+            label={t('My Role *', '本人角色 *')}
+            options={roles}
+            placeholder={t('Select my role', '選擇本人角色')}
+            value={a.role}
+            onChange={(e) => patch({ role: e.target.value as Aircraft['role'] })}
+          />
           <details className="more-details">
             <summary>
               {t('More Details', '更多資料')}{' '}
@@ -394,14 +534,14 @@ export default function AircraftEditor({
                       {history.variant}
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
+                          changeAirline(history.airline);
                           patch({
-                            airline: history.airline,
                             variant: history.variant,
                             family: history.family,
                             icao: history.icao,
-                          })
-                        }
+                          });
+                        }}
                       >
                         {t('Use suggestion', '採用建議')}
                       </button>
@@ -440,17 +580,6 @@ export default function AircraftEditor({
                   {hasDeparture(a) && legFields('departure')}
                 </>
               )}
-              <label className="check">
-                <input
-                  type="checkbox"
-                  checked={a.actualHandling}
-                  onChange={(e) => patch({ actualHandling: e.target.checked })}
-                />
-                {t(
-                  'Actual handling took place. A cancellation without handling cannot be Confirmed.',
-                  '有實際處理工作；純取消且無處理不能確認。',
-                )}
-              </label>
               <Select
                 label={t(
                   'Disruption Status · independent of flight status',
@@ -583,8 +712,30 @@ export default function AircraftEditor({
               '可在設定啟用受限制選填欄位，以測試虛構資料。',
             )}
           </p>
-          {error && (
-            <p role="alert" className="notice amber">
+          {!review && issues.length > 0 && (
+            <div role="alert" className="validation-summary">
+              <strong>
+                {t('Please complete the following required fields:', '請填妥以下必填欄位：')}
+              </strong>
+              <ul>
+                {issues.map((issue) => (
+                  <li key={issue.field}>
+                    {fieldNames[issue.field]} — {fieldError(issue.field)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {a.date > today && (
+            <p className="notice">
+              {t(
+                'Future Handling: save as Draft. It will display Pending until you explicitly confirm it after handling.',
+                '未來處理紀錄請儲存為草稿，將顯示待處理；完成實際處理後須明確確認。',
+              )}
+            </p>
+          )}
+          {!review && error && (
+            <p role="alert" className="validation-summary">
               {error}
             </p>
           )}
@@ -626,7 +777,10 @@ export default function AircraftEditor({
             <dd>
               {a.airline || '—'}{' '}
               {p.flights &&
-                [hasArrival(a) && a.arrival.flight, hasDeparture(a) && a.departure.flight]
+                [
+                  hasArrival(a) && flightEntry(a.airline, a.arrival.flight),
+                  hasDeparture(a) && flightEntry(a.airline, a.departure.flight),
+                ]
                   .filter(Boolean)
                   .join(' / ')}
             </dd>
@@ -690,11 +844,21 @@ export default function AircraftEditor({
             <dt>{t('Notes', '筆記')}</dt>
             <dd>{a.notes || '—'}</dd>
             <dt>{t('Actual handling', '實際處理')}</dt>
-            <dd>{a.actualHandling ? t('Yes', '有') : t('No · Draft only', '無 · 僅草稿')}</dd>
+            <dd>
+              {(review === 'draft' ? a.actualHandling : performed)
+                ? t('Yes', '有')
+                : t('Not confirmed', '尚未確認')}
+            </dd>
             <dt>{t('Will be saved as', '將儲存為')}</dt>
             <dd>
-              <Badge tone="teal">{l(review === 'draft' ? 'Draft' : 'Confirmed')}</Badge> ·{' '}
-              {t('This device only', '僅此裝置')}
+              <Badge tone="teal">
+                {l(
+                  review === 'draft'
+                    ? handlingDisplayStatus({ ...a, status: 'Draft' })
+                    : 'Confirmed',
+                )}
+              </Badge>{' '}
+              · {t('This device only', '僅此裝置')}
             </dd>
           </dl>
           {a.disruption === 'Normal' && a.events.length > 0 && (
@@ -714,18 +878,53 @@ export default function AircraftEditor({
               </label>
             </div>
           )}
-          {error && <p role="alert">{error}</p>}
+          {review !== 'draft' && (
+            <label className="check completion-check">
+              <input
+                type="checkbox"
+                checked={performed}
+                onChange={(e) => setPerformed(e.target.checked)}
+              />
+              {t(
+                'I confirm this handling assignment actually occurred.',
+                '我確認此航機處理任務已實際發生。',
+              )}
+            </label>
+          )}
+          {error && (
+            <p role="alert" className="validation-summary">
+              {error}
+            </p>
+          )}
           <div className="actions">
             <button onClick={closeReview}>{t('Back to Edit', '返回修改')}</button>
             <button
               className="primary"
-              disabled={matches.length > 0 && !keep}
+              disabled={(matches.length > 0 && !keep) || (review !== 'draft' && !performed)}
               onClick={confirmSave}
             >
               {t('Confirm & Save', '確認並儲存')}
             </button>
           </div>
         </Modal>
+      )}
+      {pendingType !== null && (
+        <Confirm
+          title={t('Change Handling Type?', '更改處理類型？')}
+          onClose={() => setPendingType(null)}
+          onConfirm={() => {
+            patch({ handling: pendingType });
+            setPendingType(null);
+          }}
+          confirmLabel={t('Change type', '更改類型')}
+        >
+          <p>
+            {t(
+              'Saved flight, status and timing values for inapplicable legs, including archived values, will be removed only after reviewed save. Temporary input is kept if you switch back before saving.',
+              '不適用航段已儲存的航班、狀態及時間（包括封存值）只會在覆核儲存後移除；儲存前切回原類型會保留暫存輸入。',
+            )}
+          </p>
+        </Confirm>
       )}
       {discard && (
         <Confirm

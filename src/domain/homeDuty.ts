@@ -36,3 +36,31 @@ export function homeDutySchedule(duties: Duty[], now: number) {
   const next = future.filter((d) => d.date === future[0]?.date && d.start === future[0]?.start);
   return { current, next, remaining: future.length - next.length };
 }
+
+/** Group presentation separately so a pre-start same-day schedule has its own subsequent Next Shift. */
+export function homeDutyPresentation(duties: Duty[], now: number) {
+  const schedule = homeDutySchedule(duties, now);
+  if (schedule.current.length)
+    return { ...schedule, primary: schedule.current, kind: 'current' as const };
+  const primary = schedule.next;
+  if (primary[0]?.date === hkToday(new Date(now))) {
+    const following = homeDutySchedule(
+      duties.filter((d) => !primary.some((row) => row.id === d.id)),
+      now,
+    );
+    return {
+      current: [],
+      primary,
+      next: following.next,
+      remaining: following.remaining,
+      kind: 'today' as const,
+    };
+  }
+  return {
+    current: [],
+    primary,
+    next: [],
+    remaining: schedule.remaining,
+    kind: 'upcoming' as const,
+  };
+}

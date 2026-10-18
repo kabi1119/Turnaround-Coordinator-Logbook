@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.4.1 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.2 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.4.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -90,3 +90,14 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Keep root scrollbar-gutter stable with the existing reference-counted modal lock. No fixed compensation offsets, forced permanent scrollbar or modal rewrite.
 - CSS radar may continue behind dialogs only at desktop >=1024px with fine pointer, hover and normal motion. Coarse/mobile dialog pause remains; hidden documents and inactive Home always pause. Visibility listeners clean up; never add per-frame React updates or restart the animation on modal toggles. Reduced motion remains static. See docs/V0_4_1_ACCEPTANCE.md for measured scope and physical-device limits.
 - No schema/key migration, reseed, asset/provenance change, automatic commit or push. Suggested release title: v0.4.1 - Refine Home Duty Cards and Fix Modal Layout Shifts.
+
+## v0.4.2 Handling form and Duty status refinement
+
+- New editor records explicitly start with no Handling Type or Role. Form order: date/Duty, airline, Handling Type, applicable flights, aircraft type/variant, role, More Details/notices/actions. Do not change historical fixtures or low-level fixture defaults to implement UI defaults.
+- This release supersedes the historical optional-flight and four-core-field copy. Confirmed saves validate airline, handling, compatible aircraft type/variant, role, date and applicable privacy-enabled flights. Never validate hidden/disabled flights. Red markers/errors follow current configuration; focus the first invalid control.
+- Catalogue IATA prefixes are fixed, not editable overrides. Personal input format: 1–4 digits and optional ASCII letter; matching pasted prefix is stripped once. Retain conflicting/unfamiliar values verbatim with guidance; custom airlines use full two-character code plus that portion. No new external identity lookup or invented code.
+- Save Draft skips business completeness, including an empty form, but retains safe dates/IDs/references and mandatory review. New future saves stay Draft, display Pending and never auto-confirm. All Confirmed saves revalidate at final save and require explicit review attestation of actual handling. Preserve existing Confirmed snapshots and flag inconsistencies instead of demoting/reclassifying them on load.
+- Preserve temporary flight/leg input on type switches; warn before a saved leg (including archived private data) becomes inapplicable. Only an explicitly reviewed type-change save clears those inapplicable values. Same-type edits preserve historical/archived values. Drafts remain excluded from confirmed statistics.
+- Schema/key remain unchanged. Strict backup identity validation also accepts known aircraft type + missing variant in Draft / trashed former Draft, without weakening Confirmed identity validation or reference checks.
+- Home titles now mean Upcoming (future day), Today's Scheduled Shift (today pre-start/unknown hours), Current Shift (complete active scheduled interval). Retain Scheduled label, HKT overnight start date, explicit overlapping/tied choices and distinct Next Shift; never infer actual attendance/Worked. Full Calendar closes with its existing X, retaining source/month/date; no second Return to Home action.
+- Preserve v0.4.1 stable gutter and radar safeguards, assets/privacy/disclaimers, existing sample data and local-only scope. See docs/V0_4_2_ACCEPTANCE.md. No automatic commit/push. Suggested title: v0.4.2 - Refine Handling Forms and Duty Status Logic.

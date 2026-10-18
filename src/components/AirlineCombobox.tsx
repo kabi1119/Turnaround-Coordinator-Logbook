@@ -3,14 +3,17 @@ import { ChevronDown } from 'lucide-react';
 import AirlineLogo from './AirlineLogo';
 import { searchAirlines } from '../data/airlineCatalogue';
 import { useT } from '../i18n';
+import { RequiredLabel } from './ui';
 
 /** Editable combobox: custom/historical text is never coerced into a catalogue option. */
 export default function AirlineCombobox({
   value,
   onChange,
+  error,
 }: {
   value: string;
   onChange: (value: string) => void;
+  error?: string;
 }) {
   const t = useT(),
     id = useId(),
@@ -39,19 +42,24 @@ export default function AirlineCombobox({
       }}
     >
       <label className="field" htmlFor={id}>
-        <span>{t('Airline *', '航空公司 *')}</span>
+        <span>
+          <RequiredLabel label={t('Airline *', '航空公司 *')} />
+        </span>
       </label>
       <div className="airline-combobox-field">
         {value && <AirlineLogo airline={value} size="sm" decorative />}
         <input
           ref={input}
           id={id}
+          name="airline"
           role="combobox"
           aria-autocomplete="list"
           aria-expanded={open}
           aria-controls={`${id}-list`}
           aria-activedescendant={activeId}
-          aria-describedby={`${id}-hint`}
+          aria-describedby={`${id}-hint${error ? ` ${id}-error` : ''}`}
+          aria-invalid={Boolean(error)}
+          aria-required="true"
           autoComplete="off"
           value={value}
           placeholder={t('Search airline name or code', '搜尋航空公司名稱或代碼')}
@@ -137,6 +145,11 @@ export default function AirlineCombobox({
           </div>
         )}
       </div>
+      {error && (
+        <small id={`${id}-error`} className="field-error">
+          {error}
+        </small>
+      )}
       <small id={`${id}-hint`} className="muted">
         {t(
           'Search by name/code, or enter a custom airline. Arrow keys select; Enter confirms.',
