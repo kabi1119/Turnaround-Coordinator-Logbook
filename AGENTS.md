@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.4.5a Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.6 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.4.5a Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.6 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -129,3 +129,8 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Supersedes the previous off-center radar framing: symmetric 68-degree Mercator span around HKG, square canvas, 94% disc / 92.12% outer ring. Keep actual coordinate alignment, small equal margins, existing sweep/marker/label and all pause/reduced-motion rules. Reframe south and regenerate only the clipped local vectors; no invented coastlines or interior boundaries.
 - Preserve data/business logic, airline assets, Worker app, wrangler/security/SPA configuration and existing deployment workflow. No automatic commit/push/deployment. See docs/V0_4_5A_ACCEPTANCE.md.
 - UI/docs release is v0.4.5a; keep the existing numeric npm package version 0.4.5, matching the prior suffix-release package convention.
+
+## v0.4.6 radar scan and marker
+
+- Preserve the v0.4.5a geography/projection and 92.12% outer ring. Keep one circular CSS sweep in an independent rounded-square clip, sized to reach the corners; no glow may spill outside the card. Retain existing six-second animation and all pause/reduced-motion rules.
+- Render the existing Plane at 25.3px (55% of 46px), keep HKG / VHHH centered 20px below center and remove the radar top-left caption without replacement. Preserve other Home content, records/business rules, privacy, assets and Cloudflare configuration. No automatic commit/push/deploy. See docs/V0_4_6_ACCEPTANCE.md.

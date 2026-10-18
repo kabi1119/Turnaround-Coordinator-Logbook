@@ -1,4 +1,12 @@
-# TCO Logbook v0.4.5a Pre-release status
+# TCO Logbook v0.4.6 Pre-release status
+
+## v0.4.6 Radar Scan Coverage and Center Marker — 2026-10-19 (Hong Kong)
+
+Started from clean main / 238bd19, matching origin/main after the owner completed the historical-message cleanup. Reused the existing single six-second circular CSS sweep in a separate rounded-square clip. The sweep diameter is 150% of the card (75% radius exceeds the 70.71% center-to-corner distance), with static corner falloff, hidden overflow, inherited radius and paint containment. Rings retain 92.12% width and sit with the unchanged geographic HKG anchor/marker above the scan. The Plane is now 25.3px, exactly 55% of its former 46px; HKG / VHHH remains centered with a 20px offset. Removed the top-left caption without replacement. Geography/projection/generated vectors, other Home cards, data/business/privacy/backup/keyboard, assets and Cloudflare configuration remain unchanged. No new dependency, geometry recalculation or React animation loop.
+
+Verification: **377 tests passed / 27 files**, including three new scan/marker cases. Lint, build, format, static checks and Wrangler dry-run passed; npm audit **0 vulnerabilities**. Edge/local Workers passed **32** bilingual/theme/motion/layout combinations (320 portrait, 390 portrait, 844 landscape, 1440 desktop), with correct marker scale, label alignment, clipped scan and unchanged rings/data. **24 screenshot pixel comparisons** across three sizes, both themes and four diagonal phases confirm corner illumination with zero significant changed pixels outside the rounded card. Mobile/desktop screenshots were inspected; zero startup exceptions, CSP violations or external requests. Existing tracked CRLF snapshots caused newline-only format failures. Restored original unrelated file bytes and kept each edited file’s original line-ending style; Prettier endOfLine:auto now supports consistent LF or CRLF without changing other format rules.
+
+Existing HTTPS preview returned 200 and **v0.4.5a**; no commit, push or v0.4.6 deployment was performed. Physical iPhone compositor/scroll smoothness, Safari/Chrome/Home Screen and post-publication v0.4.6 acceptance remain owner tasks. See docs/V0_4_6_ACCEPTANCE.md.
 
 ## v0.4.5a Radar Framing and Regional Coverage — 2026-10-19 (Hong Kong)
 

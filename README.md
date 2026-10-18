@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.5a Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.6 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.4.6 Radar Scan Coverage and Center Marker
+
+Home radar now uses a larger circular scan inside an independently clipped, rounded square layer, reaching all four corners while retaining the existing geography and range-ring sizes. The Plane marker is 55% of its previous size, HKG / VHHH has closer spacing, and the top-left TCO Logbook / ASIA caption is removed. Existing six-second animation, pause/reduced-motion behavior, records and Cloudflare setup remain unchanged. No new dependency or map request. See [v0.4.6 acceptance](docs/V0_4_6_ACCEPTANCE.md). This session does not automatically commit, push or deploy the update.
 
 ## v0.4.5a Radar Framing and Regional Coverage
 

@@ -33,21 +33,22 @@ export default function Radar({ active = true }: { active?: boolean }) {
         <path className="map-coastline" d={geography.coastline} />
         <circle className="map-hkg" cx={HKG_POINT[0]} cy={HKG_POINT[1]} r="3" />
       </svg>
+      <div className="radar-scan-viewport">
+        <div className="radar-sweep">
+          <div className="radar-trail" />
+          <div className="radar-beam" />
+        </div>
+      </div>
       <div className="radar-disc">
         <div className="radar-grid" />
         <div className="radar-ring ring-one" />
         <div className="radar-ring ring-two" />
         <div className="radar-ring ring-three" />
         <div className="radar-axis" />
-        <div className="radar-sweep">
-          <div className="radar-trail" />
-          <div className="radar-beam" />
-        </div>
         <div className="radar-hub" />
         <Plane className="hero-plane" size={96} strokeWidth={1} />
         <span className="radar-airport-label">HKG / VHHH</span>
       </div>
-      <span className="radar-caption">TCO Logbook / ASIA</span>
       <span className="coordinate">22°18′N &nbsp; 113°55′E</span>
     </div>
   );

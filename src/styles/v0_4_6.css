@@ -1,0 +1,24 @@
+/* Let the circular scan reach the square's corners without enlarging the range rings. */
+.radar-scan-viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+  contain: paint;
+  -webkit-mask-image: radial-gradient(circle, #000 0 60%, #000d 85%, #000a 100%);
+  mask-image: radial-gradient(circle, #000 0 60%, #000d 85%, #000a 100%);
+}
+.radar-scan-viewport .radar-sweep {
+  inset: -25%;
+}
+.radar-disc {
+  z-index: 2;
+}
+.hero-plane {
+  width: 25.3px;
+  height: 25.3px;
+}
+.radar-airport-label {
+  top: calc(50% + 20px);
+}

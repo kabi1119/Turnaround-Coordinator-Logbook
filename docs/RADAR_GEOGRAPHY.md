@@ -44,3 +44,7 @@ The original **six-second CSS transform sweep** is retained. No per-frame geomet
 ## Hosting/data boundary
 
 No changes to `wrangler.jsonc`, Worker `app`, assets `./dist`, SPA fallback, CSP or branch workflow. Vite bundles the local geometry with the frontend. No database/schema/key/ID/relationship/fixture/privacy/lifecycle/statistics/backup changes. No airline assets or existing provenance records are modified. See [current acceptance evidence](V0_4_5A_ACCEPTANCE.md).
+
+## v0.4.6 scan-layer refinement
+
+The geographic data, coordinate projection and v0.4.5a ring geometry are unchanged. A separately clipped full-card scan layer now uses a 150%-diameter circular sweep to reach the square corners; rings and marker sit above it. Rounded clipping, paint containment and a static soft alpha mask keep animation inside the card. The Plane is 25.3px (55% of the previous width), the HKG / VHHH label is closer and the top-left caption is removed. No new geographic data, dependency or runtime map request. See [v0.4.6 verification](V0_4_6_ACCEPTANCE.md).
