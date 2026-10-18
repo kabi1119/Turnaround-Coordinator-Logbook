@@ -10,9 +10,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarDays,
-  Clock3,
   MapPin,
-  MoreHorizontal,
   Check,
   Trash2,
   Pencil,
@@ -38,7 +36,6 @@ import FullDutyCalendar from './features/FullDutyCalendar';
 import UpcomingShift from './features/UpcomingShift';
 import { dutyOptionText } from './domain/roster';
 import DutyHistory from './features/DutyHistory';
-import { previousDuties } from './domain/roster';
 import { useMotionClose } from './lib/useMotionClose';
 import { useRecordNavigation } from './lib/useRecordNavigation';
 
@@ -136,7 +133,6 @@ function Workspace({
     active = db.aircraft
       .filter((a) => a.status !== 'Trashed')
       .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
-  const recentDuty = previousDuties(db.duties)[0];
   const openAircraft = (a: Aircraft) => setOverlay({ type: 'detail', id: a.id });
   const detail =
     overlay?.type === 'detail' ? db.aircraft.find((a) => a.id === overlay.id) : undefined;
@@ -217,13 +213,8 @@ function Workspace({
                     '每個細節，都是值得記下的經驗。',
                   )}
                 </p>
-                <button className="primary" onClick={() => setOverlay({ type: 'aircraft' })}>
-                  <Plus size={18} />
-                  {t('Log a Handling Task', '記錄航機處理任務')}
-                  <ArrowUpRight size={17} />
-                </button>
               </div>
-              <Radar />
+              <Radar active={page === 'home'} />
             </section>
             <div className="metrics surface-dark">
               <Metric
@@ -242,76 +233,14 @@ function Workspace({
                 detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
               />
             </div>
-            <UpcomingShift
-              duties={db.duties}
-              onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
-              onCalendar={() => setCalendarOpen(true)}
-            />
             <div className="home-columns">
               <div>
-                <SectionTitle title={t('Most recent Duty', '最近更次')} />
-                {recentDuty ? (
-                  <section className="current-duty surface-dark">
-                    <div className="section-title">
-                      <Badge tone="light">{t('Duty', '更次')}</Badge>
-                      <button
-                        className="icon-button"
-                        aria-label={t('Open recent Duty', '開啟最近更次')}
-                        onClick={() => setOverlay({ type: 'dutyDetail', id: recentDuty.id })}
-                      >
-                        <MoreHorizontal size={21} />
-                      </button>
-                    </div>
-                    <div className="duty-big-date">
-                      {recentDuty.date.slice(8)}
-                      <div>
-                        {new Intl.DateTimeFormat(t('en-HK', 'zh-HK'), {
-                          month: 'long',
-                          year: 'numeric',
-                          timeZone: 'Asia/Hong_Kong',
-                        }).format(new Date(`${recentDuty.date}T12:00+08:00`))}
-                        <small>
-                          {l(recentDuty.status)} ·{' '}
-                          {l(recentDuty.leave || recentDuty.workState || 'Work state not recorded')}
-                        </small>
-                      </div>
-                    </div>
-                    <div className="duty-facts">
-                      <span>
-                        <Clock3 size={16} />
-                        {recentDuty.leave === 'AL'
-                          ? t('Annual Leave · no duty hours', '年假 · 沒有工時')
-                          : `${recentDuty.start || '—'} – ${recentDuty.end || '—'}`}
-                        {recentDuty.start && recentDuty.end && recentDuty.end < recentDuty.start
-                          ? ' (+1)'
-                          : ''}
-                      </span>
-                      <span>
-                        <Plane size={16} />
-                        {
-                          db.aircraft.filter(
-                            (a) => a.dutyId === recentDuty.id && a.status !== 'Trashed',
-                          ).length
-                        }{' '}
-                        {t('records', '項紀錄')}
-                      </span>
-                    </div>
-                    <button
-                      className="duty-open"
-                      onClick={() => setOverlay({ type: 'dutyDetail', id: recentDuty.id })}
-                    >
-                      {t('View Duty', '查看更次')}
-                      <ArrowRight size={18} />
-                    </button>
-                  </section>
-                ) : (
-                  <Empty
-                    text={t(
-                      'Start with a Duty or an Aircraft assignment.',
-                      '先新增更次或航機處理紀錄。',
-                    )}
-                  />
-                )}
+                <UpcomingShift
+                  duties={db.duties}
+                  aircraft={db.aircraft}
+                  onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
+                  onCalendar={() => setCalendarOpen(true)}
+                />
                 <section className="journal-teaser">
                   <span className="eyebrow">BEYOND THE NUMBERS</span>
                   <h2>{t('What did today\nteach you?', '今天學到了\n甚麼？')}</h2>
@@ -425,7 +354,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.4.0 {t('Pre-release', '預發佈')} ·{' '}
+            v0.4.1 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -448,7 +377,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.4.0 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.4.1 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

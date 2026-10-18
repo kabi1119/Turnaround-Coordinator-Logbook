@@ -40,7 +40,12 @@ describe('v0.4.0 preserved navigation and authoritative presentation', () => {
   it('Keeps the originating Duty scroll position when a linked Handling record opens and returns', () => {
     initialize();
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'View Duty' }));
+    nav('Logbook');
+    fireEvent.click(
+      [...document.querySelectorAll('.duty-row')].find((el) =>
+        el.textContent?.includes('2026-Oct-16'),
+      )!,
+    );
     const duty = screen.getByRole('dialog');
     duty.scrollTop = 250;
     fireEvent.click(within(duty).getByRole('button', { name: /Cathay Pacific/ }));
@@ -109,7 +114,12 @@ describe('v0.4.0 preserved navigation and authoritative presentation', () => {
   it('A failure after a prior successful save removes the stale success message and retains unsaved values', () => {
     initialize();
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'View Duty' }));
+    nav('Logbook');
+    fireEvent.click(
+      [...document.querySelectorAll('.duty-row')].find((el) =>
+        el.textContent?.includes('2026-Oct-16'),
+      )!,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Edit Duty' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save Duty' }));
     expect(screen.getByRole('status')).toHaveTextContent('Saved on this device');

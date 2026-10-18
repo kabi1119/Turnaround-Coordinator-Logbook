@@ -33,7 +33,6 @@ describe('v0.3.4 compact Upcoming Shift', () => {
       later,
       duty({ id: 'worked', workState: 'Worked' }),
       duty({ id: 'past', date: '2026-11-04' }),
-      duty({ id: 'active', start: '10:00', end: '13:00' }),
       duty({ id: 'al', leave: 'AL', start: '', end: '' }),
       duty({ id: 'sl', leave: 'SL' }),
       duty({ id: 'draft', status: 'Draft' }),
@@ -49,7 +48,7 @@ describe('v0.3.4 compact Upcoming Shift', () => {
       'Start 14:00 · End 22:00 HKT',
     );
     expect(screen.getByText('1 more scheduled shift in the Full Calendar.')).toBeInTheDocument();
-    fireEvent.click(container.querySelector('.upcoming-shift-row')!);
+    fireEvent.click(container.querySelector('.duty-open')!);
     expect(onDuty).toHaveBeenCalledWith(next);
     fireEvent.click(screen.getByRole('button', { name: 'View Full Calendar' }));
     expect(onCalendar).toHaveBeenCalledOnce();
@@ -93,7 +92,8 @@ describe('v0.3.4 compact Upcoming Shift', () => {
       render(<UpcomingShift duties={[row]} onDuty={() => {}} onCalendar={() => {}} />);
       expect(screen.queryByText('No upcoming scheduled shifts.')).toBeNull();
       act(() => vi.advanceTimersByTime(60000));
-      expect(screen.getByText('No upcoming scheduled shifts.')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: "Today's Scheduled Shift" })).toBeInTheDocument();
+      expect(screen.queryByText('In Progress')).toBeNull();
       expect(row.workState).toBe('Planned');
     } finally {
       vi.useRealTimers();
@@ -175,6 +175,7 @@ describe('Full Calendar navigation and structured status legend', () => {
   it('Home opens and closes the complete calendar; detail and editing return to the selected date without storage writes on navigation', () => {
     const db = seedDatabase(),
       today = hkToday();
+    vi.spyOn(Date, 'now').mockReturnValue(Date.parse(today + 'T12:00:00+08:00'));
     db.duties.push(
       duty({ id: 'qa-next', date: today }),
       duty({ id: 'qa-second', date: today, start: '23:00', end: '06:00' }),

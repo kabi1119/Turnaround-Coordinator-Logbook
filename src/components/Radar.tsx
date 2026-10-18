@@ -1,9 +1,19 @@
 import { Plane } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 /** Decorative only: no flight data, timers, JS animation loop or pointer targets. */
-export default function Radar() {
+export default function Radar({ active = true }: { active?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const update = () => {
+      if (ref.current) ref.current.dataset.documentHidden = String(document.hidden);
+    };
+    update();
+    document.addEventListener('visibilitychange', update);
+    return () => document.removeEventListener('visibilitychange', update);
+  }, []);
   return (
-    <div className="flight-visual" aria-hidden="true">
+    <div ref={ref} className="flight-visual" aria-hidden="true" data-active={active}>
       <svg className="east-asia-map" viewBox="0 0 600 400" focusable="false">
         <g className="map-land">
           <path

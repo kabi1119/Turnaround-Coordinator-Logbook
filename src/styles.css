@@ -1,4 +1,6 @@
 :root {
+  /* Keep classic scrollbar space when shared dialogs lock body scrolling. */
+  scrollbar-gutter: stable;
   font-family: Inter, 'Segoe UI', 'Noto Sans TC', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);

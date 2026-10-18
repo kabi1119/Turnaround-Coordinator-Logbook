@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.4.0 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.1 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.4.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -82,3 +82,11 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Shared 150/200/180 ms CSS motion and dismissal retain scroll locking, focus, safe areas and explicit discard/review rules. Closing dialogs are inert. Reduced motion skips nonessential effects and waits. No animation library or count-up loop; statistics always display authoritative values.
 - Show local success only after a successful write, clear stale success after failure, retain retryable forms and guard repeated submissions. Preserve clock isolation and radar pause/reduced motion.
 - See docs/V0_4_0_ACCEPTANCE.md for audit, compatibility and regression/manual acceptance. No automatic commit/push. Release title: v0.4.0 - Integrate Duty and Aircraft Workflows with Motion Enhancements.
+
+## v0.4.1 Home and dialog refinement
+
+- This release supersedes the historical Home Log a Handling Task action and standalone Most Recent Duty: central Add is the general creation entry. Reuse the dark-green card for Upcoming / Today's Scheduled Shift, showing Scheduled only. Full Calendar and Logbook retain history.
+- Derive current/next presentation only from eligible confirmed Planned, non-leave schedules, HKT intervals and valid dates. Incomplete hours never establish a current shift. Expose overlapping current/tied next candidates for explicit inspection; never infer Worked/In Progress or write attendance/progress. Preserve Draft inspection and existing statistics/privacy.
+- Keep root scrollbar-gutter stable with the existing reference-counted modal lock. No fixed compensation offsets, forced permanent scrollbar or modal rewrite.
+- CSS radar may continue behind dialogs only at desktop >=1024px with fine pointer, hover and normal motion. Coarse/mobile dialog pause remains; hidden documents and inactive Home always pause. Visibility listeners clean up; never add per-frame React updates or restart the animation on modal toggles. Reduced motion remains static. See docs/V0_4_1_ACCEPTANCE.md for measured scope and physical-device limits.
+- No schema/key migration, reseed, asset/provenance change, automatic commit or push. Suggested release title: v0.4.1 - Refine Home Duty Cards and Fix Modal Layout Shifts.

@@ -1,0 +1,64 @@
+.upcoming-shift {
+  margin: 0;
+  min-width: 0;
+}
+.upcoming-shift > .section-title {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+.upcoming-shift > .section-title > button {
+  margin-left: auto;
+}
+.upcoming-shift .current-duty {
+  margin-bottom: 0;
+}
+.upcoming-shift .duty-facts {
+  gap: 12px;
+  line-height: 1.6;
+}
+.upcoming-shift .duty-facts > span > svg {
+  flex: none;
+}
+.next-shift {
+  margin-top: 14px;
+  padding: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.next-shift h3 {
+  margin: 0 0 8px;
+}
+.next-shift p {
+  margin: 6px 0;
+}
+.shift-choices {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.shift-choices button {
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.shift-choices button > span:first-child {
+  display: grid;
+  gap: 4px;
+}
+.shift-choices button > span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+@media (max-width: 767px) {
+  .home-columns > div > .upcoming-shift {
+    order: 1;
+    margin-bottom: 20px;
+  }
+}

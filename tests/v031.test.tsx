@@ -150,7 +150,7 @@ describe('v0.3.1 final bilingual handling terminology', () => {
   it.each([
     [
       'en',
-      'Log a Handling Task',
+      'Add',
       'New Handling Record',
       'Review Handling Record',
       'Handling Record',
@@ -159,7 +159,7 @@ describe('v0.3.1 final bilingual handling terminology', () => {
     ],
     [
       'zh-HK',
-      '記錄航機處理任務',
+      '新增',
       '新增航機處理紀錄',
       '覆核航機處理紀錄',
       '航機處理紀錄',
@@ -175,6 +175,7 @@ describe('v0.3.1 final bilingual handling terminology', () => {
       localStorage.setItem(STORAGE_KEY, original);
       const { container } = render(<App />);
       fireEvent.click(screen.getByRole('button', { name: action }));
+      fireEvent.click(screen.getByRole('button', { name: new RegExp('^' + fresh) }));
       expect(screen.getByRole('dialog', { name: fresh })).toBeInTheDocument();
       fireEvent.change(
         screen.getByRole('combobox', { name: language === 'en' ? 'Airline *' : '航空公司 *' }),

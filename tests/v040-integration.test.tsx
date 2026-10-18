@@ -145,7 +145,8 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
   it('Failed local save retains review and values, shows no success, and retry creates only one assignment', () => {
     const db = seedDatabase();
     start(db);
-    fireEvent.click(screen.getByRole('button', { name: 'Log a Handling Task' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: /^New Handling Record/ }));
     core();
     fireEvent.click(screen.getByRole('button', { name: 'Save & Close' }));
     const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementationOnce(() => {

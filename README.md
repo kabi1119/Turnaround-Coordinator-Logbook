@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.0 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.1 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -46,6 +46,14 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Career Journal:** Standalone or linked reflections, STAR-style fields, competencies, Draft/Confirmed status and optional self-reported outcomes. Journal entries do not increase aircraft handling counts.
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
+
+## v0.4.1 Home Dashboard and UI Fixes
+
+Home now uses one dark-green **Upcoming Shift** card, or **Today's Scheduled Shift** with a smaller **Next Shift** when a complete planned interval contains the current Hong Kong time. Scheduled is the only card status; elapsed time never establishes Worked/In Progress. Overlapping current shifts and tied upcoming starts show every candidate for explicit inspection. Counts use linked non-Trashed records, including inspectable Drafts without adding them to confirmed Handling totals.
+
+The central **Add** remains the general creation entry; the redundant hero action and Most Recent Duty section are removed. Historical duties remain in **View Full Calendar** and Logbook. Stable scrollbar space prevents desktop Add/review layout shifts. The CSS radar continues behind dialogs only on desktop fine-pointer/hover layouts with normal motion; mobile dialogs, hidden documents and inactive Home pause it. Reduced Motion stays static. No storage/schema/sample/asset changes. See [v0.4.1 evidence and manual acceptance](docs/V0_4_1_ACCEPTANCE.md).
+
+The release notes below describe earlier releases; this section supersedes their Home action and modal-radar presentation.
 
 ## v0.4.0 Functional Integration and Motion
 
@@ -310,7 +318,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.0 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.1 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -327,6 +335,14 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **職涯日誌（Career Journal）：** 支援獨立或關聯式反思、STAR 結構欄位、能力標籤、Draft／Confirmed 狀態及可選填的自行申報成果。Journal 紀錄不會增加航機處理任務數量。
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
+
+## v0.4.1 首頁儀表板及介面修正
+
+首頁改用一張深綠色「即將到來的更次」卡；若香港目前時間落在完整的預定更次時段內，則顯示「今日已排更次」及較小的「下一更次」。卡片只顯示已排班，不會因時間自動改為已工作／進行中。重疊的當前更次或相同開始時間的候選更次會全部列出供選擇。關聯數目來自未刪除的實際紀錄，包括可查閱的草稿；草稿不計入已確認航機處理總數。
+
+中央「新增」保留為一般建立入口，移除首頁重複按鈕及最近更次區塊；歷史更次仍可從「查看完整月曆」及紀錄簿查閱。穩定的捲軸預留空間修正桌面彈窗位移。雷達只在桌面滑鼠／可懸停、正常動態環境中於彈窗後繼續掃描；手機彈窗、隱藏文件及離開首頁時暫停，減少動態時維持靜態。儲存格式、樣本、資產均不變。詳見 [v0.4.1 驗證及手動驗收](docs/V0_4_1_ACCEPTANCE.md)。
+
+以下為歷史版本說明，首頁操作及彈窗雷達行為以本節為準。
 
 ## v0.4.0 功能整合及動態效果
 

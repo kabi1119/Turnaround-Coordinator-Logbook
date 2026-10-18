@@ -234,7 +234,8 @@ describe('App navigation, persistence and privacy', () => {
   it('New Aircraft persists only after confirmation and survives remount', async () => {
     const user = userEvent.setup();
     const view = render(<App />);
-    await user.click(screen.getByRole('button', { name: 'Log a Handling Task' }));
+    await user.click(screen.getByRole('button', { name: 'Add' }));
+    await user.click(screen.getByRole('button', { name: /^New Handling Record/ }));
     await core(user);
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();

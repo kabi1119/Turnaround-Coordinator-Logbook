@@ -1,4 +1,12 @@
-# TCO Logbook v0.4.0 Pre-release status
+# TCO Logbook v0.4.1 Pre-release status
+
+## v0.4.1 Home Dashboard & UI Fixes — 2026-10-18 (Hong Kong)
+
+Started on clean main / 21a5c88 (committed v0.4.0). Reused the deep-green Duty card for Upcoming / Today's Scheduled Shift and a compact Next Shift, with Scheduled-only status, real linked non-Trashed counts and exact Duty/Handling navigation. Added a non-mutating HKT presentation selector with complete-interval boundaries, overnight support, safe missing-time handling and explicit overlapping/tied candidate inspection. Removed the redundant Home creation action and Most Recent Duty without deleting history or replacing central Add. No explicit attendance state exists, so elapsed Planned work never becomes Worked/In Progress.
+
+Measured desktop Add width expansion from a removed 15 px scrollbar, then fixed it centrally with root scrollbar-gutter: stable while retaining the existing nested scroll lock. Conditional desktop fine-pointer/hover radar continuation follows short main-thread measurements; mobile modal pause, hidden/inactive pause, static Reduced Motion and cleanup remain. No models/schema, storage, backup, IDs/links, statistics definitions, privacy, sample data, dependencies or airline assets/provenance changed. No migration, reset, commit or push. See [v0.4.1 evidence, exact changed files and manual acceptance](docs/V0_4_1_ACCEPTANCE.md).
+
+Browser verification: 160 isolated headless Edge LAN-HTTP layout checks across 320/375/390/430/1440 px, both languages/themes and motion preferences passed with no overflow/runtime exceptions. Three desktop Add cycles retained identical header/hero/metrics/card/sidebar rectangles and animation startTime. Verified linked Draft details/origin preselection, nested review lock and byte-identical storage during navigation. Home screenshots were visually inspected; physical iPhone/WebKit/VoiceOver and actual OS suspension/performance remain manual acceptance. Full quality checks: **288 tests passed / 22 files** (14 new v0.4.1 cases); ESLint passed with zero warnings, TypeScript/Vite build passed, full format check passed, npm audit **0 vulnerabilities**.
 
 ## v0.4.0 Functional Integration & Motion Enhancement — 2026-10-18 (Hong Kong)
 
