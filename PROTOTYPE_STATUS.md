@@ -1,4 +1,10 @@
-# TCO Logbook v0.3.3 Pre-release status
+# TCO Logbook v0.3.4 Pre-release status
+
+## v0.3.4 Home & Calendar UI Refinement — 2026-10-18 (Hong Kong)
+
+Started from clean main / 79cfa67 (committed v0.3.3). Reused the existing Home calendar as FullDutyCalendar in a native dialog, retaining month/date and detail/edit return state. Home now shows a compact Upcoming Shift card with a top-right View Full Calendar action and a concise empty state. Multiple upcoming shifts remain separate; only confirmed, non-leave Planned shifts that have not started appear in the compact card. The display never changes stored work progress. The fictional preview is now secondary inside Full Calendar. Shared calendar legends are five independent icon/label groups, with mobile wrapping, readable typography and unchanged neutral Light/Dark AL/SL styling. Existing date summary logic, models, Statistics, persistence, samples and airline assets are unchanged.
+
+Verification: **258 tests passed / 19 files**, including 11 new v0.3.4 cases. ESLint, TypeScript/Vite build and repository format check passed; npm audit reported **0 vulnerabilities**. Isolated Edge verified 80 layout cases across 320/375/390/430/1440 px, Light/Dark and English/Traditional Chinese on private LAN HTTP port 5185: compact Home, Full Calendar, fictional preview and Add Duties. No horizontal/dialog overflow or runtime exceptions. Confirmed five marker/label groups, 14 px legend text, black/white AL/SL, one marker per date, multiple records, preserved month/date on return, no navigation writes and active-preview Escape dismissal with browser user activation. The calendar and preview use sibling dialogs so dismissal stays isolated. Mobile card and calendar screenshots were visually reviewed; the mobile status badge moves below the date/times to avoid squeezing them. Physical iPhone Safari/PWA, native keyboard and VoiceOver remain owner manual acceptance. No automatic commit, push, deployment, data reset or migration. See [v0.3.4 acceptance, changed files and manual checks](docs/V0_3_4_ACCEPTANCE.md).
 
 ## v0.3.3 Calendar & Duty Management Refinement — 2026-10-18 (Hong Kong)
 

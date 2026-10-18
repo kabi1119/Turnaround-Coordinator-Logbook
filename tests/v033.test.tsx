@@ -18,7 +18,7 @@ import { loadDatabase, STORAGE_KEY, writeDatabase } from '../src/lib/storage';
 import DutyCalendar from '../src/components/DutyCalendar';
 import BatchDutyEditor from '../src/features/BatchDutyEditor';
 import DutyEditor from '../src/features/DutyEditor';
-import HomeCalendar from '../src/features/HomeCalendar';
+import FullDutyCalendar from '../src/features/FullDutyCalendar';
 import App from '../src/App';
 import { LanguageContext } from '../src/i18n';
 
@@ -413,17 +413,21 @@ describe('Add Duties and connected calendars', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Remove duty 1' }));
     expect(screen.getByLabelText('Record type')).toBeEnabled();
   });
-  it('Home shows all same-day records; editing updates Home and Add calendars through shared props without reload', () => {
+  it('Full Calendar shows all same-day records; editing updates Full and Add calendars through shared props without reload', () => {
     const original = duty({ date: hkToday() }),
       other = duty({ date: hkToday(), id: 'other', start: '17:00', end: '21:00' }),
       open = vi.fn();
-    const view = render(<HomeCalendar duties={[original, other]} onDuty={open} />);
+    const view = render(
+      <FullDutyCalendar open onClose={() => {}} duties={[original, other]} onDuty={open} />,
+    );
     const records = view.container.querySelector('.calendar-records')!;
     expect(within(records as HTMLElement).getAllByRole('button')).toHaveLength(2);
     fireEvent.click(within(records as HTMLElement).getAllByRole('button')[1]);
     expect(open).toHaveBeenCalledWith(other);
     const converted = { ...original, leave: 'SL' as const };
-    view.rerender(<HomeCalendar duties={[converted, other]} onDuty={open} />);
+    view.rerender(
+      <FullDutyCalendar open onClose={() => {}} duties={[converted, other]} onDuty={open} />,
+    );
     expect(
       view.container.querySelector(`[data-date="${hkToday()}"] [data-duty-marker]`),
     ).toHaveAttribute('data-duty-marker', 'SL');
@@ -502,7 +506,7 @@ describe('Add Duties and connected calendars', () => {
     expect(screen.getByRole('button', { name: '加入所選假別項目' })).toBeInTheDocument();
     expect(screen.getByRole('dialog')).toHaveTextContent('病假只可由現有已確認');
   });
-  it('Central Add is the duty entry and View Calendar opens Logbook; saved AL immediately appears on Home', () => {
+  it('Central Add remains the duty entry; saved AL immediately appears when opening the Full Calendar', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(database()));
     const view = render(<App />);
     expect(screen.queryByRole('button', { name: 'Add Duty' })).toBeNull();
@@ -512,12 +516,13 @@ describe('Add Duties and connected calendars', () => {
     choose([hkToday()]);
     applyLeave();
     save();
+    expect(view.container.querySelector('.calendar-grid')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'View Full Calendar' }));
     expect(
       view.container.querySelector(`[data-date="${hkToday()}"] [data-duty-marker]`),
     ).toHaveTextContent('AL');
     expect(loadDatabase().db.duties[0].leave).toBe('AL');
-    fireEvent.click(screen.getByRole('button', { name: 'View Calendar' }));
-    expect(screen.getByRole('button', { name: 'Calendar' })).toHaveClass('selected');
+    expect(screen.getByRole('dialog', { name: 'Full Duty Calendar' })).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: new RegExp(`${hkToday()} · Annual Leave`) }),
     ).toBeInTheDocument();

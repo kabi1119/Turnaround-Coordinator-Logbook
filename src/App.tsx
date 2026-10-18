@@ -34,7 +34,8 @@ import Radar from './components/Radar';
 import AircraftSummary from './features/AircraftDetails';
 import BatchDutyEditor from './features/BatchDutyEditor';
 import HongKongClock from './components/HongKongClock';
-import HomeCalendar from './features/HomeCalendar';
+import FullDutyCalendar from './features/FullDutyCalendar';
+import UpcomingShift from './features/UpcomingShift';
 import { dutyOptionText } from './domain/roster';
 import DutyHistory from './features/DutyHistory';
 import { previousDuties } from './domain/roster';
@@ -72,7 +73,7 @@ function Workspace({
 }) {
   const t = useT(),
     l = useLabel();
-  const [logbookMode, setLogbookMode] = useState('timeline');
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [page, setPage] = useState<Page>('home'),
     [overlay, setOverlay] = useState<Overlay>(null),
     [toast, setToast] = useState(''),
@@ -127,6 +128,7 @@ function Workspace({
     { key: 'journal', en: 'Journal', zh: '日誌', icon: NotebookPen },
   ] as const;
   function navigate(key: (typeof nav)[number]['key']) {
+    setCalendarOpen(false);
     if (key === 'add') {
       setOverlay({ type: 'add' });
       return;
@@ -207,27 +209,14 @@ function Workspace({
                 detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
               />
             </div>
-            <HomeCalendar
+            <UpcomingShift
               duties={db.duties}
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
+              onCalendar={() => setCalendarOpen(true)}
             />
             <div className="home-columns">
               <div>
-                <SectionTitle
-                  title={t('Most recent Duty', '最近更次')}
-                  action={
-                    <button
-                      className="text-button"
-                      onClick={() => {
-                        setLogbookMode('calendar');
-                        navigate('logbook');
-                      }}
-                    >
-                      {t('View Calendar', '查看月曆')}
-                      <ArrowRight size={16} />
-                    </button>
-                  }
-                />
+                <SectionTitle title={t('Most recent Duty', '最近更次')} />
                 {recentDuty ? (
                   <section className="current-duty surface-dark">
                     <div className="section-title">
@@ -346,7 +335,6 @@ function Workspace({
         )}
         {page === 'logbook' && (
           <Logbook
-            initialMode={logbookMode}
             db={db}
             onAircraft={openAircraft}
             onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
@@ -376,7 +364,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.3.3 {t('Pre-release', '預發佈')} ·{' '}
+            v0.3.4 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -399,7 +387,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.3.3 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.3.4 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
@@ -456,6 +444,12 @@ function Workspace({
           ))}
         </Modal>
       )}
+      <FullDutyCalendar
+        duties={db.duties}
+        open={calendarOpen && !overlay}
+        onClose={() => setCalendarOpen(false)}
+        onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
+      />
       {overlay?.type === 'aircraft' && (
         <AircraftEditor
           key={overlay.id || `new-${overlay.dutyId || ''}`}

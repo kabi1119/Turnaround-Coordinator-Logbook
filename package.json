@@ -1,6 +1,6 @@
 {
   "name": "tco-logbook-prototype",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,8 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint . --max-warnings 0",
-    "format": "prettier --write src tests package.json tsconfig.json vite.config.ts eslint.config.js index.html public README.md THIRD_PARTY_NOTICES.md docs/AIRLINE_ASSET_AUDIT.md docs/AIRLINE_ASSET_INVENTORY.json docs/PUBLICATION_PREPARATION.md docs/V0_1_2_ACCEPTANCE.md docs/AIRLINE_CATALOGUE.md docs/V0_1_3_ACCEPTANCE.md docs/VERSIONING.md docs/V0_1_4_ACCEPTANCE.md docs/V0_2_0_ACCEPTANCE.md docs/V0_3_0_ACCEPTANCE.md docs/V0_3_1_ACCEPTANCE.md docs/V0_3_3_ACCEPTANCE.md docs/AIRCRAFT_CATALOGUE.md docs/JSON_BACKUP_RESTORE.md PROTOTYPE_STATUS.md AGENTS.md",
-    "format:check": "prettier --check src tests package.json tsconfig.json vite.config.ts eslint.config.js index.html public README.md THIRD_PARTY_NOTICES.md docs/AIRLINE_ASSET_AUDIT.md docs/AIRLINE_ASSET_INVENTORY.json docs/PUBLICATION_PREPARATION.md docs/V0_1_2_ACCEPTANCE.md docs/AIRLINE_CATALOGUE.md docs/V0_1_3_ACCEPTANCE.md docs/VERSIONING.md docs/V0_1_4_ACCEPTANCE.md docs/V0_2_0_ACCEPTANCE.md docs/V0_3_0_ACCEPTANCE.md docs/V0_3_1_ACCEPTANCE.md docs/V0_3_3_ACCEPTANCE.md docs/AIRCRAFT_CATALOGUE.md docs/JSON_BACKUP_RESTORE.md PROTOTYPE_STATUS.md AGENTS.md"
+    "format": "prettier --write src tests package.json tsconfig.json vite.config.ts eslint.config.js index.html public README.md THIRD_PARTY_NOTICES.md docs/AIRLINE_ASSET_AUDIT.md docs/AIRLINE_ASSET_INVENTORY.json docs/PUBLICATION_PREPARATION.md docs/V0_1_2_ACCEPTANCE.md docs/AIRLINE_CATALOGUE.md docs/V0_1_3_ACCEPTANCE.md docs/VERSIONING.md docs/V0_1_4_ACCEPTANCE.md docs/V0_2_0_ACCEPTANCE.md docs/V0_3_0_ACCEPTANCE.md docs/V0_3_1_ACCEPTANCE.md docs/V0_3_3_ACCEPTANCE.md docs/V0_3_4_ACCEPTANCE.md docs/AIRCRAFT_CATALOGUE.md docs/JSON_BACKUP_RESTORE.md PROTOTYPE_STATUS.md AGENTS.md",
+    "format:check": "prettier --check src tests package.json tsconfig.json vite.config.ts eslint.config.js index.html public README.md THIRD_PARTY_NOTICES.md docs/AIRLINE_ASSET_AUDIT.md docs/AIRLINE_ASSET_INVENTORY.json docs/PUBLICATION_PREPARATION.md docs/V0_1_2_ACCEPTANCE.md docs/AIRLINE_CATALOGUE.md docs/V0_1_3_ACCEPTANCE.md docs/VERSIONING.md docs/V0_1_4_ACCEPTANCE.md docs/V0_2_0_ACCEPTANCE.md docs/V0_3_0_ACCEPTANCE.md docs/V0_3_1_ACCEPTANCE.md docs/V0_3_3_ACCEPTANCE.md docs/V0_3_4_ACCEPTANCE.md docs/AIRCRAFT_CATALOGUE.md docs/JSON_BACKUP_RESTORE.md PROTOTYPE_STATUS.md AGENTS.md"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

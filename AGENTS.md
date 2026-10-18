@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.3.3 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.3.4 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.3.3 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.3.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -66,3 +66,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Keep Scheduled, actual Worked and Scheduled SL hours separate; AL has no hours, leave does not inflate Worked or Aircraft counts. Preserve Draft/Confirmed and legacy counting semantics.
 - Fictional calendar preview is dynamic and read-only, separate from saved records/statistics. Preserve stable sample-refresh fingerprints and never infer attendance or reseed on upgrade.
 - Sheet transitions must retain scroll locking through close, honor reduced motion and safe areas, clean up timers/listeners and support visual viewport resizing. No automatic commit/push. See docs/V0_3_3_ACCEPTANCE.md.
+
+## v0.3.4 owner-approved Home and calendar UI
+
+- This UI-only refinement supersedes the v0.3.3 inline Home calendar placement. Home uses a compact Upcoming Shift card and View Full Calendar action; no monthly grid on Home.
+- Reuse the full calendar/date records in a dialog with a clear return to Home, keeping month/day state across closing and duty detail/edit navigation. Keep fictional preview inside Full Calendar with its read-only disclosure.
+- Shared legends use five icon-and-label groups below the grid, naturally wrapping with readable typography; neutral black/white AL/SL, separate instructions and accessible status descriptions remain.
+- Do not change Duty/Aircraft models, Scheduled/Worked conversions, leave rules, Statistics or saved sample data for this release. No automatic commit/push. See docs/V0_3_4_ACCEPTANCE.md.

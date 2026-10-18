@@ -67,7 +67,7 @@ export default function DutyCalendar({
           <ChevronRight size={18} />
         </button>
       </div>
-      <div className="calendar-grid" aria-describedby={legendId}>
+      <div className="calendar-grid" aria-describedby={`${legendId} ${legendId}-hint`}>
         {t('Sun,Mon,Tue,Wed,Thu,Fri,Sat', '日,一,二,三,四,五,六')
           .split(',')
           .map((d) => (
@@ -115,10 +115,37 @@ export default function DutyCalendar({
           );
         })}
       </div>
-      <p className="calendar-legend muted" id={legendId}>
+      <ul
+        className="calendar-legend"
+        id={legendId}
+        aria-label={t('Calendar status legend', '月曆狀態圖例')}
+      >
+        {(
+          [
+            ['scheduled', t('Scheduled', '已排更')],
+            ['worked', t('Worked', '已工作')],
+            ['working', t('Currently Working', '正在當值')],
+            ['AL', t('Annual Leave', '年假')],
+            ['SL', t('Sick Leave', '病假')],
+          ] as const
+        ).map(([marker, text]) => (
+          <li key={marker}>
+            <span
+              aria-hidden="true"
+              className={
+                marker === 'AL' || marker === 'SL' ? 'leave-marker' : `duty-marker ${marker}`
+              }
+            >
+              {marker === 'AL' || marker === 'SL' ? marker : ''}
+            </span>
+            <span>{text}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="calendar-instructions muted" id={`${legendId}-hint`}>
         {t(
-          'Green: Worked · Red: Scheduled · Yellow: Currently Working · AL: Annual Leave · SL: Sick Leave. No marker means no Duty. Select a date to inspect every record.',
-          '綠：已工作 · 紅：已排更 · 黃：正在當值 · AL：年假 · SL：病假。沒有標記表示沒有更次，選擇日期可查看全部紀錄。',
+          'No marker: no Duty. Hollow marker: work state not recorded or incomplete. Select a date to inspect every record.',
+          '沒有標記：沒有更次。空心標記：工作進度未記錄或未完成。選擇日期可查看全部紀錄。',
         )}
       </p>
     </section>

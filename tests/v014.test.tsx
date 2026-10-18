@@ -321,10 +321,13 @@ describe('v0.1.4 previous Duty navigation', () => {
     render(<App />);
     expect(screen.queryByRole('button', { name: 'Add Duty' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Batch Add Duties' })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'View Calendar' }));
-    expect(screen.getByRole('button', { name: 'Calendar' })).toHaveClass('selected');
+    fireEvent.click(screen.getByRole('button', { name: 'View Full Calendar' }));
+    expect(screen.getByRole('dialog', { name: 'Full Duty Calendar' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Duty calendar' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Return to Home' }));
+    fireEvent.click(
+      within(screen.getByRole('navigation')).getByRole('button', { name: 'Logbook' }),
+    );
     fireEvent.click(screen.getAllByRole('button').find((b) => b.classList.contains('duty-row'))!);
     expect(screen.getByRole('dialog', { name: /Duty ·/ })).toHaveTextContent('Edit Duty');
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));

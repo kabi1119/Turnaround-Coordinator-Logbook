@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.3 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.4 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -47,7 +47,13 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
 
-## v0.3.3 Calendar and Duty Management
+## v0.3.4 Home and Calendar UI
+
+I replaced Home's full month grid with a compact **Upcoming Shift** card. **View Full Calendar** opens the complete calendar with all duties, month/date navigation, detail access and retained in-session selection; **Return to Home** closes it. Fictional examples remain clearly disclosed inside that interface. The shared status legend now uses five separate marker-and-label groups, readable text and natural mobile wrapping; AL/SL stay black in Light and white in Dark.
+
+This is a UI-only update: I preserved v0.3.3 duty/leave rules, Statistics, data models, local storage and sample records. See [v0.3.4 acceptance and changed files](docs/V0_3_4_ACCEPTANCE.md).
+
+## Historical v0.3.3 Calendar and Duty Management
 
 I added shared Home / Logbook / Add Duties calendars with one status marker per date, neutral AL/SL text and explicit Scheduled versus Worked progress. Use **Add → Add Duties** for one or multiple dates, with a single record type per reviewed batch. AL has no shift hours; SL only classifies a selected existing Scheduled duty while retaining its planned times, notes and links. Statistics separate scheduled, worked and SL hours and leave dates. **View Calendar** opens Logbook; redundant Home duty-creation buttons are removed.
 
@@ -298,7 +304,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.3 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.4 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -316,7 +322,13 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
 
-## v0.3.3 月曆及更次管理
+## v0.3.4 首頁及月曆介面
+
+我以精簡的**即將到來的更次**卡片取代 Home 完整月曆網格。**查看完整月曆**開啟完整介面，保留月份／日期切換、同日多更、詳情及本次使用期間的選取狀態；**返回首頁**關閉視窗。虛構預覽移至該介面內並保留清楚說明。共用圖例改為五組獨立圖示與文字，手機可自然換行；AL／SL 在淺色／深色主題維持黑色／白色。
+
+這次只調整介面，v0.3.3 更次／假別規則、統計、資料模型、本機儲存及樣本紀錄均保留。詳見 [v0.3.4 驗收及修改檔案](docs/V0_3_4_ACCEPTANCE.md)。
+
+## v0.3.3 歷史更新：月曆及更次管理
 
 我加入 Home／Logbook／Add Duties 共用月曆，每日最多一個狀態標記，AL／SL 按主題顯示黑／白文字，並保留已排更與已工作的明確區分。從 **新增 → 新增更次** 選擇一日或多日；每個批次只接受同一紀錄類型並須覆核。年假沒有工時；病假只能由指定的現有已排更更次轉換，保留原定時間、筆記及連結。統計分開列出已排更、已工作、病假原定工時及假別日數。**查看月曆** 開啟紀錄簿，Home 不再重複提供建立更次按鈕。
 
