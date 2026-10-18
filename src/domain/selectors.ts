@@ -169,7 +169,7 @@ export function duplicates(a: Aircraft, records: Aircraft[], p: Privacy) {
   );
 }
 export function resolveDuty(date: string, duties: Duty[]) {
-  const options = duties.filter((d) => d.status !== 'Trashed' && d.date === date);
+  const options = duties.filter((d) => d.status !== 'Trashed' && !d.leave && d.date === date);
   return {
     options,
     selected: options.length === 1 ? options[0].id : '',

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useMotionClose } from '../lib/useMotionClose';
 import type { Database, Duty } from '../domain/model';
 import { hkToday, id } from '../domain/model';
 import { dutyOptionText, rosterConflicts, shiftRange } from '../domain/roster';
@@ -31,18 +32,10 @@ export default function BatchDutyEditor({
   const [selected, setSelected] = useState<string[]>([]);
   const [kind, setKind] = useState<DutyKind>('Scheduled');
   const [targets, setTargets] = useState<Record<string, string>>({});
-  const [closing, setClosing] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useEffect(() => () => clearTimeout(closeTimer.current), []);
+  const { closing, close: animateClose } = useMotionClose(onClose);
   function finishClose() {
-    if (closing) return;
     setDiscard(false);
-    if (!window.matchMedia || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      onClose();
-      return;
-    }
-    setClosing(true);
-    closeTimer.current = setTimeout(onClose, 180);
+    animateClose();
   }
   const [type, setType] = useState<ShiftType>('Day');
   const [templates, setTemplates] = useState<Record<ShiftType, { start: string; end: string }>>({

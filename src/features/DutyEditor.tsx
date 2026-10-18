@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Database, Duty } from '../domain/model';
 import { hkToday, id } from '../domain/model';
 import { completedDuty, rosterConflicts, shiftRange } from '../domain/roster';
 import { eligibleSickDuty, validDutyDate, batchProblem } from '../domain/dutyCalendar';
 import { Confirm, Field, Modal, Select, TextArea } from '../components/ui';
 import { useT } from '../i18n';
+import { useMotionClose } from '../lib/useMotionClose';
 export default function DutyEditor({
   db,
   existing,
-  onClose,
+  onClose: leave,
   commit,
 }: {
   db: Database;
@@ -17,6 +18,8 @@ export default function DutyEditor({
   commit: (db: Database) => boolean;
 }) {
   const t = useT();
+  const { closing, close: onClose } = useMotionClose(leave);
+  const saving = useRef(false);
   const [d, setD] = useState<Duty>(
     existing
       ? { ...existing }
@@ -53,10 +56,13 @@ export default function DutyEditor({
       <Modal
         title={existing ? t('Edit Duty', '編輯更次') : t('New Duty', '新增更次')}
         onClose={requestClose}
+        sheet
+        closing={closing}
       >
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            if (saving.current) return;
             if (
               !validDutyDate(d.date) ||
               (conflicts.length &&
@@ -105,6 +111,7 @@ export default function DutyEditor({
               );
               return;
             }
+            saving.current = true;
             if (
               commit({
                 ...db,
@@ -114,7 +121,10 @@ export default function DutyEditor({
               })
             )
               onClose();
-            else setError(t('Could not save locally.', '未能在本機儲存。'));
+            else {
+              saving.current = false;
+              setError(t('Could not save locally.', '未能在本機儲存。'));
+            }
           }}
         >
           <Field

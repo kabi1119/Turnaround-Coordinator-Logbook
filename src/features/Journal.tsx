@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowUpRight, Plus, BookOpen } from 'lucide-react';
 import { competencies, hkToday, id } from '../domain/model';
 import type { Database, Journal as JournalRecord } from '../domain/model';
 import { Badge, Confirm, Empty, Field, Modal, Select, TextArea } from '../components/ui';
 import { cardText } from '../domain/selectors';
 import { useLabel, useT } from '../i18n';
+import { useMotionClose } from '../lib/useMotionClose';
 export function JournalPage({
   db,
   onOpen,
@@ -129,7 +130,7 @@ export function JournalPage({
 export function JournalEditor({
   db,
   existing,
-  onClose,
+  onClose: leave,
   commit,
 }: {
   db: Database;
@@ -163,6 +164,8 @@ export function JournalEditor({
           verification: 'Self-reported · not employer verified',
         },
   );
+  const saving = useRef(false);
+  const { closing, close: onClose } = useMotionClose(leave);
   const [error, setError] = useState(''),
     [dirty, setDirty] = useState(false),
     [discard, setDiscard] = useState(false);
@@ -188,6 +191,8 @@ export function JournalEditor({
         title={existing ? t('Career Journal', '職涯日誌') : t('New Career Journal', '新增職涯日誌')}
         onClose={requestClose}
         wide
+        sheet
+        closing={closing}
       >
         <p className="muted">
           {t(
@@ -198,6 +203,8 @@ export function JournalEditor({
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            if (saving.current) return;
+            saving.current = true;
             if (
               commit({
                 ...db,
@@ -207,7 +214,10 @@ export function JournalEditor({
               })
             )
               onClose();
-            else setError(t('Could not save locally.', '未能在本機儲存。'));
+            else {
+              saving.current = false;
+              setError(t('Could not save locally.', '未能在本機儲存。'));
+            }
           }}
         >
           <Field
@@ -367,7 +377,10 @@ export function JournalEditor({
         <Confirm
           title={t('Discard unsaved Journal changes?', '捨棄未儲存的日誌修改？')}
           onClose={() => setDiscard(false)}
-          onConfirm={onClose}
+          onConfirm={() => {
+            setDiscard(false);
+            onClose();
+          }}
           confirmLabel={t('Discard changes', '捨棄修改')}
         >
           <p>{t('No changes will be saved.', '不會儲存修改。')}</p>

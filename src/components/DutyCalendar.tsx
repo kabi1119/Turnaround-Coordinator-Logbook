@@ -67,7 +67,11 @@ export default function DutyCalendar({
           <ChevronRight size={18} />
         </button>
       </div>
-      <div className="calendar-grid" aria-describedby={`${legendId} ${legendId}-hint`}>
+      <div
+        key={month}
+        className="calendar-grid calendar-month"
+        aria-describedby={`${legendId} ${legendId}-hint`}
+      >
         {t('Sun,Mon,Tue,Wed,Thu,Fri,Sat', '日,一,二,三,四,五,六')
           .split(',')
           .map((d) => (

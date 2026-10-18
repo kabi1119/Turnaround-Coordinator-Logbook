@@ -31,6 +31,7 @@ import { dutyOptionText } from '../domain/roster';
 import AircraftTypeFields from '../components/AircraftTypeFields';
 import { aircraftModel } from '../data/aircraftCatalogue';
 import { delaySeverity } from '../domain/delaySeverity';
+import { useMotionClose } from '../lib/useMotionClose';
 export interface EditorProps {
   db: Database;
   existing?: Aircraft;
@@ -43,14 +44,16 @@ export default function AircraftEditor({
   db,
   existing,
   dutyId,
-  onClose,
+  onClose: leave,
   commit,
   onSaved,
 }: EditorProps) {
   const t = useT(),
     l = useLabel(),
     p = db.settings.privacy;
-  const chosen = db.duties.find((d) => d.id === dutyId);
+  const { closing, close: onClose } = useMotionClose(leave);
+  const chosen = db.duties.find((d) => d.id === dutyId && d.status !== 'Trashed' && !d.leave);
+  const [explicitDuty, setExplicitDuty] = useState(Boolean(existing || chosen));
   const [a, setA] = useState<Aircraft>(() =>
     existing
       ? visibleAircraft(structuredClone(existing), p)
@@ -63,6 +66,7 @@ export default function AircraftEditor({
     [error, setError] = useState(''),
     [keep, setKeep] = useState(false),
     [discard, setDiscard] = useState(false);
+  const { closing: reviewClosing, close: closeReview } = useMotionClose(() => setReview(null));
   const saving = useRef(false);
   const patch = (part: Partial<Aircraft>) => setA((prev) => ({ ...prev, ...part }));
   const applicableDuties = db.duties.filter((d) => d.status !== 'Trashed' || d.id === a.dutyId);
@@ -81,6 +85,7 @@ export default function AircraftEditor({
   const selectedDuty = db.duties.find((d) => d.id === a.dutyId);
   function openReview(mode: 'close' | 'next' | 'draft') {
     setError('');
+    if (!validLink()) return;
     if (!a.date && mode !== 'draft') {
       setError(
         t(
@@ -105,6 +110,7 @@ export default function AircraftEditor({
   }
   function confirmSave() {
     if (saving.current || !review || (matches.length > 0 && !keep)) return;
+    if (!validLink()) return;
     saving.current = true;
     const now = new Date().toISOString();
     // Disabled values remain archived on edits; only enabled fields accept new values.
@@ -158,6 +164,22 @@ export default function AircraftEditor({
       setError('');
       saving.current = false;
     } else onClose();
+  }
+  function validLink() {
+    // Preserve historical associations on edits; never create a new leave/trash/orphan link.
+    if (
+      !a.dutyId ||
+      a.dutyId === existing?.dutyId ||
+      db.duties.some((d) => d.id === a.dutyId && d.status !== 'Trashed' && !d.leave)
+    )
+      return true;
+    setError(
+      t(
+        'The selected Duty is no longer eligible. Choose another Duty or explicitly unlink before saving.',
+        '所選更次已不再合資格，請選擇其他更次或明確解除連結後再儲存。',
+      ),
+    );
+    return false;
   }
   function legFields(key: 'arrival' | 'departure') {
     const leg = a[key],
@@ -273,8 +295,12 @@ export default function AircraftEditor({
             ? t('Edit Handling Record', '編輯航機處理紀錄')
             : t('New Handling Record', '新增航機處理紀錄')
         }
-        onClose={() => setDiscard(true)}
+        onClose={() => {
+          if (!closing) setDiscard(true);
+        }}
         wide
+        sheet
+        closing={closing}
       >
         <p className="muted">
           {t(
@@ -295,13 +321,19 @@ export default function AircraftEditor({
               value={a.date}
               onChange={(e) => {
                 const date = e.target.value;
-                patch({ date, dutyId: resolveDuty(date, db.duties).selected });
+                patch({
+                  date,
+                  ...(!explicitDuty ? { dutyId: resolveDuty(date, db.duties).selected } : {}),
+                });
               }}
             />
             <DutyPicker
               value={a.dutyId}
               duties={applicableDuties}
-              onChange={(dutyId) => patch({ dutyId })}
+              onChange={(dutyId) => {
+                setExplicitDuty(true);
+                patch({ dutyId });
+              }}
             />
           </div>
           {suggested.ambiguous && !a.dutyId && (
@@ -572,7 +604,9 @@ export default function AircraftEditor({
       {review && (
         <Modal
           title={t('Review Handling Record', '覆核航機處理紀錄')}
-          onClose={() => setReview(null)}
+          sheet
+          closing={reviewClosing}
+          onClose={closeReview}
         >
           <div className="airline-selection">
             <AirlineLogo airline={a.airline} size="sm" showName />
@@ -682,7 +716,7 @@ export default function AircraftEditor({
           )}
           {error && <p role="alert">{error}</p>}
           <div className="actions">
-            <button onClick={() => setReview(null)}>{t('Back to Edit', '返回修改')}</button>
+            <button onClick={closeReview}>{t('Back to Edit', '返回修改')}</button>
             <button
               className="primary"
               disabled={matches.length > 0 && !keep}
@@ -697,7 +731,10 @@ export default function AircraftEditor({
         <Confirm
           title={t('Close without saving?', '關閉而不儲存？')}
           onClose={() => setDiscard(false)}
-          onConfirm={onClose}
+          onConfirm={() => {
+            setDiscard(false);
+            onClose();
+          }}
           confirmLabel={t('Discard changes', '捨棄修改')}
         >
           <p>

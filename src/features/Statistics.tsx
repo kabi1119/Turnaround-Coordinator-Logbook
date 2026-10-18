@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowUpRight, Download } from 'lucide-react';
 import type { Database, Filters } from '../domain/model';
 import { filterAircraft, ranking, stats, visibleAircraft } from '../domain/selectors';
@@ -21,7 +21,7 @@ export function Bars({ items, airline = false }: { items: [string, number][]; ai
             <strong>{count}</strong>
           </div>
           <div className="bar-track">
-            <div style={{ width: `${(count / max) * 100}%` }} />
+            <div style={{ transform: `scaleX(${count / max})` }} />
           </div>
         </div>
       ))}
@@ -36,19 +36,23 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
     [rank, setRank] = useState<'airline' | 'aircraftType' | 'variant' | 'family' | 'registration'>(
       'airline',
     );
-  const rows = filterAircraft(db.aircraft, filters, db.settings.privacy);
-  const s = stats(
-    rows,
-    db.duties.filter(
-      (d) => (!filters.from || d.date >= filters.from) && (!filters.to || d.date <= filters.to),
-    ),
+  const rows = useMemo(
+    () => filterAircraft(db.aircraft, filters, db.settings.privacy),
+    [db.aircraft, filters, db.settings.privacy],
   );
-  const totals = dutyTotals(
-    db.duties.filter(
-      (d) => (!filters.from || d.date >= filters.from) && (!filters.to || d.date <= filters.to),
-    ),
+  const duties = useMemo(
+    () =>
+      db.duties.filter(
+        (d) => (!filters.from || d.date >= filters.from) && (!filters.to || d.date <= filters.to),
+      ),
+    [db.duties, filters.from, filters.to],
   );
-  const visible = rows.map((a) => visibleAircraft(a, db.settings.privacy));
+  const s = useMemo(() => stats(rows, duties), [rows, duties]);
+  const totals = useMemo(() => dutyTotals(duties), [duties]);
+  const visible = useMemo(
+    () => rows.map((a) => visibleAircraft(a, db.settings.privacy)),
+    [rows, db.settings.privacy],
+  );
   const ranked =
     scope === 'logged'
       ? visible
@@ -159,7 +163,8 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
                 <strong>{count}</strong>
                 <div
                   style={{
-                    height: `${Math.max(4, (count / Math.max(1, ...monthRows.map((x) => x[1]))) * 130)}px`,
+                    height: '130px',
+                    transform: `scaleY(${count / Math.max(1, ...monthRows.map((x) => x[1]))})`,
                   }}
                 />
                 <small>{month}</small>

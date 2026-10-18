@@ -7,12 +7,13 @@ import DutyCalendar from '../components/DutyCalendar';
 import { useCalendarNow } from '../lib/useCalendarNow';
 import { Modal } from '../components/ui';
 import { useT, useLabel } from '../i18n';
+import { useMotionClose } from '../lib/useMotionClose';
 
 export default function FullDutyCalendar({
   duties,
   onDuty,
   open,
-  onClose,
+  onClose: leave,
 }: {
   duties: Duty[];
   onDuty: (d: Duty) => void;
@@ -22,6 +23,7 @@ export default function FullDutyCalendar({
   const t = useT(),
     l = useLabel(),
     now = useCalendarNow();
+  const { closing, close: onClose } = useMotionClose(leave);
   const [month, setMonth] = useState(hkToday().slice(0, 7)),
     [day, setDay] = useState(hkToday()),
     [preview, setPreview] = useState(false);
@@ -31,7 +33,12 @@ export default function FullDutyCalendar({
   if (!open) return null;
   return (
     <>
-      <Modal title={t('Full Duty Calendar', '完整更次月曆')} onClose={onClose} wide>
+      <Modal
+        title={t('Full Duty Calendar', '完整更次月曆')}
+        onClose={onClose}
+        wide
+        closing={closing}
+      >
         <div className="calendar-secondary">
           <p className="muted">
             {t(
@@ -53,7 +60,7 @@ export default function FullDutyCalendar({
           selected={[day]}
           onSelect={setDay}
         />
-        <div className="calendar-records" aria-live="polite">
+        <div className="calendar-records motion-date-details" key={day} aria-live="polite">
           <h3>{day}</h3>
           {rows.length ? (
             rows.map((d) => (

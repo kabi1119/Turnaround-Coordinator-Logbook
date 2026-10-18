@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.4 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.0 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -46,6 +46,12 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Career Journal:** Standalone or linked reflections, STAR-style fields, competencies, Draft/Confirmed status and optional self-reported outcomes. Journal entries do not increase aircraft handling counts.
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
+
+## v0.4.0 Functional Integration and Motion
+
+I connected Duty and Handling creation, details and editing with an in-session return trail and restored scroll positions. A Handling record started from a Duty retains that preselection; editing its date preserves its existing association. Automatic same-date matching excludes leave and Trash, selects only an unambiguous candidate and never creates an implicit Duty. Saved changes propagate through the existing shared database to Home, Full Calendar, Logbook and Statistics.
+
+I preserved visited-page filters and added restrained 150–200 ms page/card/calendar/chart feedback plus 180 ms sheet dismissal with scroll locking, safe areas and reduced-motion support. Statistics show authoritative final values immediately and animate chart presentation only; the Hong Kong clock remains isolated. Aircraft review remains mandatory, failed writes retain entered data without a success message, and repeated-submit guards protect pending saves. Storage schema, backups, settings, fictional samples and airline assets remain unchanged. See [v0.4.0 integration, compatibility and acceptance](docs/V0_4_0_ACCEPTANCE.md).
 
 ## v0.3.4 Home and Calendar UI
 
@@ -304,7 +310,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.4 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.0 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -321,6 +327,12 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **職涯日誌（Career Journal）：** 支援獨立或關聯式反思、STAR 結構欄位、能力標籤、Draft／Confirmed 狀態及可選填的自行申報成果。Journal 紀錄不會增加航機處理任務數量。
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
+
+## v0.4.0 功能整合及動態效果
+
+我以本次使用期間的返回路徑及捲動位置，串連更次與航機處理紀錄的新增、詳情及編輯。從更次開始新增時會預選該更次；編輯處理日期仍保留既有關聯。按日期自動配對會排除假別及垃圾桶，只預選唯一明確候選，不會隱式建立更次。儲存後透過既有共用資料狀態，即時更新 Home、完整月曆、Logbook 及 Statistics。
+
+我保留已瀏覽分頁的篩選狀態，加入輕量的 150–200 ms 分頁／卡片／月曆／圖表效果，以及 180 ms 面板關閉動態，保留捲動鎖、安全區及減少動態支援。統計數字直接顯示正確結果，只為圖表呈現加入動態；香港時鐘維持獨立更新。航機仍必須覆核，失敗儲存保留輸入且不顯示成功，重複提交亦受保護。儲存格式、備份、設定、虛構樣本及航空資產不變。詳見 [v0.4.0 整合、相容性及驗收](docs/V0_4_0_ACCEPTANCE.md)。
 
 ## v0.3.4 首頁及月曆介面
 

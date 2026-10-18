@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Plane,
   Home,
@@ -39,6 +39,8 @@ import UpcomingShift from './features/UpcomingShift';
 import { dutyOptionText } from './domain/roster';
 import DutyHistory from './features/DutyHistory';
 import { previousDuties } from './domain/roster';
+import { useMotionClose } from './lib/useMotionClose';
+import { useRecordNavigation } from './lib/useRecordNavigation';
 
 type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
 type Overlay =
@@ -74,14 +76,32 @@ function Workspace({
   const t = useT(),
     l = useLabel();
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const {
+    current: overlay,
+    previous,
+    open: setOverlay,
+    back: close,
+  } = useRecordNavigation<Exclude<Overlay, null>>();
   const [page, setPage] = useState<Page>('home'),
-    [overlay, setOverlay] = useState<Overlay>(null),
     [toast, setToast] = useState(''),
     [storageError, setStorageError] = useState(loadError),
     [pending, setPending] = useState<{
       kind: 'aircraftTrash' | 'dutyTrash' | 'aircraftRestore';
       id: string;
     } | null>(null);
+  const [visited, setVisited] = useState<Page[]>(['home']);
+  const positions = useRef<Partial<Record<Page, number>>>({});
+  const [saveSequence, setSaveSequence] = useState(0);
+  const { closing: detailClosing, close: closeDetail } = useMotionClose(close);
+  useLayoutEffect(() => {
+    window.scrollTo({ top: positions.current[page] || 0, behavior: 'instant' });
+  }, [page]);
+  function changePage(next: Page) {
+    if (next === page) return;
+    positions.current[page] = window.scrollY;
+    setVisited((rows) => (rows.includes(next) ? rows : [...rows, next]));
+    setPage(next);
+  }
   useEffect(() => {
     document.documentElement.lang = db.settings.language;
   }, [db.settings.language]);
@@ -89,13 +109,15 @@ function Workspace({
     if (!toast) return;
     const timer = setTimeout(() => setToast(''), 4500);
     return () => clearTimeout(timer);
-  }, [toast]);
+  }, [toast, saveSequence]);
   function commit(next: Database, explicitReset = false) {
     if (loadError && storageError && !explicitReset) {
+      setToast('');
       setStorageError(loadError);
       return false;
     }
     if (!writeDatabase(next)) {
+      setToast('');
       setStorageError(
         t(
           'Could not write browser storage. Changes have not been saved.',
@@ -105,16 +127,16 @@ function Workspace({
       return false;
     }
     setDb(next);
+    setSaveSequence((n) => n + 1);
     setStorageError('');
     setToast(t('Saved on this device', '已儲存在此裝置'));
     return true;
   }
-  const s = stats(db.aircraft, db.duties),
+  const s = useMemo(() => stats(db.aircraft, db.duties), [db.aircraft, db.duties]),
     active = db.aircraft
       .filter((a) => a.status !== 'Trashed')
       .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
   const recentDuty = previousDuties(db.duties)[0];
-  const close = () => setOverlay(null);
   const openAircraft = (a: Aircraft) => setOverlay({ type: 'detail', id: a.id });
   const detail =
     overlay?.type === 'detail' ? db.aircraft.find((a) => a.id === overlay.id) : undefined;
@@ -134,8 +156,7 @@ function Workspace({
       return;
     }
     setOverlay(null);
-    setPage(key);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    changePage(key);
   }
   return (
     <div className="app-shell">
@@ -155,8 +176,9 @@ function Workspace({
             className="icon-button"
             aria-label={t('Settings', '設定')}
             onClick={() => {
-              setPage('settings');
-              close();
+              setCalendarOpen(false);
+              setOverlay(null);
+              changePage('settings');
             }}
           >
             <SettingsIcon size={21} />
@@ -167,13 +189,24 @@ function Workspace({
         {storageError && (
           <div className="notice amber" role="alert">
             {storageError}
-            <button onClick={() => setPage('settings')}>
+            <button
+              onClick={() => {
+                setOverlay(null);
+                setCalendarOpen(false);
+                changePage('settings');
+              }}
+            >
               {t('Open Settings to manage local data', '開啟設定以管理本機資料')}
             </button>
           </div>
         )}
-        {page === 'home' && (
-          <>
+        {visited.includes('home') && (
+          <section
+            className="page-view"
+            data-page="home"
+            data-active={page === 'home'}
+            hidden={page !== 'home'}
+          >
             <section className="home-intro">
               <div>
                 <span className="eyebrow">YOUR JOURNEY / YOUR RECORD</span>
@@ -331,40 +364,68 @@ function Workspace({
                 </div>
               </section>
             </div>
-          </>
+          </section>
         )}
-        {page === 'logbook' && (
-          <Logbook
-            db={db}
-            onAircraft={openAircraft}
-            onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
-            onNew={() => setOverlay({ type: 'aircraft' })}
-          />
+        {visited.includes('logbook') && (
+          <section
+            className="page-view"
+            data-page="logbook"
+            data-active={page === 'logbook'}
+            hidden={page !== 'logbook'}
+          >
+            <Logbook
+              db={db}
+              onAircraft={openAircraft}
+              onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
+              onNew={() => setOverlay({ type: 'aircraft' })}
+            />
+          </section>
         )}
-        {page === 'statistics' && (
-          <Statistics db={db} onReport={() => setOverlay({ type: 'report' })} />
+        {visited.includes('statistics') && (
+          <section
+            className="page-view"
+            data-page="statistics"
+            data-active={page === 'statistics'}
+            hidden={page !== 'statistics'}
+          >
+            <Statistics db={db} onReport={() => setOverlay({ type: 'report' })} />
+          </section>
         )}
-        {page === 'journal' && (
-          <JournalPage
-            db={db}
-            onOpen={(j) => setOverlay({ type: 'journal', id: j.id })}
-            onNew={() => setOverlay({ type: 'journal' })}
-          />
+        {visited.includes('journal') && (
+          <section
+            className="page-view"
+            data-page="journal"
+            data-active={page === 'journal'}
+            hidden={page !== 'journal'}
+          >
+            <JournalPage
+              db={db}
+              onOpen={(j) => setOverlay({ type: 'journal', id: j.id })}
+              onNew={() => setOverlay({ type: 'journal' })}
+            />
+          </section>
         )}
-        {page === 'settings' && (
-          <Settings
-            db={db}
-            commit={commit}
-            resetCommit={(next) => commit(next, true)}
-            onBack={() => navigate('home')}
-            onReport={() => setOverlay({ type: 'report' })}
-            onAircraftRestore={(id) => setPending({ kind: 'aircraftRestore', id })}
-          />
+        {visited.includes('settings') && (
+          <section
+            className="page-view"
+            data-page="settings"
+            data-active={page === 'settings'}
+            hidden={page !== 'settings'}
+          >
+            <Settings
+              db={db}
+              commit={commit}
+              resetCommit={(next) => commit(next, true)}
+              onBack={() => navigate('home')}
+              onReport={() => setOverlay({ type: 'report' })}
+              onAircraftRestore={(id) => setPending({ kind: 'aircraftRestore', id })}
+            />
+          </section>
         )}
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.3.4 {t('Pre-release', '預發佈')} ·{' '}
+            v0.4.0 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -387,13 +448,13 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.3.4 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.4.0 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
       </nav>
       {toast && (
-        <div className="toast surface-dark" role="status">
+        <div className="toast surface-dark" role="status" key={saveSequence}>
           <Check size={17} />
           {toast}
           <button aria-label={t('Dismiss', '關閉提示')} onClick={() => setToast('')}>
@@ -402,7 +463,11 @@ function Workspace({
         </div>
       )}
       {overlay?.type === 'add' && (
-        <Modal title={t('Add to your logbook', '新增至紀錄簿')} onClose={close}>
+        <Modal
+          title={t('Add to your logbook', '新增至紀錄簿')}
+          onClose={closeDetail}
+          closing={detailClosing}
+        >
           <p className="muted">{t('What would you like to record?', '想記下甚麼？')}</p>
           {[
             {
@@ -487,7 +552,19 @@ function Workspace({
       )}
       {overlay?.type === 'report' && <ReportPreview db={db} onClose={close} />}
       {detail && (
-        <Modal title={t('Handling Record', '航機處理紀錄')} onClose={close} wide>
+        <Modal
+          title={t('Handling Record', '航機處理紀錄')}
+          onClose={closeDetail}
+          wide
+          closing={detailClosing}
+        >
+          {previous && (
+            <button className="text-button record-back" onClick={closeDetail}>
+              {previous.type === 'dutyDetail'
+                ? t('Back to Duty', '返回更次')
+                : t('Back to previous record', '返回上一筆紀錄')}
+            </button>
+          )}
           <AircraftSummary
             a={detail}
             db={db}
@@ -539,7 +616,19 @@ function Workspace({
         </Modal>
       )}
       {duty && (
-        <Modal title={`${t('Duty', '更次')} · ${duty.date}`} onClose={close} wide>
+        <Modal
+          title={`${t('Duty', '更次')} · ${duty.date}`}
+          onClose={closeDetail}
+          wide
+          closing={detailClosing}
+        >
+          {(previous || calendarOpen) && (
+            <button className="text-button record-back" onClick={close}>
+              {previous
+                ? t('Back to previous record', '返回上一筆紀錄')
+                : t('Back to Calendar', '返回月曆')}
+            </button>
+          )}
           <div className="section-title">
             <Badge tone="teal">
               {l(duty.status)} · {l(duty.leave || duty.workState || 'Work state not recorded')}
@@ -596,7 +685,8 @@ function Workspace({
       {overlay?.type === 'history' && db.settings.privacy.registration && (
         <Modal
           title={`${t('Aircraft History', '航機歷史')} · ${overlay.registration}`}
-          onClose={close}
+          onClose={closeDetail}
+          closing={detailClosing}
           wide
         >
           <HistoryView db={db} registration={overlay.registration} onAircraft={openAircraft} />

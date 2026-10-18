@@ -1,0 +1,212 @@
+:root {
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-out: 180ms;
+  --motion-ease: cubic-bezier(0.2, 0.7, 0.25, 1);
+}
+.page-view[hidden] {
+  display: none !important;
+}
+.page-view[data-active='true'] {
+  animation: motion-page-in var(--motion-base) var(--motion-ease);
+}
+dialog[open] {
+  animation: motion-panel-in var(--motion-base) var(--motion-ease) both;
+}
+dialog.duty-sheet[open] {
+  animation: motion-sheet-in var(--motion-base) var(--motion-ease) both;
+}
+dialog[open]::backdrop,
+dialog.duty-sheet[open]::backdrop {
+  animation: motion-backdrop-in var(--motion-base) ease-out both;
+}
+dialog[open].closing,
+dialog.duty-sheet[open].closing {
+  animation: motion-sheet-out var(--motion-out) ease-in both;
+  pointer-events: none;
+}
+dialog[open].closing::backdrop,
+dialog.duty-sheet[open].closing::backdrop {
+  animation: motion-backdrop-out var(--motion-out) ease-in both;
+}
+.calendar-month {
+  animation: motion-month-in var(--motion-fast) var(--motion-ease);
+}
+.calendar-grid button {
+  transition:
+    background-color var(--motion-fast),
+    outline-color var(--motion-fast);
+}
+.duty-marker {
+  transition:
+    background-color var(--motion-fast),
+    opacity var(--motion-fast);
+}
+.motion-date-details {
+  animation: motion-panel-in var(--motion-fast) var(--motion-ease);
+}
+.aircraft-card,
+.duty-row,
+.upcoming-shift-row,
+.journal-card {
+  transition:
+    transform var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast),
+    border-color var(--motion-fast);
+}
+@media (hover: hover) and (pointer: fine) {
+  .aircraft-card:hover,
+  .duty-row:hover,
+  .upcoming-shift-row:hover,
+  .journal-card:hover {
+    transform: translateY(-1px);
+  }
+}
+.aircraft-card:active,
+.duty-row:active,
+.upcoming-shift-row:active,
+.journal-card:active {
+  transform: scale(0.995);
+}
+.record-back {
+  margin-bottom: 16px;
+  min-height: 44px;
+}
+.more-details[open] > .details-content {
+  animation: motion-panel-in var(--motion-fast) var(--motion-ease);
+}
+.bar-track > div {
+  width: 100%;
+  transform-origin: left;
+  transition: transform var(--motion-base) var(--motion-ease);
+}
+.trend-column > div {
+  transform-origin: bottom;
+  transition: transform var(--motion-base) var(--motion-ease);
+}
+.page-view[data-page='statistics'][data-active='true'] .bars,
+.page-view[data-page='statistics'][data-active='true'] .trend-chart {
+  animation: motion-chart-in var(--motion-base) var(--motion-ease);
+}
+.toast {
+  animation: motion-panel-in var(--motion-base) var(--motion-ease);
+}
+.toast > svg polyline {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 0;
+  animation: motion-check-in var(--motion-out) ease-out;
+}
+@keyframes motion-page-in {
+  from {
+    opacity: 0.5;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes motion-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes motion-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes motion-sheet-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes motion-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes motion-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes motion-month-in {
+  from {
+    opacity: 0.6;
+    transform: translateX(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes motion-chart-in {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes motion-check-in {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-view[data-active='true'],
+  dialog[open],
+  dialog.duty-sheet[open],
+  dialog[open].closing,
+  dialog.duty-sheet[open].closing,
+  dialog[open]::backdrop,
+  dialog.duty-sheet[open]::backdrop,
+  dialog[open].closing::backdrop,
+  .calendar-month,
+  .motion-date-details,
+  .more-details[open] > .details-content,
+  .page-view[data-page='statistics'][data-active='true'] .bars,
+  .page-view[data-page='statistics'][data-active='true'] .trend-chart,
+  .toast,
+  .toast > svg polyline {
+    animation: none;
+  }
+  .calendar-grid button,
+  .duty-marker,
+  .aircraft-card,
+  .duty-row,
+  .upcoming-shift-row,
+  .journal-card,
+  .bar-track > div,
+  .trend-column > div {
+    transition: none;
+  }
+  .aircraft-card:hover,
+  .duty-row:hover,
+  .upcoming-shift-row:hover,
+  .journal-card:hover,
+  .aircraft-card:active,
+  .duty-row:active,
+  .upcoming-shift-row:active,
+  .journal-card:active {
+    transform: none;
+  }
+}

@@ -197,6 +197,8 @@ describe('Full Calendar navigation and structured status legend', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Edit Duty' }));
     expect(screen.getByRole('dialog', { name: 'Edit Duty' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.getByRole('dialog', { name: `Duty · ${today}` })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back to Calendar' }));
     expect(screen.getByRole('dialog', { name: 'Full Duty Calendar' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Return to Home' }));
     expect(view.container.querySelector('.calendar-grid')).toBeNull();

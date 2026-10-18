@@ -62,13 +62,14 @@ export function Modal({
     <dialog
       ref={ref}
       aria-labelledby={titleId}
+      inert={closing}
       className={`${wide ? 'wide' : ''} ${sheet ? 'duty-sheet' : ''} ${closing ? 'closing' : ''}`}
       onCancel={(e) => {
         e.preventDefault();
-        onClose();
+        if (!closing) onClose();
       }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (!closing && e.target === e.currentTarget) onClose();
       }}
     >
       <div className="modal-head">

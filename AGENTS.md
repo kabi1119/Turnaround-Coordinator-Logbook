@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.3.4 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.4.0 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.3.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.4.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -73,3 +73,12 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Reuse the full calendar/date records in a dialog with a clear return to Home, keeping month/day state across closing and duty detail/edit navigation. Keep fictional preview inside Full Calendar with its read-only disclosure.
 - Shared legends use five icon-and-label groups below the grid, naturally wrapping with readable typography; neutral black/white AL/SL, separate instructions and accessible status descriptions remain.
 - Do not change Duty/Aircraft models, Scheduled/Worked conversions, leave rules, Statistics or saved sample data for this release. No automatic commit/push. See docs/V0_3_4_ACCEPTANCE.md.
+
+## v0.4.0 integration and motion
+
+- Reuse the single authoritative database and existing selectors. Keep persisted models/schema, legacy progress, leave, counting, privacy, sample-refresh and restore rules unchanged.
+- New date-based Duty auto-matching excludes leave/Trash and selects only a single unambiguous candidate. Existing or explicitly chosen/unlinked associations survive date edits; validate new links again before reviewed confirmation. Never create an implicit Duty.
+- Related record navigation uses an in-session return trail and dialog scroll restoration. Visited pages retain local filters and tab scroll; navigation state is never persisted or exported. Home remains compact and Timeline remains the default Logbook view.
+- Shared 150/200/180 ms CSS motion and dismissal retain scroll locking, focus, safe areas and explicit discard/review rules. Closing dialogs are inert. Reduced motion skips nonessential effects and waits. No animation library or count-up loop; statistics always display authoritative values.
+- Show local success only after a successful write, clear stale success after failure, retain retryable forms and guard repeated submissions. Preserve clock isolation and radar pause/reduced motion.
+- See docs/V0_4_0_ACCEPTANCE.md for audit, compatibility and regression/manual acceptance. No automatic commit/push. Release title: v0.4.0 - Integrate Duty and Aircraft Workflows with Motion Enhancements.
