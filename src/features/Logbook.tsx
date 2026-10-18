@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { CalendarDays, List, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import DutyCalendar from '../components/DutyCalendar';
+import { hkToday } from '../domain/model';
+import { dutyOptionText } from '../domain/roster';
+import { CalendarDays, List, ChevronRight, Plus } from 'lucide-react';
 import type { Aircraft, Database, Duty, Filters } from '../domain/model';
 import { filterAircraft, timelineDate } from '../domain/selectors';
 import { AircraftCard, Badge, Empty } from '../components/ui';
@@ -10,7 +13,9 @@ export default function Logbook({
   onAircraft,
   onDuty,
   onNew,
+  initialMode = 'timeline',
 }: {
+  initialMode?: string;
   db: Database;
   onAircraft: (a: Aircraft) => void;
   onDuty: (d: Duty) => void;
@@ -18,10 +23,10 @@ export default function Logbook({
 }) {
   const t = useT(),
     l = useLabel();
-  const [mode, setMode] = useState('timeline'),
+  const [mode, setMode] = useState(initialMode),
     [filters, setFilters] = useState<Filters>({}),
-    [month, setMonth] = useState('2026-10'),
-    [day, setDay] = useState('2026-10-16');
+    [month, setMonth] = useState(hkToday().slice(0, 7)),
+    [day, setDay] = useState(hkToday());
   const rows = filterAircraft(
     db.aircraft.filter((a) => a.status !== 'Trashed'),
     filters,
@@ -43,12 +48,6 @@ export default function Logbook({
   ]
     .sort()
     .reverse();
-  const shift = (n: number) => {
-    const [y, m] = month.split('-').map(Number);
-    const date = new Date(Date.UTC(y, m - 1 + n, 1));
-    setMonth(date.toISOString().slice(0, 7));
-    setDay(date.toISOString().slice(0, 10));
-  };
   const renderDate = (date: string) => (
     <div className="timeline-group" key={date}>
       <div className="date-marker">
@@ -74,8 +73,7 @@ export default function Logbook({
             <button className="duty-row" onClick={() => onDuty(d)}>
               <span>
                 <strong>
-                  {t('Duty', '更次')} · {d.start || '—'} – {d.end || '—'}
-                  {d.start && d.end && d.end < d.start ? ' (+1)' : ''}
+                  {t('Duty', '更次')} · {dutyOptionText(d, l)}
                 </strong>
                 <small>
                   {rows.filter((a) => a.dutyId === d.id).length}{' '}
@@ -83,7 +81,7 @@ export default function Logbook({
                 </small>
               </span>
               <Badge tone={d.status === 'Draft' ? 'amber' : 'teal'}>
-                {l(d.status)} · {l(d.workState || 'Worked')}
+                {l(d.status)} · {l(d.leave || d.workState || 'Work state not recorded')}
                 {d.shiftType ? ` · ${l(d.shiftType)}` : ''}
               </Badge>
               <ChevronRight size={17} />
@@ -112,9 +110,6 @@ export default function Logbook({
         ))}
     </div>
   );
-  const [year, mon] = month.split('-').map(Number),
-    days = new Date(Date.UTC(year, mon, 0)).getUTCDate(),
-    offset = new Date(Date.UTC(year, mon - 1, 1)).getUTCDay();
   return (
     <>
       <div className="page-heading">
@@ -164,50 +159,13 @@ export default function Logbook({
         dates.map(renderDate)
       ) : (
         <>
-          <section className="panel calendar">
-            <div className="section-title">
-              <button aria-label={t('Previous month', '上個月')} onClick={() => shift(-1)}>
-                <ChevronLeft size={18} />
-              </button>
-              <h2>{month}</h2>
-              <button aria-label={t('Next month', '下個月')} onClick={() => shift(1)}>
-                <ChevronRight size={18} />
-              </button>
-            </div>
-            <div className="calendar-grid">
-              {t('Sun,Mon,Tue,Wed,Thu,Fri,Sat', '日,一,二,三,四,五,六')
-                .split(',')
-                .map((d) => (
-                  <small key={d}>{d}</small>
-                ))}
-              {Array.from({ length: offset }, (_, i) => (
-                <span key={`blank${i}`} />
-              ))}
-              {Array.from({ length: days }, (_, i) => {
-                const date = `${month}-${String(i + 1).padStart(2, '0')}`;
-                const count = rows.filter((a) => timelineDate(a, db.duties) === date).length;
-                const dutyCount = dutyRows.filter((d) => d.date === date).length;
-                return (
-                  <button
-                    key={date}
-                    className={day === date ? 'active' : ''}
-                    onClick={() => setDay(date)}
-                    aria-label={`${date} · ${count} ${t('records', '項紀錄')}`}
-                    aria-pressed={day === date}
-                  >
-                    {i + 1}
-                    {(count > 0 || dutyCount > 0) && <span className="calendar-dot" />}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="muted">
-              {t(
-                'No record does not mean day off. Cross-midnight shifts stay on their start date.',
-                '無紀錄不代表休假；跨午夜更次按開更日期歸組。',
-              )}
-            </p>
-          </section>
+          <DutyCalendar
+            duties={db.duties}
+            month={month}
+            onMonth={setMonth}
+            selected={[day]}
+            onSelect={setDay}
+          />
           {dates.includes(day) ? (
             renderDate(day)
           ) : (

@@ -30,6 +30,7 @@ function validDatabase(value: unknown): value is Database {
         object(d) &&
         strings(d, ['id', 'date', 'start', 'end', 'status', 'notes']) &&
         ['Draft', 'Confirmed', 'Trashed'].includes(String(d.status)) &&
+        (d.leave === undefined || ['AL', 'SL'].includes(String(d.leave))) &&
         (d.workState === undefined || ['Planned', 'Worked'].includes(String(d.workState))) &&
         (d.shiftType === undefined ||
           ['Day', 'Evening', 'Night', 'Custom'].includes(String(d.shiftType))),

@@ -119,7 +119,7 @@ describe('Batch duty review and persistence UI', () => {
       close = vi.fn();
     render(<BatchDutyEditor db={db} commit={commit} onClose={close} />);
     fireEvent.click(screen.getByRole('button', { name: 'Apply template to selected dates' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('different valid start/end times');
+    expect(screen.getByRole('alert')).toHaveTextContent('valid shift times');
     prepare(['2026-11-05', '2026-11-06', '2026-11-30'], 'Night', '22:00', '06:00');
     expect(screen.getByLabelText('Pending duty 3')).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Duty 1 start'), { target: { value: '21:00' } });
@@ -192,10 +192,9 @@ describe('Batch duty review and persistence UI', () => {
     const original = seedDatabase();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(original));
     const view = render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Add Duty' }));
-    expect(screen.getByRole('dialog', { name: 'New Duty' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Batch Add Duties' }));
+    fireEvent.click(within(screen.getByRole('navigation')).getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Add Duties/ }));
+    expect(screen.getByRole('dialog', { name: 'Add Duties' })).toBeInTheDocument();
     prepare();
     fireEvent.click(screen.getByRole('button', { name: 'Review Batch' }));
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).duties).toHaveLength(6);
@@ -237,7 +236,7 @@ describe('Batch duty review and persistence UI', () => {
         <BatchDutyEditor db={empty()} commit={() => true} onClose={() => {}} />
       </LanguageContext.Provider>,
     );
-    expect(screen.getByRole('heading', { name: '批次新增更次' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '新增更次' })).toBeInTheDocument();
     expect(screen.getByLabelText('更次範本')).toHaveTextContent('日更');
     expect(screen.getByRole('button', { name: '覆核批次' })).toBeDisabled();
   });

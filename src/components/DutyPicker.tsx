@@ -22,7 +22,7 @@ export default function DutyPicker({
   const options = [
     { id: '', text: t('No linked Duty', '不連結更次') },
     ...duties
-      .filter((d) => d.status !== 'Trashed' || d.id === value)
+      .filter((d) => (d.status !== 'Trashed' && !d.leave) || d.id === value)
       .sort(
         (a, b) =>
           b.date.localeCompare(a.date) ||
@@ -120,8 +120,8 @@ export default function DutyPicker({
       )}
       <small id={`${uid}-help`}>
         {t(
-          'No duty recorded? Add it using Add Duty, then link it here.',
-          '尚未建立更次？請先使用「Add Duty」新增，再返回此處關聯。',
+          'No duty recorded? Add it using Add → Add Duties, then link it here.',
+          '尚未建立更次？請先使用「新增 → 新增更次」新增，再返回此處關聯。',
         )}
       </small>
       {duties.some((d) => !d.workState) && (

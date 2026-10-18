@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.3.2 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.3.3 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.3.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.3.3 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -57,3 +57,12 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 - Owner-approved QR replacement is intentional. Reconcile only QR's current byte size/SHA-256 to the actual preserved PNG; other 23 asset entries/checksums and all unverified source/permission evidence remain unchanged.
 - Preserve all uncommitted normalization work and the existing integrity assertion. Never restore an old image or weaken tests to match outdated inventory. No automatic commit/push.
+
+## v0.3.3 owner-approved calendar and leave scope
+
+- Reuse one shared date resolver and calendar across Home, Logbook and Add Duties. One marker per day: SL/AL before unresolved Scheduled, active Scheduled and explicitly Worked. Never convert elapsed Planned records automatically; legacy absence remains unclassified in calendars and original legacy statistics remain compatible.
+- Central Add → Add Duties is the creation entry. Every reviewed batch has exactly one type: Scheduled, Worked, AL or SL. Invalid/stale entries block the whole write. Keep duplicate/overlap handling and all same-day records.
+- Duty.leave is optional AL/SL under schema 1. AL is date-only/no hours and conflicts require resolution. SL only classifies an eligible existing confirmed Planned duty, preserving its ID, times, notes, metadata and links; require explicit target selection if several exist. Never add Other Leave or overwrite planned information.
+- Keep Scheduled, actual Worked and Scheduled SL hours separate; AL has no hours, leave does not inflate Worked or Aircraft counts. Preserve Draft/Confirmed and legacy counting semantics.
+- Fictional calendar preview is dynamic and read-only, separate from saved records/statistics. Preserve stable sample-refresh fingerprints and never infer attendance or reseed on upgrade.
+- Sheet transitions must retain scroll locking through close, honor reduced motion and safe areas, clean up timers/listeners and support visual viewport resizing. No automatic commit/push. See docs/V0_3_3_ACCEPTANCE.md.

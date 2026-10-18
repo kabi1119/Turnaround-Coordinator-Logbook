@@ -34,6 +34,8 @@ import Radar from './components/Radar';
 import AircraftSummary from './features/AircraftDetails';
 import BatchDutyEditor from './features/BatchDutyEditor';
 import HongKongClock from './components/HongKongClock';
+import HomeCalendar from './features/HomeCalendar';
+import { dutyOptionText } from './domain/roster';
 import DutyHistory from './features/DutyHistory';
 import { previousDuties } from './domain/roster';
 
@@ -70,6 +72,7 @@ function Workspace({
 }) {
   const t = useT(),
     l = useLabel();
+  const [logbookMode, setLogbookMode] = useState('timeline');
   const [page, setPage] = useState<Page>('home'),
     [overlay, setOverlay] = useState<Overlay>(null),
     [toast, setToast] = useState(''),
@@ -187,16 +190,6 @@ function Workspace({
               </div>
               <Radar />
             </section>
-            <div className="home-duty-actions">
-              <button onClick={() => setOverlay({ type: 'duty' })}>
-                <CalendarDays size={18} />
-                {t('Add Duty', '新增更次')}
-              </button>
-              <button className="primary" onClick={() => setOverlay({ type: 'batchDuty' })}>
-                <CalendarDays size={18} />
-                {t('Batch Add Duties', '批次新增更次')}
-              </button>
-            </div>
             <div className="metrics surface-dark">
               <Metric
                 value={s.logged}
@@ -214,6 +207,10 @@ function Workspace({
                 detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
               />
             </div>
+            <HomeCalendar
+              duties={db.duties}
+              onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
+            />
             <div className="home-columns">
               <div>
                 <SectionTitle
@@ -221,9 +218,12 @@ function Workspace({
                   action={
                     <button
                       className="text-button"
-                      onClick={() => setOverlay({ type: 'dutyHistory' })}
+                      onClick={() => {
+                        setLogbookMode('calendar');
+                        navigate('logbook');
+                      }}
                     >
-                      {t('View All Previous Duties', '查看過往全部更次')}
+                      {t('View Calendar', '查看月曆')}
                       <ArrowRight size={16} />
                     </button>
                   }
@@ -249,14 +249,17 @@ function Workspace({
                           timeZone: 'Asia/Hong_Kong',
                         }).format(new Date(`${recentDuty.date}T12:00+08:00`))}
                         <small>
-                          {l(recentDuty.status)} · {l(recentDuty.workState || 'Worked')}
+                          {l(recentDuty.status)} ·{' '}
+                          {l(recentDuty.leave || recentDuty.workState || 'Work state not recorded')}
                         </small>
                       </div>
                     </div>
                     <div className="duty-facts">
                       <span>
                         <Clock3 size={16} />
-                        {recentDuty.start || '—'} – {recentDuty.end || '—'}
+                        {recentDuty.leave === 'AL'
+                          ? t('Annual Leave · no duty hours', '年假 · 沒有工時')
+                          : `${recentDuty.start || '—'} – ${recentDuty.end || '—'}`}
                         {recentDuty.start && recentDuty.end && recentDuty.end < recentDuty.start
                           ? ' (+1)'
                           : ''}
@@ -343,6 +346,7 @@ function Workspace({
         )}
         {page === 'logbook' && (
           <Logbook
+            initialMode={logbookMode}
             db={db}
             onAircraft={openAircraft}
             onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
@@ -372,7 +376,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.3.2 {t('Pre-release', '預發佈')} ·{' '}
+            v0.3.3 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -395,7 +399,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.3.2 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.3.3 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
@@ -421,11 +425,11 @@ function Workspace({
               type: 'aircraft',
             },
             {
-              en: 'New Duty',
+              en: 'Add Duties',
               zh: '新增更次',
-              sub: t('A shift, including overnight', '工作更次，包括通宵更'),
+              sub: t('Scheduled, Worked, Annual or Sick Leave', '已排更、已工作、年假或病假'),
               icon: CalendarDays,
-              type: 'duty',
+              type: 'batchDuty',
             },
             {
               en: 'New Career Journal',
@@ -438,7 +442,9 @@ function Workspace({
             <button
               className="add-option"
               key={item.type}
-              onClick={() => setOverlay({ type: item.type as 'aircraft' | 'duty' | 'journal' })}
+              onClick={() =>
+                setOverlay({ type: item.type as 'aircraft' | 'batchDuty' | 'journal' })
+              }
             >
               <item.icon size={25} />
               <span>
@@ -542,18 +548,19 @@ function Workspace({
         <Modal title={`${t('Duty', '更次')} · ${duty.date}`} onClose={close} wide>
           <div className="section-title">
             <Badge tone="teal">
-              {l(duty.status)} · {l(duty.workState || 'Worked')}
+              {l(duty.status)} · {l(duty.leave || duty.workState || 'Work state not recorded')}
               {duty.shiftType ? ` · ${l(duty.shiftType)}` : ''}
             </Badge>
             <span>
-              {duty.start || '—'} – {duty.end || '—'}
-              {duty.start && duty.end && duty.end < duty.start ? ' (+1)' : ''} · Asia/Hong_Kong
+              {duty.leave === 'SL' && `${t('Original planned shift', '原定更次')} · `}
+              {dutyOptionText(duty, l)} · Asia/Hong_Kong
             </span>
           </div>
           <p>{duty.notes}</p>
           <div className="actions left">
             <button
               className="primary"
+              disabled={!!duty.leave}
               onClick={() => setOverlay({ type: 'aircraft', dutyId: duty.id })}
             >
               <Plus size={16} />

@@ -29,7 +29,7 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.2 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.3.3 Pre-release** runs locally with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
 ## About the Project
 
@@ -46,6 +46,12 @@ I develop and maintain this project independently as a non-commercial portfolio 
 - **Career Journal:** Standalone or linked reflections, STAR-style fields, competencies, Draft/Confirmed status and optional self-reported outcomes. Journal entries do not increase aircraft handling counts.
 - **Reports and local controls:** Privacy Preview, reviewed JSON, counts-only CSV and browser Print / Save as PDF; local Trash/restore and explicitly confirmed sample-load/reset actions. These tools are not full backups or automatic anonymization.
 - **User experience:** Home | Logbook | Add | Statistics | Journal, separate Settings, responsive desktop/mobile layouts, English / Traditional Chinese interface and system light/dark themes. Entered content and standard aviation references retain their original language.
+
+## v0.3.3 Calendar and Duty Management
+
+I added shared Home / Logbook / Add Duties calendars with one status marker per date, neutral AL/SL text and explicit Scheduled versus Worked progress. Use **Add → Add Duties** for one or multiple dates, with a single record type per reviewed batch. AL has no shift hours; SL only classifies a selected existing Scheduled duty while retaining its planned times, notes and links. Statistics separate scheduled, worked and SL hours and leave dates. **View Calendar** opens Logbook; redundant Home duty-creation buttons are removed.
+
+Home's **Fictional calendar preview** generates examples relative to Hong Kong today without writing them to saved records or statistics. Existing sample fingerprints and user data remain intact. The animated sheet supports reduced motion, safe areas and visual viewport resizing. The optional Duty.leave field keeps storage schema 1; old records load without migration. Read [v0.3.3 acceptance and compatibility](docs/V0_3_3_ACCEPTANCE.md).
 
 ## v0.3.2 QR asset integrity
 
@@ -117,15 +123,15 @@ Open an Aircraft card for grouped assignment, arrival, departure, Duty/Journal r
 
 ### Monthly / batch roster
 
-On Home choose **Add Duty** or **Batch Add Duties**; the central Add navigation is preserved.
+Choose **Add → Add Duties** for Scheduled, Worked, Annual Leave or eligible Sick Leave; every batch uses one type and requires review.
 
 1. Choose a month/year and select multiple calendar dates. Selection and pending entries can span months.
-2. Choose Day / Evening / Night / Custom and enter your own start/end times. There are no official or prefilled employer shift hours.
+2. Choose one record type. Scheduled/Worked use Day / Evening / Night / Custom and your own start/end times; AL has no hours, and SL requires an eligible existing Scheduled duty. There are no official employer shift hours.
 3. Apply the template. Repeat with other templates/dates; edit or remove individual pending entries and add synthetic notes.
 4. Review dates, types, times, next-day end dates and conflicts. Identical shifts must be edited/removed; overlaps require a separate explicit keep-separate confirmation.
 5. Confirm once to save all entries locally. Failed storage writes retain pending entries for retry; no saved Duty is replaced by matching date.
 
-Batch duties are **Confirmed + Planned**, where Confirmed describes record state and Planned describes work progress. Planned never contributes to Worked Duty Shifts, even after its date passes. In Duty → Edit Duty, mark Worked explicitly after completion. A future or unfinished shift cannot be newly marked Worked. Aircraft assignment counts remain independent of a Duty's work progress.
+Scheduled batches save **Confirmed + Planned**, while completed Worked batches save **Confirmed + Worked**. Confirmed describes record state; work progress and optional AL/SL leave classification are separate. Planned never contributes to Worked Duty Shifts, even after its date passes. In Duty → Edit Duty, mark Worked explicitly after completion. A future or unfinished shift cannot be newly marked Worked. AL/SL never add actual worked hours or shifts; SL preserves its original Planned duty and hours separately. Aircraft assignment counts remain independent.
 
 A Duty's date is always its Hong Kong shift-start date. End earlier than start means next day, including month/year boundaries; equal start/end is rejected. Day / Evening / Night are personal labels. Templates are remembered only while the batch dialog is open, not as a permanent template library.
 
@@ -292,7 +298,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.2 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.3.3 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## 關於本項目
 
@@ -309,6 +315,12 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 - **職涯日誌（Career Journal）：** 支援獨立或關聯式反思、STAR 結構欄位、能力標籤、Draft／Confirmed 狀態及可選填的自行申報成果。Journal 紀錄不會增加航機處理任務數量。
 - **報告與本機控制：** Privacy Preview（私隱預覽）、經覆核的 JSON、僅含數量統計的 CSV、瀏覽器 Print / Save as PDF、本機垃圾桶／還原，以及須另外確認的樣本載入／清除操作。這些功能並非完整備份或自動匿名化工具。
 - **使用者體驗：** Home | Logbook | Add | Statistics | Journal 五個主分頁，另設 Settings；具備桌面／手機響應式版面、英文／繁體中文介面，以及跟隨系統的淺色／深色主題。使用者輸入內容及標準航空參考資料均保留其原有語言。
+
+## v0.3.3 月曆及更次管理
+
+我加入 Home／Logbook／Add Duties 共用月曆，每日最多一個狀態標記，AL／SL 按主題顯示黑／白文字，並保留已排更與已工作的明確區分。從 **新增 → 新增更次** 選擇一日或多日；每個批次只接受同一紀錄類型並須覆核。年假沒有工時；病假只能由指定的現有已排更更次轉換，保留原定時間、筆記及連結。統計分開列出已排更、已工作、病假原定工時及假別日數。**查看月曆** 開啟紀錄簿，Home 不再重複提供建立更次按鈕。
+
+Home 的**虛構月曆預覽**按香港當日動態產生範例，不會寫入已存資料或統計；既有樣本辨識及使用者紀錄保留。新增面板支援進出動畫、減少動態、安全區及可視視窗高度調整。Duty.leave 為選填欄位，儲存 schema 維持 1，舊紀錄不需遷移。詳見 [v0.3.3 驗收及相容說明](docs/V0_3_3_ACCEPTANCE.md)。
 
 ## v0.3.2 QR 資產完整性
 
@@ -380,15 +392,15 @@ Recent Aircraft 卡片會優先顯示適用航段的實際 AIBT／AOBT。如只�
 
 ### 每月／批次更表
 
-在 Home 選擇 **Add Duty** 或 **Batch Add Duties**；中央 Add 導航分頁維持不變。
+從中央 **新增 → 新增更次** 選擇已排更、已工作、年假或合資格病假；每批須使用同一類型並經覆核。
 
 1. 選擇月份／年份及多個日曆日期。已選日期及待儲存項目可以跨月。
-2. 選擇 Day／Evening／Night／Custom，自行輸入開始與結束時間。系統不提供任何官方或預設的僱主更次時間。
+2. 選擇一種紀錄類型。已排更／已工作使用 Day／Evening／Night／Custom，自行輸入開始與結束時間；年假沒有工時，病假須選擇合資格的現有已排更更次。系統不提供官方僱主更次時間。
 3. 套用範本。可為其他範本／日期重複操作；儲存前可逐筆修改或移除待處理項目，並加入虛構筆記。
 4. 覆核日期、類型、時間、翌日結束日期及衝突。完全相同的更次必須修改或移除；時段重疊則須另行明確確認保留為獨立更次。
 5. 確認一次後，將所有項目儲存至本機。若寫入儲存空間失敗，待處理項目會保留供重試；系統不會因日期相同而取代已存在的 Duty。
 
-批次建立的 Duty 為 **Confirmed + Planned**：Confirmed 指紀錄狀態，Planned 指實際工作進度。即使日期已過，Planned 亦不會計入 Worked Duty Shifts。完成更次後可於 Duty → Edit Duty 明確標記為 Worked；未來或未完成的更次不能新標記為 Worked。航機任務數量的計算獨立於 Duty 的工作進度。
+已排更批次儲存為 **Confirmed + Planned**，已完成的已工作批次則為 **Confirmed + Worked**。Confirmed 指紀錄狀態，工作進度及選填 AL／SL 假別各自獨立。即使日期已過，Planned 亦不會計入 Worked Duty Shifts。完成更次後可於 Duty → Edit Duty 明確標記為 Worked；未來或未完成的更次不能新標記為 Worked。AL／SL 不增加實際工作工時或更次，SL 保留原有 Planned 更次及獨立列出的原定工時；航機任務次數獨立計算。
 
 Duty 日期一律以香港時間的更次開始日期為準。如結束時間早於開始時間，則視為翌日結束，包括跨月／跨年；開始與結束時間相同則會被拒絕。Day／Evening／Night 僅屬個人標籤。範本只會在目前批次視窗開啟期間保留，並非永久範本庫。
 

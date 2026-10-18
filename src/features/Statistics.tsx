@@ -5,6 +5,7 @@ import { filterAircraft, ranking, stats, visibleAircraft } from '../domain/selec
 import { Metric, SectionTitle, Select } from '../components/ui';
 import RecordFilters from '../components/RecordFilters';
 import { useLabel, useT } from '../i18n';
+import { dutyTotals } from '../domain/dutyCalendar';
 import AirlineLogo from '../components/AirlineLogo';
 
 export function Bars({ items, airline = false }: { items: [string, number][]; airline?: boolean }) {
@@ -38,6 +39,11 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
   const rows = filterAircraft(db.aircraft, filters, db.settings.privacy);
   const s = stats(
     rows,
+    db.duties.filter(
+      (d) => (!filters.from || d.date >= filters.from) && (!filters.to || d.date <= filters.to),
+    ),
+  );
+  const totals = dutyTotals(
     db.duties.filter(
       (d) => (!filters.from || d.date >= filters.from) && (!filters.to || d.date <= filters.to),
     ),
@@ -229,6 +235,30 @@ export default function Statistics({ db, onReport }: { db: Database; onReport: (
           </>
         )}
       </div>
+      <section className="panel" aria-label={t('Duty and leave totals', '更次及假別統計')}>
+        <h2>{t('Duty and leave totals', '更次及假別統計')}</h2>
+        <div className="mini-metrics duty-totals">
+          {[
+            [t('Scheduled duty hours', '已排更工時'), totals.scheduledHours.toFixed(1)],
+            [t('Actual worked duty hours', '實際已工作工時'), totals.workedHours.toFixed(1)],
+            [t('Scheduled SL hours', '病假原定工時'), totals.sickHours.toFixed(1)],
+            [t('Annual Leave dates', '年假日數'), totals.annualDates],
+            [t('Sick Leave dates', '病假日數'), totals.sickDates],
+            [t('Confirmed worked duty shifts', '已確認的已工作更次'), totals.workedShifts],
+          ].map(([label, value]) => (
+            <div key={label}>
+              <strong>{value}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+        <p className="muted">
+          {t(
+            'Confirmed records only, filtered by Duty start date. AL has no hours; SL retains planned hours separately. Missing times add no hours. Aircraft counts are independent.',
+            '只計已確認紀錄，按開更日期篩選；年假沒有工時，病假保留原定工時並獨立列出。缺少時間不增加工時，航機次數獨立計算。',
+          )}
+        </p>
+      </section>
       <div className="mini-metrics">
         <div>
           <strong>{s.duties}</strong>

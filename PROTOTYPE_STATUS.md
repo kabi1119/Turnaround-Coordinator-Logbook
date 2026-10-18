@@ -1,4 +1,12 @@
-# TCO Logbook v0.3.2 Pre-release status
+# TCO Logbook v0.3.3 Pre-release status
+
+## v0.3.3 Calendar & Duty Management Refinement — 2026-10-18 (Hong Kong)
+
+Started from clean main / 07bf3f4 (v0.3.2), preserving all previous work and Git history. Implemented shared Home/Logbook/Add Duties calendars with one deterministic status marker per date, theme-neutral AL/SL, central Add → Add Duties, atomic single-type batches, date-only AL and eligible Scheduled-to-SL conversion preserving IDs/planned information/links. Added separate confirmed duty/leave hours and date totals, reduced-motion CSS sheet animations, retained scroll lock through close, safe-area padding and VisualViewport height/listener cleanup. View Calendar reuses Logbook; redundant Home creation buttons are gone. Aircraft/Journal/handling calculations and all airline PNGs/provenance are unchanged.
+
+Data compatibility: optional Duty.leave = AL/SL under schema 1, unchanged key and backup envelope. No migration, reset, reseed or ID rewrite. Strict backups recognize/validate leave; legacy records remain readable. Dynamic fictional calendar examples are explicitly read-only and never persisted, retaining safe sample-refresh fingerprints. See [v0.3.3 acceptance and design decisions](docs/V0_3_3_ACCEPTANCE.md).
+
+Verification: **247 tests passed / 18 files** (33 new v0.3.3 cases); lint, TypeScript/Vite build and repository format check passed; npm audit **0 vulnerabilities**. Isolated headless Edge on private LAN HTTP port 5184 performed 83 layout checks across 320/375/390/430/1440 px, Light/Dark and English/Traditional Chinese: Home calendar, Add Duties, AL, fictional preview and Logbook calendar. No horizontal/dialog overflow or JavaScript exceptions. Verified neutral black/white leave text, one marker per date, no preview/cancel writes, open/close animation/scroll lock and reduced motion. Actual UI saves verified date-only AL, two same-day Scheduled shifts, explicit selection of one SL target, complete original-row preservation, unchanged Aircraft/Journal data, synchronized Home/Statistics and persistence after reload. 375 px Light/Dark sheet screenshots were visually inspected. Physical iPhone Safari/PWA, keyboard and VoiceOver remain manual acceptance; emulation is not real-device verification. No commit, push or deployment.
 
 ## v0.3.2 owner-authorized QR inventory reconciliation — 2026-10-18 (Hong Kong)
 

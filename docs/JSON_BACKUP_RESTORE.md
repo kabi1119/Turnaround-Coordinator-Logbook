@@ -32,6 +32,10 @@ Local only; no upload, authentication, remote sync or encryption. Full files con
 
 Export includes complete supported Aircraft/Duty/Journal objects, disruption records, revisions, ID links, optional model/duration fields, original-duty links, Trash and archived values, plus language and all six field preferences. No token or browser-profile metadata is included. Supported schema stays at 1: new fields are optional and no load-time migration runs. Legacy workState absence and combined/custom aircraft snapshots retain their meaning.
 
+## v0.3.3 optional leave field
+
+Duty may include optional leave: AL or SL. AL has blank start/end and no duty hours. SL requires Planned plus valid different start/end times, retaining the original planned shift and identity. Legacy objects without leave remain valid. Full backups preserve this field and relationships; envelope/storage versions remain 1. Restore a leave-containing backup with v0.3.3 or newer: older strict validators reject the unknown optional field. No automatic load-time transformation occurs.
+
 ## Workflow
 
 1. Settings → Export Full Backup (JSON). Read the unencrypted-data notice and explicitly download. This includes hidden values, unlike reports. Export validates data before creating a file; broken links require review rather than silently dropping content.

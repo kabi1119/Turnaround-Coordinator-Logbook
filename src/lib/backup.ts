@@ -115,11 +115,16 @@ export function validateBackupDatabase(value: unknown): asserts value is Databas
     shape(
       d,
       ['id', 'date', 'start', 'end', 'status', 'notes'],
-      ['workState', 'shiftType', 'trashedAt', 'previousStatus'],
+      ['workState', 'shiftType', 'leave', 'trashedAt', 'previousStatus'],
     );
     strings(d, ['id', 'notes']);
     oneOf(d.status, recordStates);
     if (!date(d.date) || !clock(d.start) || !clock(d.end)) fail();
+    optional(d, 'leave', (v) => member(v, ['AL', 'SL']));
+    if (d.leave && !d.date) fail();
+    if (d.leave === 'AL' && (d.start || d.end)) fail();
+    if (d.leave === 'SL' && (d.workState !== 'Planned' || !d.start || !d.end || d.start === d.end))
+      fail();
     optional(d, 'workState', (v) => member(v, ['Planned', 'Worked']));
     optional(d, 'shiftType', (v) => member(v, ['Day', 'Evening', 'Night', 'Custom']));
     optional(d, 'trashedAt', timestamp);

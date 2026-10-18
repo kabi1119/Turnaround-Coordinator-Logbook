@@ -35,7 +35,7 @@ describe('Cross-feature regression workflows', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole('button', { name: 'Logbook' }));
-    await user.click(screen.getByRole('button', { name: /Duty · 22:00 – 06:00/ }));
+    await user.click(screen.getByRole('button', { name: /Duty · 2026-Oct-15 22:00–06:00/ }));
     await user.click(screen.getByRole('button', { name: 'Move Duty to Trash' }));
     expect(stored().duties.find((d) => d.id === 'd3')?.status).toBe('Confirmed');
     await user.click(screen.getByRole('button', { name: 'Confirm' }));

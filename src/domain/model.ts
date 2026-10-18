@@ -44,6 +44,8 @@ export type PrivacyKey =
   'registration' | 'flights' | 'bay' | 'gateTimes' | 'statuses' | 'disruptionNotes';
 export type Privacy = Record<PrivacyKey, boolean>;
 export interface Duty {
+  /** Optional, additive classification; SL retains the original Planned shift. */
+  leave?: 'AL' | 'SL';
   /** Absent on v0.1.1 records: retain legacy Confirmed-duty semantics. */
   workState?: 'Planned' | 'Worked';
   shiftType?: 'Day' | 'Evening' | 'Night' | 'Custom';

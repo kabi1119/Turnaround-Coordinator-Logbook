@@ -18,11 +18,15 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  sheet = false,
+  closing = false,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  sheet?: boolean;
+  closing?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -45,11 +49,20 @@ export function Modal({
       previous?.focus();
     };
   }, []);
+  useEffect(() => {
+    if (!sheet || !window.visualViewport) return;
+    const viewport = window.visualViewport;
+    const update = () =>
+      ref.current?.style.setProperty('--sheet-viewport-height', `${viewport.height}px`);
+    update();
+    viewport.addEventListener('resize', update);
+    return () => viewport.removeEventListener('resize', update);
+  }, [sheet]);
   return (
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      className={wide ? 'wide' : ''}
+      className={`${wide ? 'wide' : ''} ${sheet ? 'duty-sheet' : ''} ${closing ? 'closing' : ''}`}
       onCancel={(e) => {
         e.preventDefault();
         onClose();
@@ -87,11 +100,13 @@ export function Select({
   label,
   options,
   placeholder,
+  placeholderDisabled = false,
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
   options: readonly string[] | { value: string; label: string }[];
   placeholder?: string;
+  placeholderDisabled?: boolean;
 }) {
   const id = useId();
   const l = useLabel();
@@ -99,7 +114,11 @@ export function Select({
     <label className="field" htmlFor={id}>
       <span>{label}</span>
       <select id={id} {...props}>
-        {placeholder !== undefined && <option value="">{placeholder}</option>}
+        {placeholder !== undefined && (
+          <option value="" disabled={placeholderDisabled}>
+            {placeholder}
+          </option>
+        )}
         {options.map((o) =>
           typeof o === 'string' ? (
             <option key={o} value={o}>

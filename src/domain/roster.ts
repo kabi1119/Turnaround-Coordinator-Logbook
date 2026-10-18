@@ -22,11 +22,13 @@ export function dutyOptionText(d: Duty, label: (value: string) => string = (valu
     : d.date || '—';
   const overnight = d.start && d.end && d.end < d.start ? '(+1)' : '';
   const progress =
-    d.workState === 'Planned'
+    d.leave ||
+    (d.workState === 'Planned'
       ? 'Scheduled'
       : d.workState === 'Worked'
         ? 'Worked'
-        : 'Work state not recorded';
+        : 'Work state not recorded');
+  if (d.leave === 'AL') return `${date} · AL`;
   return `${date} ${d.start || '—'}–${d.end || '—'}${overnight} · ${label(progress)}`;
 }
 
@@ -68,14 +70,14 @@ export function shiftRange(d: Pick<Duty, 'date' | 'start' | 'end'>) {
 }
 
 export function completedDuty(d: Duty, now = Date.now()) {
-  if (d.status !== 'Confirmed' || d.workState === 'Planned') return false;
+  if (d.leave || d.status !== 'Confirmed' || d.workState === 'Planned') return false;
   if (!d.workState) return true; // Non-destructive interpretation of legacy v0.1.1 data.
   const range = shiftRange(d);
   return range ? range.end <= now : Boolean(d.date && d.date <= hkToday(new Date(now)));
 }
 
 export interface RosterConflict {
-  kind: 'duplicate' | 'overlap';
+  kind: 'duplicate' | 'overlap' | 'leave';
   entry: Duty;
   other: Duty;
   saved: boolean;
@@ -89,9 +91,17 @@ export function rosterConflicts(entries: Duty[], saved: Duty[]): RosterConflict[
         entry.date === other.date && entry.start === other.start && entry.end === other.end;
       const a = shiftRange(entry),
         b = shiftRange(other);
-      if (same || (a && b && a.start < b.end && b.start < a.end)) {
+      const annualConflict = (al: Duty, duty: Duty) => {
+        if (al.leave !== 'AL') return false;
+        if (al.date === duty.date) return true;
+        const range = shiftRange(duty),
+          start = Date.parse(`${al.date}T00:00:00+08:00`);
+        return !!range && range.start < start + 86400000 && start < range.end;
+      };
+      const leave = annualConflict(entry, other) || annualConflict(other, entry);
+      if (leave || same || (a && b && a.start < b.end && b.start < a.end)) {
         conflicts.push({
-          kind: same ? 'duplicate' : 'overlap',
+          kind: leave ? 'leave' : same ? 'duplicate' : 'overlap',
           entry,
           other,
           saved: saved.some((d) => d.id === other.id),

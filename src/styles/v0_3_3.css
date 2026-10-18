@@ -1,0 +1,148 @@
+.home-calendar-section {
+  margin: 28px 0;
+}
+.duty-calendar {
+  min-width: 0;
+}
+.duty-calendar .calendar-grid > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 2px;
+  position: relative;
+}
+.duty-calendar .calendar-grid > button.active {
+  outline: 2px solid var(--teal, #00786f);
+  outline-offset: -2px;
+}
+.duty-calendar [aria-current='date'] > span:first-child {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.duty-calendar .duty-marker {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.duty-marker.worked {
+  background: #168148;
+}
+.duty-marker.scheduled {
+  background: #d13c3c;
+}
+.duty-marker.working {
+  background: #d5a91e;
+}
+.duty-marker.unknown {
+  background: transparent;
+  border: 1px solid currentColor;
+}
+.duty-calendar .leave-marker {
+  color: #000;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 750;
+}
+.calendar-legend {
+  line-height: 1.65;
+  font-size: 12px;
+  margin-bottom: 0;
+}
+.calendar-records {
+  display: grid;
+  gap: 8px;
+  padding: 12px 0;
+}
+.calendar-records > button {
+  text-align: left;
+  white-space: normal;
+  min-height: 44px;
+}
+.duty-totals {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+dialog.duty-sheet[open] {
+  animation: duty-sheet-in 200ms ease-out both;
+}
+dialog.duty-sheet[open]::backdrop {
+  animation: duty-backdrop-in 200ms ease-out both;
+}
+dialog.duty-sheet.closing {
+  animation: duty-sheet-out 180ms ease-in both;
+  pointer-events: none;
+}
+dialog.duty-sheet.closing::backdrop {
+  animation: duty-backdrop-out 180ms ease-in both;
+}
+dialog.duty-sheet {
+  max-height: min(92dvh, calc(var(--sheet-viewport-height, 100dvh) - 20px));
+  overscroll-behavior: contain;
+}
+dialog.duty-sheet .modal-body {
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+@keyframes duty-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes duty-sheet-out {
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+@keyframes duty-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes duty-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .duty-calendar .leave-marker {
+    color: #fff;
+  }
+}
+@media (max-width: 700px) {
+  dialog.duty-sheet {
+    margin: auto auto 0;
+    width: calc(100% - 12px);
+    max-width: none;
+    border-radius: 20px 20px 0 0;
+  }
+  .duty-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-calendar-section > .section-title {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.duty-sheet[open],
+  dialog.duty-sheet.closing,
+  dialog.duty-sheet[open]::backdrop,
+  dialog.duty-sheet.closing::backdrop {
+    animation: none;
+  }
+}

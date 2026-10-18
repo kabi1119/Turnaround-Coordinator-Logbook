@@ -6,6 +6,8 @@ export function useT(): Translate {
   return (en, zh) => (lang === 'en' ? en : zh);
 }
 export const labels: Record<string, string> = {
+  AL: '年假 (AL)',
+  SL: '病假 (SL)',
   Scheduled: '已排班',
   'Work state not recorded': '未記錄工作進度',
   Legacy: '舊版未記錄',

@@ -317,18 +317,20 @@ describe('v0.1.4 previous Duty navigation', () => {
       'past-plan',
     ]);
   });
-  it('Home opens a working history; details and both prominent duty actions remain available', () => {
+  it('Home opens the existing calendar; central Add provides Duties without redundant Home actions', () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: 'Add Duty' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Batch Add Duties' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'New Duty' })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'View All Previous Duties' }));
-    const dialog = screen.getByRole('dialog', { name: 'Previous Duties' });
-    const rows = within(dialog)
-      .getAllByRole('button')
-      .filter((b) => b.classList.contains('duty-history-row'));
-    fireEvent.click(rows[0]);
+    expect(screen.queryByRole('button', { name: 'Add Duty' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Batch Add Duties' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'View Calendar' }));
+    expect(screen.getByRole('button', { name: 'Calendar' })).toHaveClass('selected');
+    expect(screen.getByRole('region', { name: 'Duty calendar' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Timeline' }));
+    fireEvent.click(screen.getAllByRole('button').find((b) => b.classList.contains('duty-row'))!);
     expect(screen.getByRole('dialog', { name: /Duty ·/ })).toHaveTextContent('Edit Duty');
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    fireEvent.click(within(screen.getByRole('navigation')).getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Add Duties/ }));
+    expect(screen.getByRole('dialog', { name: 'Add Duties' })).toBeInTheDocument();
   });
   it('Shows Planned/Worked, overnight end dates, an empty state and Traditional Chinese controls', () => {
     const db = legacySeedDatabase(),
