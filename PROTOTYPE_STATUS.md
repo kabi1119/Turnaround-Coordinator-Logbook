@@ -1,4 +1,14 @@
-# TCO Logbook v0.4.5 Pre-release status
+# TCO Logbook v0.4.5a Pre-release status
+
+## v0.4.5a Radar Framing and Regional Coverage — 2026-10-19 (Hong Kong)
+
+Started from clean main / 676c21f (v0.4.5). Reframed the same uniform Mercator projection symmetrically on the actual HKG coordinate: 79.918–147.918 E, 11.0371323 S–49.3438451 N. HKG now sits at exactly 50% / 50%. Disc width is 94%; the existing outer ring fills 92.12% of the square with approximately 3.94% margins (previously about 69%). This reduces excess far north and includes Java/Bali/Timor while retaining Hokkaido and partial India. No interior boundaries or new labels. The square card, existing icon/HKG label, six-second CSS sweep and pause/reduced-motion behavior remain unchanged.
+
+Regenerated only the local Natural Earth subset from unchanged pinned/hash-verified sources. A 0.65-unit tolerance remains below half a display pixel at maximum size and keeps the original <75K path assertion intact: 240 polygon subpaths / 342 coastline segments, approximately 67KB data, two static SVG paths. Final JS gzip is 157.29KB versus 160.72KB in v0.4.5; no new dependency or per-frame computation. UI/docs use v0.4.5a; the npm package retains numeric 0.4.5 as in prior suffix releases.
+
+Verification: **374 tests / 26 files passed**, including four added framing/island cases. Lint, build, format, static checks and Wrangler dry-run passed; npm audit **0 vulnerabilities**. Deterministic regeneration confirmed. Isolated Edge/local Workers passed **32** combinations across 320×800, 390×844, 844×390 and 1440×1000, both languages/themes/motion preferences: actual ring ratio and four margins, centered shared anchors, square geometry, visible label, no overflow, preserved modal/inactive rules and unchanged stored records. Zero startup exceptions, CSP violations or external requests; actual mobile/desktop screenshots inspected. Physical iPhone and real mobile smoothness remain untested.
+
+No records/schema/key/IDs/links, business logic, airline assets, backup, keyboard, dependencies or Cloudflare configuration changes. Existing https://app.tcologbook.workers.dev/ responded HTTPS 200 with **v0.4.5**. No v0.4.5a commit, push or deployment was performed. See docs/V0_4_5A_ACCEPTANCE.md for limitations and owner acceptance.
 
 ## v0.4.5 Radar Map Visual & Geographic Refinement — 2026-10-19 (Hong Kong)
 

@@ -42,9 +42,8 @@ describe('geographic radar', () => {
     expect(projectRadar(east, south)[0]).toBeCloseTo(RADAR_SIZE);
     expect(projectRadar(east, south)[1]).toBeCloseTo(RADAR_SIZE);
     expect(HKG_POINT).toEqual(projectRadar(HKG.longitude, HKG.latitude));
-    expect(HKG_POINT[0] / RADAR_SIZE).toBeCloseTo(0.5189067);
-    expect(HKG_POINT[1] / RADAR_SIZE).toBeGreaterThan(0.6);
-    expect(HKG_POINT[1] / RADAR_SIZE).toBeLessThan(0.65);
+    expect(HKG_POINT[0] / RADAR_SIZE).toBeCloseTo(0.5);
+    expect(HKG_POINT[1] / RADAR_SIZE).toBeCloseTo(0.5);
     const horizontal = projectRadar(114.001, HKG.latitude)[0] - projectRadar(114, HKG.latitude)[0];
     const vertical =
       projectRadar(114, HKG.latitude)[1] -
@@ -53,11 +52,14 @@ describe('geographic radar', () => {
   });
   it('keeps Japan, India and equatorial islands inside the frame without moving HKG', () => {
     for (const [lon, lat] of [
-      [77, 23],
+      [85, 23],
       [145.8, 45.5],
       [104, 1.3],
       [117, -3],
       [99, 3],
+      [110.4, -7.3],
+      [115.2, -8.4],
+      [124, -9.5],
     ]) {
       for (const value of projectRadar(lon, lat)) {
         expect(value).toBeGreaterThan(0);
@@ -68,6 +70,20 @@ describe('geographic radar', () => {
       expect(coordinate - RADAR_RADIUS).toBeGreaterThan(0);
       expect(coordinate + RADAR_RADIUS).toBeLessThan(RADAR_SIZE);
     }
+  });
+  it('fills the square with a centered, comfortably inset ring and a south-shifted view', () => {
+    const ringWidth = readFileSync('src/styles/radar.css', 'utf8').match(
+      /\.ring-three\s*\{\s*width:\s*([\d.]+)%/,
+    );
+    expect(ringWidth).not.toBeNull();
+    const outerRingRatio = (((RADAR_RADIUS * 2) / RADAR_SIZE) * Number(ringWidth![1])) / 100;
+    expect(outerRingRatio).toBeGreaterThanOrEqual(0.88);
+    expect(outerRingRatio).toBeLessThanOrEqual(0.94);
+    expect(outerRingRatio).toBeCloseTo(0.9212);
+    expect(RADAR_BOUNDS.north).toBeLessThan(51);
+    expect(RADAR_BOUNDS.north).toBeGreaterThan(45.5);
+    expect(RADAR_BOUNDS.south).toBeLessThan(-10);
+    expect(RADAR_BOUNDS.south).toBeGreaterThan(-12);
   });
   it.each([
     ['China', 116, 39],
@@ -85,6 +101,9 @@ describe('geographic radar', () => {
     ['Borneo', 114.5, 1],
     ['Sumatra', 99, 2],
     ['Malay Peninsula', 102, 4],
+    ['Java', 110.4, -7.3],
+    ['Bali', 115.2, -8.4],
+    ['Timor', 124, -9.5],
   ])('retains recognizable land at %s', (_name, lon, lat) => {
     expect(isLand(Number(lon), Number(lat))).toBe(true);
   });

@@ -1,4 +1,4 @@
-# v0.4.5 radar geography
+# v0.4.5a radar geography
 
 ## Data source and rights
 
@@ -13,17 +13,17 @@ The actual coordinate files are pinned to the upstream Natural Earth repository 
 
 ## Projection and composition
 
-The 600 × 600 logical viewport uses spherical Mercator with **one scale for both axes**. Geographic bounds: **75°E–150°E, 5°S–57.1539818°N**. The northern edge deliberately extends beyond the suggested 48–52°N to keep a square map, retain the requested longitude span, avoid stretching and keep the southern edge at 5°S. The western edge shows part of central/eastern India, not the whole country. Hokkaido/main Japan remain inside the eastern edge. Borneo, northern Sumatra and northern Indonesian islands remain near the bottom; Java and the full archipelago are not included.
+The 600 × 600 logical viewport uses spherical Mercator with **one scale for both axes**. Geographic bounds: **79.918°E–147.918°E, 11.0371323°S–49.3438451°N**. v0.4.5a frames the square symmetrically around HKG with a 68° longitude span. Compared with v0.4.5, the north falls from 57.15°N to 49.34°N and the south extends from 5°S to 11.04°S. Hokkaido stays visible while far-northern Russia is reduced; partial eastern India and the Bay of Bengal remain on the west. Java, Bali, Timor and more of the Indonesian archipelago now fit. A tiny Cape York tip may appear at the far southern edge; the map is not focused on Australia. No interior boundaries are added.
 
 For longitude λ and latitude φ in radians: projected x is proportional to λ, projected y to `log(tan(π/4 + φ/2))`. `src/lib/radarProjection.ts` derives the northern bound and every screen coordinate from these same equations. Mercator is conformal locally, but does not preserve area or distances across latitudes; decorative rings have no real nautical-mile scale.
 
-HKG uses the owner-specified approximate **113.918°E, 22.308°N**, at **51.8907% across / approximately 62.8% down**. It is slightly below the geometric center rather than falsely repositioned on the coastline or stretching geography. The SVG point, circular disc, rings, hub, existing Plane icon and sweep share that exact anchor. Disc radius is the nearest canvas edge minus a margin, so every ring fits. `HKG / VHHH` is centered below the icon on a subtle dark backing, above the sweep, and remains English in both UI languages. The entire visualization remains decorative and noninteractive.
+HKG uses the owner-specified approximate **113.918°E, 22.308°N**, at **50% across / 50% down**. The SVG point, circular disc, rings, hub, existing Plane icon and sweep share that exact anchor. The disc is 94% of canvas width; the existing 98%-wide outer ring therefore fills **92.12%** of the square with approximately 3.94% margin on each edge. `HKG / VHHH` is centered below the icon on a subtle dark backing, above the sweep, and remains English in both UI languages. The entire visualization remains decorative and noninteractive.
 
 ## Reproducible generation and size
 
-The checked-in `src/data/radar-geography.json` contains **239 clipped polygon subpaths and 289 coastline segments**, rendered as just **two SVG paths**, plus the HKG dot. Land fill and coastline stroke are separate so clipped land polygon boundaries are not drawn as invented national borders/coasts. Islands and holes remain separate subpaths. Tiny features below display resolution may be omitted; this is not a navigational chart.
+The checked-in `src/data/radar-geography.json` contains **240 clipped polygon subpaths and 342 coastline segments**, rendered as just **two SVG paths**, plus the HKG dot. Land fill and coastline stroke are separate so clipped land polygon boundaries are not drawn as invented national borders/coasts. Islands and holes remain separate subpaths. Tiny features below display resolution may be omitted; this is not a navigational chart.
 
-`scripts/generate-radar-map.mjs` verifies the pinned source SHA-256 values, projects/clips to the square and applies Douglas–Peucker simplification with a **0.45 logical-unit tolerance** (less than one screen pixel at the maximum 440px radar size), then rounds coordinates to 0.1 units. Source metadata and the projection bounds travel with the generated data. The regional path/metadata content is approximately **72KB before compression**; no full-world source is included in the app. The initial JavaScript gzip increase is approximately **28KB** over v0.4.4.
+`scripts/generate-radar-map.mjs` verifies the pinned source SHA-256 values, projects/clips to the square and applies Douglas–Peucker simplification with a **0.65 logical-unit tolerance** (less than half a screen pixel at the maximum 440px radar size), then rounds coordinates to 0.1 units. Source metadata and the projection bounds travel with the generated data. The regional path/metadata content is approximately **67KB before compression**; no full-world source is included in the app. The initial JavaScript gzip increase is approximately **24KB** over v0.4.4, and approximately **3.4KB smaller** than v0.4.5.
 
 To regenerate intentionally, use Node 24 from the repository root:
 
@@ -43,4 +43,4 @@ The original **six-second CSS transform sweep** is retained. No per-frame geomet
 
 ## Hosting/data boundary
 
-No changes to `wrangler.jsonc`, Worker `app`, assets `./dist`, SPA fallback, CSP or branch workflow. Vite bundles the local geometry with the frontend. No database/schema/key/ID/relationship/fixture/privacy/lifecycle/statistics/backup changes. No airline assets or existing provenance records are modified. See [acceptance evidence](V0_4_5_ACCEPTANCE.md).
+No changes to `wrangler.jsonc`, Worker `app`, assets `./dist`, SPA fallback, CSP or branch workflow. Vite bundles the local geometry with the frontend. No database/schema/key/ID/relationship/fixture/privacy/lifecycle/statistics/backup changes. No airline assets or existing provenance records are modified. See [current acceptance evidence](V0_4_5A_ACCEPTANCE.md).

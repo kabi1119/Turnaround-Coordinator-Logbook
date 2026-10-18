@@ -3,18 +3,19 @@ export const RADAR_SIZE = 600;
 export const HKG = { longitude: 113.918, latitude: 22.308 } as const;
 const radians = Math.PI / 180;
 const mercatorY = (latitude: number) => Math.log(Math.tan(Math.PI / 4 + (latitude * radians) / 2));
-const west = 75;
-const east = 150;
-const south = -5;
-const span = (east - west) * radians;
-const top = mercatorY(south) + span;
-// A square, undistorted Mercator canvas needs additional northern coverage.
-// Keep the southern edge at 5 S rather than exposing the whole Indonesian archipelago.
+const longitudeSpan = 68;
+const west = HKG.longitude - longitudeSpan / 2;
+const east = HKG.longitude + longitudeSpan / 2;
+const span = longitudeSpan * radians;
+const top = mercatorY(HKG.latitude) + span / 2;
+const inverseY = (y: number) => (2 * Math.atan(Math.exp(y)) - Math.PI / 2) / radians;
+// Frame symmetrically around the actual HKG point, not a separately positioned icon.
+// The narrower square includes Hokkaido and more Indonesia without excess far north.
 export const RADAR_BOUNDS = {
   west,
   east,
-  south,
-  north: (2 * Math.atan(Math.exp(top)) - Math.PI / 2) / radians,
+  south: inverseY(top - span),
+  north: inverseY(top),
 } as const;
 export function projectRadar(longitude: number, latitude: number): [number, number] {
   return [
@@ -23,5 +24,5 @@ export function projectRadar(longitude: number, latitude: number): [number, numb
   ];
 }
 export const HKG_POINT = projectRadar(HKG.longitude, HKG.latitude);
-export const RADAR_RADIUS =
-  Math.min(HKG_POINT[0], HKG_POINT[1], RADAR_SIZE - HKG_POINT[0], RADAR_SIZE - HKG_POINT[1]) - 12;
+// Disc = 94% of the canvas; existing 98%-wide outer ring = 92.12% of the canvas.
+export const RADAR_RADIUS = RADAR_SIZE * 0.47;

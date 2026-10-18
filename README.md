@@ -29,17 +29,21 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.5 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.4.5a Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.4.5a Radar Framing and Regional Coverage
+
+The circular scan now nearly fills the square Home radar: 92.12% outer-ring width, equal comfortable margins, and HKG at the true center. The geographic frame is shifted south and tightened to 79.918–147.918 E / 11.037 S–49.344 N, retaining Hokkaido while showing Java, Bali and Timor and reducing excess far north. No internal borders, new packages, record changes or hosting changes. The same local Natural Earth vectors and motion safeguards remain. See [v0.4.5a acceptance](docs/V0_4_5A_ACCEPTANCE.md). The current HTTPS site was verified at v0.4.5; this local v0.4.5a update has not been pushed or deployed by this session.
 
 ## v0.4.5 Radar Map Visual & Geographic Refinement
 
 Home now uses a responsive square geographic viewport with local Natural Earth 1:50m land/coastline vectors. India, East/Southeast Asia, Japan and northern Indonesian islands retain consistent Mercator positioning. The existing circular sweep/rings share the projected Hong Kong anchor, with HKG / VHHH beneath the Plane icon. Reduced motion and established pause rules remain unchanged. No map API, new runtime dependency or data migration. See [geography, public-domain attribution and regeneration](docs/RADAR_GEOGRAPHY.md) and [verification/real-device acceptance](docs/V0_4_5_ACCEPTANCE.md).
 
-The existing HTTPS preview at https://app.tcologbook.workers.dev/ responded successfully and showed v0.4.4 during this session. **v0.4.5 is locally verified, not yet remotely deployed.** Worker app and the current Git/Cloudflare workflow are preserved.
+During the earlier v0.4.5 implementation session, the HTTPS preview at https://app.tcologbook.workers.dev/ showed v0.4.4. The existing deployment now serves **v0.4.5**; **v0.4.5a remains locally verified and unpublished by this session**. Worker app and the current Git/Cloudflare workflow are preserved.
 
 ## v0.4.4 Cloudflare online-preview preparation
 
-Static-only Cloudflare Workers configuration, quality-gated build/deploy scripts and security headers are provided. At initial v0.4.4 preparation, the site was configured but not deployed. The owner subsequently aligned Worker **app** in v0.4.4a and the existing HTTPS URL has now been checked; the newer v0.4.5 release still awaits publication. The GitHub source repository is public; Cloudflare native Git setup must select main for production and separate development branches for previews.
+Static-only Cloudflare Workers configuration, quality-gated build/deploy scripts and security headers are provided. At initial v0.4.4 preparation, the site was configured but not deployed. The owner subsequently aligned Worker **app** in v0.4.4a and the existing HTTPS URL has now been checked; the current v0.4.5a refinement still awaits publication. The GitHub source repository is public; Cloudflare native Git setup must select main for production and separate development branches for previews.
 
 **Changing from localhost/LAN to HTTPS does not transfer or synchronize browser records.** Back up before moving origins; use the existing reviewed Full JSON Restore deliberately. Storage schema, IDs, links and lifecycle rules are unchanged. No auth/database/cloud sync is added; offline availability is not guaranteed. All 24 retained airline images still have unverified redistribution permissions.
 

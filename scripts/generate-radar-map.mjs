@@ -10,7 +10,7 @@ const hashes = {
   land: 'e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b',
   coastline: '271f1c4c1908312bac6b29d158ea1356544beafc129f260005300913aa5ea283',
 };
-const tolerance = 0.45; // SVG units, less than one pixel even at the largest UI size.
+const tolerance = 0.65; // SVG units: under 0.5px even at the largest 440px UI size.
 const sources = {};
 async function source(name) {
   const url = `https://raw.githubusercontent.com/nvkelso/natural-earth-vector/${commit}/geojson/ne_50m_${name}.geojson`;
