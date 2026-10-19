@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.6.2 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.6.3 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.6.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.6.3 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -175,3 +175,8 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Keep full-width Upcoming Shift above a Home-only B/C grid: one shared three-row stats card left, Recent Aircraft right at >=1200px; stack on narrower content. Secondary Journal comes after both. Preserve selectors, card navigation, icons and radar.
 - Desktop connectivity sits alongside the clock inside the existing 88px header; mobile placement is unchanged. Standalone phones reserve one normal-flow opaque safe-area strip outside the header, with base 18px header padding. Explicit Apple status-bar default requests non-translucent presentation. Do not accumulate old standalone offsets or claim OS blur elimination without a physical iPhone.
 - The current owner supersedes prior commit/push authorization: leave v0.6.2 changes local, no staging/commit/push/merge/deployment/history rewrite. Provide the owner-supplied message at the end of the final report, overriding earlier no-message reporting guidance. Use focused tests and one successful build, no repeated audit/dry-run or unrelated testing.
+
+## v0.6.3 Home alignment and reflection
+
+- Reuse SectionTitle for Handling Statistics / 處理統計 with the same heading row as Recent Aircraft. Keep one three-row statistics card at natural height. Grid areas place the single reflection component under stats on wide desktop, after Recent Aircraft on mobile; no duplicate rendering or positional offsets.
+- Preserve v0.6.2 Header/standalone/badge, radar/icon, all navigation/data/statistics/offline/backup/Cloudflare logic. Manual commit/push only; leave changes unstaged. Use focused tests, 1440/390px browser checks and one production build, no audit/dry-run/full-suite repeats. Final report ends with the exact owner-supplied v0.6.3 message.

@@ -34,6 +34,7 @@ it('keeps the grouped summary readable and fully localized in Traditional Chines
   localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
   render(<App />);
   const summary = screen.getByRole('region', { name: '處理紀錄摘要' });
+  expect(screen.getByRole('heading', { name: '處理統計' })).toBeVisible();
   for (const label of ['航機記錄總數', '航機處理總數', '主要協調員'])
     expect(within(summary).getByText(label)).toBeVisible();
   expect(within(summary).queryByText('Total Aircraft Logged')).toBeNull();

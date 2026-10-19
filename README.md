@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.2 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.3 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.6.3 Home statistics and reflection alignment
+
+Handling Statistics and Recent Aircraft share matching headings and card top edges. The existing reflection prompt sits below Statistics in the desktop left column, and after Recent Aircraft on mobile, using one responsive Grid instance. Metrics, navigation, header/safe-area behavior and operational data remain unchanged.
 
 ## v0.6.2 Home layout and standalone header
 

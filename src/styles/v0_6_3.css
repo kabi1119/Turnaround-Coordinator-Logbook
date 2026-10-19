@@ -1,0 +1,32 @@
+.home-operations {
+  grid-template-areas: 'statistics' 'recent' 'reflection';
+}
+.home-statistics {
+  grid-area: statistics;
+}
+.home-statistics > .home-metrics {
+  margin: 0;
+}
+.home-recent {
+  grid-area: recent;
+}
+.home-secondary {
+  grid-area: reflection;
+}
+/* Match the existing View all touch target, including the title without an action. */
+.home-statistics > .section-title,
+.home-recent > .section-title {
+  min-height: 44px;
+}
+.home-secondary .journal-teaser {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+@media (min-width: 1200px) {
+  .home-operations {
+    grid-template-areas: 'statistics recent' 'reflection recent';
+    grid-template-rows: min-content 1fr;
+  }
+}

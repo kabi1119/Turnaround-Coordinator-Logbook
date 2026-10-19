@@ -256,26 +256,29 @@ function Workspace({
               onCalendar={() => setCalendarOpen(true)}
             />
             <div className="home-operations">
-              <section
-                className="metrics home-metrics surface-dark"
-                aria-label={t('Handling summary', '處理紀錄摘要')}
-              >
-                <Metric
-                  value={s.logged}
-                  label={t('Total Aircraft Logged', '航機記錄總數')}
-                  detail={t('Every confirmed assignment', '每項已確認的處理紀錄')}
-                />
-                <Metric
-                  value={s.handled}
-                  label={t('Total Aircraft Handled', '航機處理總數')}
-                  detail={t('Primary + Supporting', '主要協調 + 支援協調')}
-                />
-                <Metric
-                  value={s.primary}
-                  label={t('Primary Coordinator', '主要協調員')}
-                  detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
-                />
-              </section>
+              <div className="home-statistics">
+                <SectionTitle title={t('Handling Statistics', '處理統計')} />
+                <section
+                  className="metrics home-metrics surface-dark"
+                  aria-label={t('Handling summary', '處理紀錄摘要')}
+                >
+                  <Metric
+                    value={s.logged}
+                    label={t('Total Aircraft Logged', '航機記錄總數')}
+                    detail={t('Every confirmed assignment', '每項已確認的處理紀錄')}
+                  />
+                  <Metric
+                    value={s.handled}
+                    label={t('Total Aircraft Handled', '航機處理總數')}
+                    detail={t('Primary + Supporting', '主要協調 + 支援協調')}
+                  />
+                  <Metric
+                    value={s.primary}
+                    label={t('Primary Coordinator', '主要協調員')}
+                    detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
+                  />
+                </section>
+              </div>
               <section className="home-recent">
                 <SectionTitle
                   title={t('Recent Aircraft', '最近航機紀錄')}
@@ -312,22 +315,22 @@ function Workspace({
                   <span>{t('All examples are fictional.', '所有例子均屬虛構。')}</span>
                 </div>
               </section>
-            </div>
-            <div className="home-secondary">
-              <section className="journal-teaser">
-                <span className="eyebrow">BEYOND THE NUMBERS</span>
-                <h2>{t('What did today\nteach you?', '今天學到了\n甚麼？')}</h2>
-                <p>
-                  {t(
-                    'Keep the lessons that make you a better coordinator.',
-                    '留下每一份有助成長的經驗。',
-                  )}
-                </p>
-                <button className="text-button" onClick={() => setOverlay({ type: 'journal' })}>
-                  {t('Write a reflection', '寫下反思')}
-                  <ArrowUpRight size={17} />
-                </button>
-              </section>
+              <div className="home-secondary">
+                <section className="journal-teaser">
+                  <span className="eyebrow">BEYOND THE NUMBERS</span>
+                  <h2>{t('What did today\nteach you?', '今天學到了\n甚麼？')}</h2>
+                  <p>
+                    {t(
+                      'Keep the lessons that make you a better coordinator.',
+                      '留下每一份有助成長的經驗。',
+                    )}
+                  </p>
+                  <button className="text-button" onClick={() => setOverlay({ type: 'journal' })}>
+                    {t('Write a reflection', '寫下反思')}
+                    <ArrowUpRight size={17} />
+                  </button>
+                </section>
+              </div>
             </div>
           </section>
         )}
@@ -390,7 +393,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.6.2 {t('Pre-release', '預發佈')} ·{' '}
+            v0.6.3 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -413,7 +416,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.6.2 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.6.3 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

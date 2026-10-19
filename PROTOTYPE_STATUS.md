@@ -1,4 +1,10 @@
-# TCO Logbook v0.6.2 Pre-release status
+# TCO Logbook v0.6.3 Pre-release status
+
+## v0.6.3 Home statistics and reflection alignment — 2026-10-20 (Hong Kong)
+
+Baseline: clean main / bbe3163 (v0.6.2). Reused SectionTitle for bilingual Handling Statistics, matching Recent Aircraft typography and its existing 44px action row; both cards retain equal heading spacing. One combined stats card retains natural height and unchanged metrics/descriptions. Named Grid areas put the one reflection prompt directly below Statistics at >=1200px, and after Recent Aircraft on narrower screens; a quiet border/background groups it without fixed heights. Hero, Upcoming Shift, Header/safe-area/badge, icons, record/navigation and all data/offline/backup engines remain unchanged. Existing tests cover the new DOM grouping, unique reflection, localized heading and original actions. No new package or test framework. Manual release only; no staging, commit, push or deployment.
+
+Verification: **19 targeted tests / 4 files passed**; lint, formatting and one production build passed. Native Edge against that production build at 1440/390px verified identical heading font/weight/color/line-height and baseline, equal first-card tops, desktop 1:2 split, natural-height stats and reflection exactly 24px below within matching left-column bounds. Mobile keeps stats/recent/reflection order with no horizontal overflow. Actual screenshots were inspected; Statistics, View all and keyboard Reflection navigation passed with unchanged stored data and no observed startup exceptions. No full-suite repeat, audit, dry-run, new framework or physical iPhone test. Changes remain local and unstaged.
 
 ## v0.6.2 Home layout and standalone header — 2026-10-20 (Hong Kong)
 

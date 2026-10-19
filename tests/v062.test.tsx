@@ -6,7 +6,7 @@ import App from '../src/App';
 import { seedDatabase } from '../src/data/seed';
 import { STORAGE_KEY } from '../src/lib/storage';
 
-it('keeps A above a shared B/C container and secondary content after the operational sections', () => {
+it('keeps A above the shared operational grid with one summary, Recent Aircraft and reflection', () => {
   const bytes = JSON.stringify(seedDatabase());
   localStorage.setItem(STORAGE_KEY, bytes);
   const { container } = render(<App />);
@@ -14,7 +14,15 @@ it('keeps A above a shared B/C container and secondary content after the operati
   const operations = home.querySelector('.home-operations')!;
   const stats = within(home as HTMLElement).getByRole('region', { name: 'Handling summary' });
   const recent = home.querySelector('.home-recent')!;
-  expect([...operations.children]).toEqual([stats, recent]);
+  expect([...operations.children]).toEqual([
+    home.querySelector('.home-statistics'),
+    recent,
+    home.querySelector('.home-secondary'),
+  ]);
+  expect(home.querySelector('.home-statistics')).toContainElement(stats);
+  expect(
+    within(home as HTMLElement).getByRole('heading', { name: 'Handling Statistics' }),
+  ).toBeInTheDocument();
   expect(stats.querySelectorAll('.metric')).toHaveLength(3);
   expect([...stats.querySelectorAll('strong')].map((el) => el.textContent)).toEqual([
     '04',
@@ -24,7 +32,8 @@ it('keeps A above a shared B/C container and secondary content after the operati
   const order = [
     home.querySelector('.home-intro')!,
     home.querySelector('.upcoming-shift')!,
-    operations,
+    stats,
+    recent,
     home.querySelector('.home-secondary')!,
   ];
   for (let i = 1; i < order.length; i++)
@@ -33,6 +42,7 @@ it('keeps A above a shared B/C container and secondary content after the operati
     ).toBeTruthy();
   expect(recent.querySelectorAll('.aircraft-card')).toHaveLength(4);
   expect(home.querySelector('.home-secondary .journal-teaser')).not.toBeNull();
+  expect(home.querySelectorAll('.journal-teaser')).toHaveLength(1);
   expect(localStorage.getItem(STORAGE_KEY)).toBe(bytes);
 });
 
