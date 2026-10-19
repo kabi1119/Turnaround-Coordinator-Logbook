@@ -1,4 +1,10 @@
-# TCO Logbook v0.5.1 Pre-release status
+# TCO Logbook v0.5.2 Pre-release status
+
+## v0.5.2 Home Layout, Status Indicator and iPhone Safe Area — 2026-10-19 (Hong Kong)
+
+Continued the existing uncommitted v0.5.2 draft on feature/v0.5.2-home-layout, based on main / 6b06436. Promoted Upcoming Shift above Home statistics, rebalanced its date/hours/count/action presentation and stacked phone statistics. Added green/red badges with larger icons, retaining connectivity logic. Corrected the overwritten mobile top inset and added 8px standalone-PWA breathing room. No offline/storage/backup/schema/selector/icon/Cloudflare change. See docs/V0_5_2_ACCEPTANCE.md. No automatic commit, push, deployment or history rewrite. Final reports no longer include suggested commit messages under the owner's updated policy.
+
+Verification: **395 tests / 30 files passed**; lint, production build, static guard and formatting passed; npm audit **0 vulnerabilities**. Native Edge/local Workers passed four focused desktop/mobile language/theme cases, actual Home hierarchy, contained single-column phone stats, unchanged counts, green/red badge contrast and View Duty/Calendar. A 59px native safe-area override produced 77px header padding; zero-inset mobile and desktop stayed at 18px/0px. Standalone media emulation was unavailable, and physical Dynamic Island/installed-PWA verification remains pending. Actual server-stopped offline Draft/Duty persistence, backup export/invalid and valid restore, quota retry and unchanged confirmed counts passed. Screenshots were inspected; no observed startup exceptions. Existing safety engines, icons, assets and dependency entries remain unchanged.
 
 ## v0.5.1 Offline UX, Update Handling and App Icon — 2026-10-19 (Hong Kong)
 

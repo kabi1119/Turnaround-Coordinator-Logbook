@@ -19,6 +19,10 @@ Before future work, propose a version based on scope and obtain the owner's agre
 
 Some tools require strict SemVer. A suffix project release must document any necessary package/tool encoding separately and obtain agreement; never silently rename the owner's release. The numeric v0.1.4 package version is `0.1.4`.
 
+## Current owner output policy
+
+From v0.5.2 onward, implementation reports must not generate or suggest Git commit messages; the owner obtains them separately from ChatGPT. This supersedes historical requirements for a final commit-message block. Report verification and Git/deployment status separately. Commit descriptions must not include test counts, build results, deployment status or statements such as "not pushed". Version agreement still does not authorize committing or publishing.
+
 ## Release commit convention
 
 Use a descriptive English title beginning with the agreed version:

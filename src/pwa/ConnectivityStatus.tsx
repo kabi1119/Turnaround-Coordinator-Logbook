@@ -26,6 +26,7 @@ export default function ConnectivityStatus() {
   return (
     <span
       className="connectivity-status"
+      data-state={online ? 'online' : 'offline'}
       role="status"
       aria-label={t('Connection status', '連線狀態')}
       title={t(
@@ -33,10 +34,12 @@ export default function ConnectivityStatus() {
         '瀏覽器連線狀態，未驗證網際網路是否可用。紀錄留在此裝置；離線啟動須先完成安裝應用程式資產。',
       )}
     >
-      <Icon size={13} aria-hidden="true" />
-      {online ? t('Online', '已連線') : t('Offline', '離線')}
+      <span className="connection-badge">
+        <Icon size={17} aria-hidden="true" />
+        {online ? t('Online', '已連線') : t('Offline', '離線')}
+      </span>
       <span aria-hidden="true">·</span>
-      {t('Device only', '僅限此裝置')}
+      <span className="connection-local">{t('Device only', '僅限此裝置')}</span>
     </span>
   );
 }

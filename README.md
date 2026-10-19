@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.5.1 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.5.2 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.5.2 Home layout and iPhone safe area
+
+Home now prioritizes the full-width Upcoming/Current Shift above statistics. Three separate statistics cards stack vertically on phones. A compact green/red connection badge retains device-only semantics. Mobile header padding preserves the top safe inset, with a small additional standalone-PWA gap; physical Dynamic Island acceptance remains separate. Existing radar, icon, offline, update, storage, backup and business rules remain unchanged. See [v0.5.2 acceptance](docs/V0_5_2_ACCEPTANCE.md).
 
 ## v0.5.1 Offline UX, updates and app icon
 

@@ -84,9 +84,11 @@ export default function UpcomingShift({
           {primary.length > 1 ? (
             choices(primary)
           ) : (
-            <>
+            <div className="shift-summary">
               <div className="duty-big-date">
-                {primary[0].date.slice(8)}
+                <time dateTime={primary[0].date} aria-label={date(primary[0], true)}>
+                  {primary[0].date.slice(8)}
+                </time>
                 <div>{date(primary[0])}</div>
               </div>
               <div className="duty-facts">
@@ -107,7 +109,7 @@ export default function UpcomingShift({
                 {t('View Duty', '查看更次')}
                 <ArrowRight size={18} />
               </button>
-            </>
+            </div>
           )}
         </div>
       ) : (

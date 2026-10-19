@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.5.1 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.5.2 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.5.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.5.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -148,3 +148,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - A waiting-update notice may be dismissed but never force activation/reload or interrupt edits. Explain saving and closing all app windows before reopening; do not announce first installation as an update.
 - Original teal/white airplane SVG is the master for all app identity icons. Use the local browser/canvas exporter for PNG sizes, preserve manifest identity and all airline/provenance assets. Never clear site data to refresh an icon.
 - Distinguish download requested from a saved backup file; retain strict reviewed replacement, stale-source/write-failure protection and format/schema compatibility. See docs/V0_5_1_ACCEPTANCE.md. No automatic commit, push, merge or deployment.
+
+## v0.5.2 Home and safe-area refinement
+
+- Preserve all v0.5.1 offline/worker/update/icon/storage/backup/business behavior. Home order is hero, prominent shift, statistics, secondary content. Phone statistics use a single column without horizontal scrolling; preserve selectors and exact Duty actions.
+- Connection badge uses a 17px icon, green Online/red Offline, text plus color and existing device-only messaging. Never change detection logic or block offline work.
+- Final mobile padding must retain env(safe-area-inset-top) after earlier shorthands; standalone mobile adds only 8px extra breathing room. Keep desktop unchanged. Native emulation is not physical Dynamic Island verification. See docs/V0_5_2_ACCEPTANCE.md.
+- Owner's updated policy supersedes earlier final-output commit-message requirements: do not generate or suggest commit titles/bodies in development reports. Report test/Git/deployment status separately. Any separately authorized future commit description excludes test counts, build results, deployment status and "not pushed" statements. No automatic commit/push/deploy or history rewrite.
