@@ -18,3 +18,4 @@ import './styles/v0_4_2.css';
 import './styles/v0_4_3.css';
 import './styles/v0_4_5.css';
 import './styles/v0_4_6.css';
+import './styles/v0_5_1.css';

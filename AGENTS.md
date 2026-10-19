@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.5.0 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.5.1 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.5.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.5.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -141,3 +141,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Keep version-coherent, hash-verified bounded app-shell caching, no private/user/API caches and no forced worker activation/reload. Cache cleanup never clears operational storage. CSP may allow same-origin worker/asset fetching only.
 - Require successful local persistence before success UI. Preserve retryable edits and block stale snapshots/unreadable storage. Strict reviewed single-key backup restore remains; do not claim cross-tab transactions or permanent browser storage.
 - Work on feature/v0.5.0-offline-foundation. The owner explicitly authorizes a local v0.5.0 release commit only after mandatory acceptance passes. No push, merge, force-push or production deployment without separate approval.
+
+## v0.5.1 offline UX and icon
+
+- Preserve the v0.5.0 worker/cache/storage/backup engine. Connection status is a browser hint only, never a sync/cache-readiness claim or a reason to disable local work. No probing requests or polling.
+- A waiting-update notice may be dismissed but never force activation/reload or interrupt edits. Explain saving and closing all app windows before reopening; do not announce first installation as an update.
+- Original teal/white airplane SVG is the master for all app identity icons. Use the local browser/canvas exporter for PNG sizes, preserve manifest identity and all airline/provenance assets. Never clear site data to refresh an icon.
+- Distinguish download requested from a saved backup file; retain strict reviewed replacement, stale-source/write-failure protection and format/schema compatibility. See docs/V0_5_1_ACCEPTANCE.md. No automatic commit, push, merge or deployment.

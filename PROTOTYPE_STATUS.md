@@ -1,4 +1,12 @@
-# TCO Logbook v0.5.0 Pre-release status
+# TCO Logbook v0.5.1 Pre-release status
+
+## v0.5.1 Offline UX, Update Handling and App Icon — 2026-10-19 (Hong Kong)
+
+Started from clean main / 0e05392 on feature/v0.5.1-offline-ux. Replaced only app identity assets with an original teal/white airplane SVG and consistent native-canvas PNGs; preserved all airline files/provenance and manifest identity. Added event-based bilingual connection feedback, a dismissible waiting-update notice without activation/reload controls, and clearer download-versus-restore results/preview wording. No new dependency, schema/key/model, record/ID/link, business-rule, Worker script/cache algorithm or Cloudflare configuration change. Documentation and icon exporter are in docs/V0_5_1_ACCEPTANCE.md.
+
+Verification: **392 tests / 29 files passed** (7 focused additions); lint, production build, static guard, formatting and Wrangler dry-run passed. npm audit: **0 vulnerabilities**. Native isolated Edge/local Workers installed 33 assets; 1440/light, 390/dark and 320/Traditional Chinese headers/icons/status passed with no overflow or connection-driven height change. Actual server-stopped offline reload, reviewed Draft create/edit/reload, Planned Duty edit, backup export/invalid and valid restore, quota retry and unchanged confirmed counts passed. A simulated waiting update preserved edits, allowed reviewed save/dismissal without activation, then activated after closing the old client with records/unrelated cache intact. Desktop/mobile screenshots and icon were inspected.
+
+The owner reports physical iPhone offline acceptance for v0.5.0; this session must separately report v0.5.1 desktop automation and real-device limits. No automatic commit, push, merge or deployment.
 
 ## v0.5.0 Offline-first Foundation — 2026-10-19 (Hong Kong)
 

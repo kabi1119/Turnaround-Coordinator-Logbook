@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.5.0 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.5.1 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.5.1 Offline UX, updates and app icon
+
+A refined original teal-and-white airplane icon now matches the favicon, app header and PWA/Home Screen PNGs. A subtle bilingual connection hint sits below the clock; records stay device-local in both states. A dismissible waiting-update notice explains saving and closing all app windows before reopening, without forcing activation. Full JSON backup results distinguish requesting a download from completing a reviewed local restore. Existing offline, validation and storage protections remain unchanged. See [acceptance, icon reproduction and iPhone checks](docs/V0_5_1_ACCEPTANCE.md). No v0.5.1 push or deployment is performed here.
 
 ## v0.5.0 Offline-first foundation
 

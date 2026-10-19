@@ -122,7 +122,9 @@ describe('v0.4.0 preserved navigation and authoritative presentation', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: 'Edit Duty' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save Duty' }));
-    expect(screen.getByRole('status')).toHaveTextContent('Saved on this device');
+    expect(screen.getByRole('status', { name: 'Save result' })).toHaveTextContent(
+      'Saved on this device',
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Edit Duty' }));
     fireEvent.change(screen.getByLabelText('Notes'), {
       target: { value: 'Fictional unsaved revision' },
@@ -131,7 +133,7 @@ describe('v0.4.0 preserved navigation and authoritative presentation', () => {
       throw Error('quota');
     });
     fireEvent.click(screen.getByRole('button', { name: 'Save Duty' }));
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByRole('status', { name: 'Save result' })).toBeNull();
     expect(screen.getByLabelText('Notes')).toHaveValue('Fictional unsaved revision');
     expect(loadDatabase().db.duties.find((d) => d.id === 'sample-day')?.notes).not.toBe(
       'Fictional unsaved revision',

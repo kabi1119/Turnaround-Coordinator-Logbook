@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <title>TCO Logbook icon exporter · developer tool</title>
+  <h1>Export app icons</h1>
+  <p>
+    Run the Vite dev server and open /scripts/generate-app-icons.html. Each button rasterizes
+    public/airplane.svg without stretching. Save each download into public/assets/pwa/, replacing
+    only the matching app icon. PNG backgrounds are opaque teal for iOS Home Screen masking.
+  </p>
+  <img src="/airplane.svg" width="192" height="192" alt="App icon source preview" />
+  <p id="result" role="status"></p>
+  <script type="module">
+    for (const size of [180, 192, 512]) {
+      const button = document.createElement('button');
+      button.textContent = `Export ${size} × ${size}`;
+      button.onclick = async () => {
+        try {
+          const image = new Image();
+          image.src = '/airplane.svg';
+          await image.decode();
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = size;
+          const context = canvas.getContext('2d');
+          context.fillStyle = '#0b303a';
+          context.fillRect(0, 0, size, size);
+          context.drawImage(image, 0, 0, size, size);
+          const link = document.createElement('a');
+          link.download = `icon-${size}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          document.getElementById('result').textContent = `Download requested: icon-${size}.png`;
+        } catch {
+          document.getElementById('result').textContent = 'Export failed. Check the dev server.';
+        }
+      };
+      document.body.append(button);
+    }
+  </script>
+</html>

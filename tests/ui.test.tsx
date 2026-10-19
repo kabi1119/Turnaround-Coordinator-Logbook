@@ -254,7 +254,9 @@ describe('App navigation, persistence and privacy', () => {
     attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(5);
-    expect(screen.getByRole('status')).toHaveTextContent('Saved on this device');
+    expect(screen.getByRole('status', { name: 'Save result' })).toHaveTextContent(
+      'Saved on this device',
+    );
     view.unmount();
     render(<App />);
     expect(screen.getAllByText('05')).not.toHaveLength(0);

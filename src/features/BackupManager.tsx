@@ -18,7 +18,7 @@ export default function BackupManager({
   const [preview, setPreview] = useState<FullBackup | null>(null),
     [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState(''),
-    [success, setSuccess] = useState(false);
+    [success, setSuccess] = useState<'export' | 'restore' | null>(null);
   const snapshot = useRef(''),
     storedSnapshot = useRef<string | null>(null),
     saving = useRef(false),
@@ -50,12 +50,20 @@ export default function BackupManager({
       '請選擇本機 .json 檔案；不能還原 PDF 或其他檔案類型。',
     ),
   };
-  const showError = (e: unknown) => setError(errors[e instanceof BackupError ? e.code : 'invalid']);
+  const showError = (e: unknown) =>
+    setError(
+      e instanceof BackupError
+        ? errors[e.code]
+        : t(
+            'Could not read or restore local data. Nothing was changed. Keep the original data and check browser storage before retrying.',
+            '未能讀取或還原本機資料，未有更改資料。請保留原有資料，檢查瀏覽器儲存空間後再試。',
+          ),
+    );
   function open(next: 'export' | 'import') {
     selection.current++;
     setMode(next);
     setError('');
-    setSuccess(false);
+    setSuccess(null);
     setPreview(null);
     setConfirmed(false);
     saving.current = false;
@@ -101,8 +109,8 @@ export default function BackupManager({
       if (raw !== null && JSON.stringify(JSON.parse(raw)) !== JSON.stringify(db)) {
         setError(
           t(
-            'Stored data changed or cannot be read. Backup was not created. Reload and review your local data first.',
-            '已儲存資料有變動或無法讀取，未建立備份。請先重新載入並檢查本機資料。',
+            'Stored data changed or cannot be read. Backup was not created. Reload and review your local data first; do not clear site data.',
+            '已儲存資料有變動或無法讀取，未建立備份。請先重新載入並檢查本機資料，切勿清除網站資料。',
           ),
         );
         return;
@@ -125,7 +133,7 @@ export default function BackupManager({
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
       setMode(null);
-      setSuccess(true);
+      setSuccess('export');
     } catch (e) {
       if (e instanceof BackupError) showError(e);
       else
@@ -158,15 +166,15 @@ export default function BackupManager({
         saving.current = false;
         setError(
           t(
-            'Could not save the backup, possibly due to storage space. Existing data was not replaced. You can retry.',
-            '可能因儲存空間不足而未能儲存備份；既有資料未被取代，可重試。',
+            'Could not restore this backup, possibly due to storage space. Existing data was not replaced. The preview is retained; you can retry.',
+            '可能因儲存空間不足而未能還原備份；既有資料未被取代。預覽已保留，可重試。',
           ),
         );
         return;
       }
       setMode(null);
       setPreview(null);
-      setSuccess(true);
+      setSuccess('restore');
     } catch (e) {
       saving.current = false;
       showError(e);
@@ -196,7 +204,17 @@ export default function BackupManager({
         </button>
       </div>
       {success && (
-        <p role="status">{t('Backup action completed locally.', '備份操作已在本機完成。')}</p>
+        <p role="status">
+          {success === 'export'
+            ? t(
+                'Backup download requested. Save the JSON file in Files or Downloads and check that it is present. No cloud copy was created.',
+                '已要求下載備份。請將 JSON 檔案儲存至「檔案」或下載項目，並確認檔案存在；未建立雲端副本。',
+              )
+            : t(
+                'Backup restore completed locally. Current records and settings now match the backup; other devices are unchanged.',
+                '備份還原已在本機完成。目前紀錄及設定已與備份一致，其他裝置不受影響。',
+              )}
+        </p>
       )}
       {mode && (
         <Modal
@@ -229,6 +247,12 @@ export default function BackupManager({
             </>
           ) : (
             <>
+              <p>
+                {t(
+                  'Selecting a file only previews it. Existing data changes only after you review and confirm replacement. Cancel to keep current data.',
+                  '選擇檔案只會顯示預覽，覆核並確認取代後才會更改既有資料；取消即可保留目前資料。',
+                )}
+              </p>
               <Field
                 label={t(
                   'Local JSON backup file · maximum 5 MiB',

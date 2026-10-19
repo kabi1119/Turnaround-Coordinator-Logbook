@@ -1,0 +1,45 @@
+.brand .app-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.header-clock {
+  min-width: 0;
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+}
+.header-clock .hk-clock > small {
+  display: none;
+}
+.connectivity-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 20px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.connectivity-status svg {
+  flex-shrink: 0;
+}
+.update-notice {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.update-notice > div {
+  flex: 1;
+  min-width: 0;
+}
+.update-notice > button {
+  flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .header-clock {
+    justify-items: start;
+  }
+  .update-notice {
+    flex-wrap: wrap;
+  }
+}

@@ -22,6 +22,7 @@ import { canRestore, normalizeRegistration, stats, trashDuty } from './domain/se
 import { LanguageContext, useLabel, useT } from './i18n';
 import { readDatabase, persistDatabase, STORAGE_KEY } from './lib/storage';
 import OfflineSetup from './pwa/OfflineSetup';
+import ConnectivityStatus from './pwa/ConnectivityStatus';
 import { AircraftCard, Badge, Confirm, Empty, Metric, Modal, SectionTitle } from './components/ui';
 import AircraftEditor from './features/AircraftEditor';
 import DutyEditor from './features/DutyEditor';
@@ -186,7 +187,7 @@ function Workspace({
       <header className="app-header">
         <button className="brand" onClick={() => navigate('home')} aria-label="TCO Logbook Home">
           <span className="app-mark">
-            <Plane size={23} strokeWidth={1.7} />
+            <img src="/airplane.svg?v=0.5.1" width="50" height="50" alt="" />
           </span>
           <span className="brand-name">
             <strong>Turnaround Coordinator Logbook</strong>
@@ -194,7 +195,10 @@ function Workspace({
           </span>
         </button>
         <div className="header-right">
-          <HongKongClock />
+          <div className="header-clock">
+            <HongKongClock />
+            <ConnectivityStatus />
+          </div>
           <button
             className="icon-button"
             aria-label={t('Settings', '設定')}
@@ -382,7 +386,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.5.0 {t('Pre-release', '預發佈')} ·{' '}
+            v0.5.1 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -405,13 +409,18 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.5.0 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.5.1 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
       </nav>
       {toast && (
-        <div className="toast surface-dark" role="status" key={saveSequence}>
+        <div
+          className="toast surface-dark"
+          role="status"
+          aria-label={t('Save result', '儲存結果')}
+          key={saveSequence}
+        >
           <Check size={17} />
           {toast}
           <button aria-label={t('Dismiss', '關閉提示')} onClick={() => setToast('')}>

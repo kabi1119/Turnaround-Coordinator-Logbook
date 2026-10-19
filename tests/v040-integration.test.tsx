@@ -159,14 +159,16 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
     });
     attestHandlingReview();
     fireEvent.click(screen.getByRole('button', { name: 'Confirm & Save' }));
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByRole('status', { name: 'Save result' })).toBeNull();
     expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toBeInTheDocument();
     expect(loadDatabase().db.aircraft).toHaveLength(db.aircraft.length);
     const confirm = screen.getByRole('button', { name: 'Confirm & Save' });
     fireEvent.click(confirm);
     fireEvent.click(confirm);
     expect(loadDatabase().db.aircraft).toHaveLength(db.aircraft.length + 1);
-    expect(screen.getByRole('status')).toHaveTextContent('Saved on this device');
+    expect(screen.getByRole('status', { name: 'Save result' })).toHaveTextContent(
+      'Saved on this device',
+    );
     expect(write).toHaveBeenCalledTimes(2);
   });
   it('Legacy v0.3.4 data loads byte-for-byte and deletion/restore preserves counts, independent dates and Journal links', () => {

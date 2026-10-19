@@ -294,6 +294,8 @@ describe('v0.3.0 reviewed restore UI', () => {
       fireEvent.click(screen.getByText('Download unencrypted backup'));
       expect(createObjectURL).toHaveBeenCalledOnce();
       expect(click).toHaveBeenCalledOnce();
+      expect(screen.getByRole('status')).toHaveTextContent('Backup download requested');
+      expect(screen.getByRole('status')).toHaveTextContent('check that it is present');
       expect(revokeObjectURL).not.toHaveBeenCalled();
       vi.advanceTimersByTime(1000);
       expect(revokeObjectURL).toHaveBeenCalledWith('blob:local-backup');
@@ -349,6 +351,7 @@ describe('v0.3.0 reviewed restore UI', () => {
     expect(restore).toHaveBeenCalledOnce();
     expect(restore.mock.calls[0][0]).toEqual(seedDatabase());
     expect(screen.getByRole('status')).toHaveTextContent('completed locally');
+    expect(screen.getByRole('status')).toHaveTextContent('Current records and settings now match');
   });
   it('keeps the preview and existing data after write failure; permits retry', async () => {
     const db = seedDatabase(),
