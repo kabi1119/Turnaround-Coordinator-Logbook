@@ -1,0 +1,11 @@
+/* Only Home's Recent Aircraft rows alternate; shared cards elsewhere stay unchanged. */
+.home-recent .records-panel > .aircraft-card:nth-child(odd) {
+  background: var(--dark-surface);
+}
+.home-recent .records-panel > .aircraft-card:nth-child(even) {
+  background: var(--dark-raised);
+}
+.home-recent .records-panel > .aircraft-card:hover,
+.home-recent .records-panel > .aircraft-card:focus-visible {
+  background: var(--dark-hover);
+}

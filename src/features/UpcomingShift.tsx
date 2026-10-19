@@ -113,14 +113,14 @@ export default function UpcomingShift({
           )}
         </div>
       ) : (
-        <div className="panel">
+        <div className="panel surface-dark">
           <p className="muted">
             {t('No upcoming scheduled shifts.', '沒有即將到來的已排更更次。')}
           </p>
         </div>
       )}
       {next.length > 0 && (
-        <section className="panel next-shift" aria-label={t('Next Shift', '下一更次')}>
+        <section className="panel next-shift surface-dark" aria-label={t('Next Shift', '下一更次')}>
           <h3>{t('Next Shift', '下一更次')}</h3>
           {next.length > 1 ? (
             choices(next)

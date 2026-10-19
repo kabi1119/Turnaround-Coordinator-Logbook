@@ -1,4 +1,10 @@
-# TCO Logbook v0.6.3a Pre-release status
+# TCO Logbook v0.6.3b Pre-release status
+
+## v0.6.3b Home card palette — 2026-10-20 (Hong Kong)
+
+Baseline: clean main / 1683b4a (v0.6.3a). Reused existing surface-dark context for Reflection/Recent Aircraft and Upcoming Shift empty/next panels, matching the existing primary shift/summary tone. No new palette values: primary dark-surface, even Recent Aircraft rows dark-raised, hover/keyboard focus dark-hover. All row styling is limited to Home Recent Aircraft; white logo plates and focus outlines remain. No layout/typography/order/content, network/storage/business, worker/backup, PWA metadata/icon or Cloudflare changes. UI v0.6.3b retains numeric npm 0.6.3. Manual release only; no staging/commit/push/deployment.
+
+Verification: **16 targeted tests / 3 files passed**; lint, format and one production build passed. Native Edge at 1440/390px in both Light/Dark verified equal primary card backgrounds, four alternating Home rows, unchanged white logo plates, readable text (sampled contrast >=4.5:1), existing layout/alignment and no overflow. Actual screenshots were inspected. Settled hover and keyboard focus use dark-hover with a visible 3px outline; native Enter opens the exact aircraft record, Reflection opens Journal, and Logbook rows retain their original unstriped backgrounds. Storage bytes remain unchanged; no observed startup exceptions. No audit/dry-run, new dependency/framework or physical iPhone test. Manual release only, with all changes left unstaged.
 
 ## v0.6.3a Home verification and desktop status — 2026-10-20 (Hong Kong)
 

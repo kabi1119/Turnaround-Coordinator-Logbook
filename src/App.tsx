@@ -289,7 +289,7 @@ function Workspace({
                     </button>
                   }
                 />
-                <div className="panel records-panel">
+                <div className="panel records-panel surface-dark">
                   {active.slice(0, 5).map((a) => (
                     <AircraftCard
                       key={a.id}
@@ -316,7 +316,7 @@ function Workspace({
                 </div>
               </section>
               <div className="home-secondary">
-                <section className="journal-teaser">
+                <section className="journal-teaser surface-dark">
                   <span className="eyebrow">BEYOND THE NUMBERS</span>
                   <h2>{t('What did today\nteach you?', '今天學到了\n甚麼？')}</h2>
                   <p>
@@ -393,7 +393,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.6.3a {t('Pre-release', '預發佈')} ·{' '}
+            v0.6.3b {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -416,7 +416,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.6.3a {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.6.3b {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
