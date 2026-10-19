@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.0 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.1 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.6.1 Home summary, app icon and iPhone spacing
+
+Home now groups the same three metrics into one stacked summary with horizontal dividers. The original app icon uses a centered side-view, nose-up airplane; SVG and Apple/PWA PNGs share the design. Small-screen standalone mode adds 18px of breathing room above the existing mobile safe-area spacing (previously 8px); ordinary browser/desktop spacing stays unchanged. Handling, statistics calculations, offline storage and backups are unchanged. iOS may retain an older Home Screen icon; do not clear site data to refresh it. See [verification and device checklist](docs/V0_6_1_ACCEPTANCE.md).
 
 ## v0.6.0 Handling entry and Duty navigation
 

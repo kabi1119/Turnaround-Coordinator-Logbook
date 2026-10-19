@@ -6,6 +6,9 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" rx="112" fill="url(#teal)"/>
-  <path transform="rotate(45 256 256)" fill="#fff"
-    d="M256 72c-12 0-20 19-21 42l-4 91-158 93c-5 3-7 7-7 12v18l166-51 4 92-41 36v23l61-17 61 17v-23l-41-36 4-92 166 51v-18c0-5-2-9-7-12l-158-93-4-91c-1-23-9-42-21-42Z"/>
+  <!-- Original side-profile silhouette; a uniform nose-up rotation preserves proportions. -->
+  <g transform="translate(6 -30) rotate(-25 256 256)" fill="#fff">
+    <path d="M74 255l32-1-21-73q-1-4 4-3l18 3q4 0 7 5l45 61h181c25 0 39 4 52 12l27 10c13 5 19 13 14 19-3 4-13 6-27 6H282l-80 50q-3 2-7 2h-23l40-50-72-3-35 13H85l18-18-29-16q-8-5 0-17Z"/>
+    <path d="M301 291h34v10q0 14-14 14h-6q-14 0-14-14Z"/>
+  </g>
 </svg>

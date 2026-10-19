@@ -132,13 +132,13 @@ it('wires matching versioned PWA/Apple/favicon assets with unchanged application
     expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([size, size]);
     if (size !== 180)
       expect(manifest.icons).toContainEqual({
-        src: `/assets/pwa/icon-${size}.png?v=0.5.1`,
+        src: `/assets/pwa/icon-${size}.png?v=0.6.1`,
         sizes: `${size}x${size}`,
         type: 'image/png',
         purpose: 'any',
       });
   }
   const html = readFileSync('index.html', 'utf8');
-  expect(html).toContain('href="/airplane.svg?v=0.5.1"');
-  expect(html).toContain('href="/assets/pwa/icon-180.png?v=0.5.1"');
+  expect(html).toContain('href="/airplane.svg?v=0.6.1"');
+  expect(html).toContain('href="/assets/pwa/icon-180.png?v=0.6.1"');
 });

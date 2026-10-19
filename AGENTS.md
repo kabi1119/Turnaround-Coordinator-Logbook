@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.6.0 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.6.1 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.6.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.6.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -162,3 +162,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Reuse schema-1 leg timestamps and origin metadata. Independent HK date + HH:mm inputs; explicit edits write seconds 00 with +08:00, untouched values keep original bytes. No guessed actual times, same-day constraint, automatic flight-status claim or new counting rule. Timing suggestions require explicit adoption.
 - Linked Duty itself is a semantic, focusable date/time button using the existing stable-ID return trail. Missing/trash references never navigate or get rewritten. Preserve worker/storage/backup/privacy/icons/Cloudflare configuration.
 - The v0.6.0 owner request explicitly authorizes direct-to-main development and one ordinary commit/push after checks with the supplied message; it supersedes older no-commit/push guidance for this task. Fetch first, require fast-forward compatibility, stop on divergence/unrelated changes, never force-push/rewrite/merge. Do not repeat or suggest commit messages in the final report; keep test/deployment status out of commit descriptions. See docs/V0_6_0_ACCEPTANCE.md.
+
+## v0.6.1 Home summary, icon and safe area
+
+- Home only: one accessible dark summary card with three stacked metrics and two horizontal dividers. Preserve labels, subtitles, selector values, ordering and the separate Statistics layout. No new metric/navigation behavior.
+- Original teal/white SVG side-profile airplane, centered with nose-up rotation. Regenerate 180/192/512 PNGs with the existing browser/canvas exporter, update all versioned icon references, preserve manifest identity and all airline assets/provenance. Never clear site data to refresh an iOS icon.
+- Small-screen standalone header uses safe-area inset plus base 18px and extra 18px (previously extra 8px). Normal browser mobile/desktop spacing and all offline/storage/backup/handling/Cloudflare engines stay unchanged. Physical iPhone appearance remains separate acceptance.
+- The current owner explicitly authorizes one supplied v0.6.1 commit and ordinary main push after essential checks, superseding older task-specific restrictions. Fetch/check scope first, stop on divergence/unrelated work/failures, never merge/force-push/rewrite. Final reports omit the supplied commit message. See docs/V0_6_1_ACCEPTANCE.md.

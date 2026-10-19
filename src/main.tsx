@@ -21,3 +21,4 @@ import './styles/v0_4_6.css';
 import './styles/v0_5_1.css';
 import './styles/v0_5_2.css';
 import './styles/v0_6_0.css';
+import './styles/v0_6_1.css';

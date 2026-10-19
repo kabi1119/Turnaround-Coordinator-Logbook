@@ -1,4 +1,10 @@
-# TCO Logbook v0.6.0 Pre-release status
+# TCO Logbook v0.6.1 Pre-release status
+
+## v0.6.1 Home summary, icon and safe area — 2026-10-19 (Hong Kong)
+
+Started from clean main / a590dc9, matching origin/main after fetch. Home metrics share one dark card with stacked title/value/subtitle rows and horizontal dividers; values, meanings, order and separate Statistics remain unchanged. Replaced only the original app-identity silhouette with a centered side profile in a nose-up pose; native browser/canvas exports update all three PNGs and versioned icon references without changing manifest identity. Small-screen standalone safe-area breathing room increases from 8px to 18px; normal-browser/desktop spacing stays unchanged. No business/model/storage/backup/worker/Cloudflare/airline asset change. See docs/V0_6_1_ACCEPTANCE.md.
+
+Verification: **412 tests / 32 files passed**; lint, build, static/format and Wrangler dry-run passed; npm audit **0 vulnerabilities**. Native Edge/local Workers passed 12 bilingual/theme/layout combinations at 320/390/1440px, unchanged records/counts, grouped rows/dividers and no overflow. A native 59px inset gives 77px normal-browser header padding. Forced stylesheet standalone condition gives 95px with that inset, 36px at zero inset and 0px on desktop; native standalone emulation was unavailable. Server-stopped offline reload, reviewed empty Draft save/reopen and linked Duty navigation passed. Screenshots/icon bounds were inspected; no observed startup exceptions. Physical iPhone/installed-PWA appearance and iOS icon cache acceptance remain owner tasks. Publication is reported separately.
 
 ## v0.6.0 Handling Entry and Duty Navigation — 2026-10-19 (Hong Kong)
 

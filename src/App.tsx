@@ -187,7 +187,7 @@ function Workspace({
       <header className="app-header">
         <button className="brand" onClick={() => navigate('home')} aria-label="TCO Logbook Home">
           <span className="app-mark">
-            <img src="/airplane.svg?v=0.5.1" width="50" height="50" alt="" />
+            <img src="/airplane.svg?v=0.6.1" width="50" height="50" alt="" />
           </span>
           <span className="brand-name">
             <strong>Turnaround Coordinator Logbook</strong>
@@ -254,7 +254,10 @@ function Workspace({
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
               onCalendar={() => setCalendarOpen(true)}
             />
-            <div className="metrics home-metrics surface-dark">
+            <section
+              className="metrics home-metrics surface-dark"
+              aria-label={t('Handling summary', '處理紀錄摘要')}
+            >
               <Metric
                 value={s.logged}
                 label={t('Total Aircraft Logged', '航機記錄總數')}
@@ -270,7 +273,7 @@ function Workspace({
                 label={t('Primary Coordinator', '主要協調員')}
                 detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
               />
-            </div>
+            </section>
             <div className="home-columns">
               <div>
                 <section className="journal-teaser">
@@ -386,7 +389,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.6.0 {t('Pre-release', '預發佈')} ·{' '}
+            v0.6.1 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -409,7 +412,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.6.0 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.6.1 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
