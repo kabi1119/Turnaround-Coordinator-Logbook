@@ -30,7 +30,7 @@ it('orders Home hero, Upcoming Shift, three metrics and secondary content withou
   const hero = home.querySelector('.home-intro')!;
   const upcoming = home.querySelector('.upcoming-shift')!;
   const metrics = home.querySelector('.home-metrics')!;
-  const secondary = home.querySelector('.home-columns')!;
+  const secondary = home.querySelector('.home-secondary')!;
   for (const [before, after] of [
     [hero, upcoming],
     [upcoming, metrics],

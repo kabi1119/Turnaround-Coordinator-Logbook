@@ -1,0 +1,42 @@
+.home-operations {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.home-operations > * {
+  min-width: 0;
+}
+.home-operations > .home-metrics {
+  margin: 0;
+}
+.standalone-top-inset {
+  display: none;
+}
+/* Account for the sidebar and gutters before giving B/C a 1:2 content split. */
+@media (min-width: 1200px) {
+  .home-operations {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+}
+@media (min-width: 1024px) {
+  /* Keep the 88px header/rail origin; don't stack the badge against its divider. */
+  .header-clock {
+    grid-template-columns: minmax(0, auto) auto;
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 0;
+  }
+}
+@media (max-width: 767px) and (display-mode: standalone) {
+  /* Reserve the reported unsafe area ONCE, outside the branding/header box. */
+  .standalone-top-inset {
+    display: block;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--bg);
+  }
+  .app-header {
+    padding-top: 18px;
+    background: var(--bg);
+  }
+}

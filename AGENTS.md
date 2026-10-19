@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.6.1 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.6.2 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.6.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.6.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -169,3 +169,9 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Original teal/white SVG side-profile airplane, centered with nose-up rotation. Regenerate 180/192/512 PNGs with the existing browser/canvas exporter, update all versioned icon references, preserve manifest identity and all airline assets/provenance. Never clear site data to refresh an iOS icon.
 - Small-screen standalone header uses safe-area inset plus base 18px and extra 18px (previously extra 8px). Normal browser mobile/desktop spacing and all offline/storage/backup/handling/Cloudflare engines stay unchanged. Physical iPhone appearance remains separate acceptance.
 - The current owner explicitly authorizes one supplied v0.6.1 commit and ordinary main push after essential checks, superseding older task-specific restrictions. Fetch/check scope first, stop on divergence/unrelated work/failures, never merge/force-push/rewrite. Final reports omit the supplied commit message. See docs/V0_6_1_ACCEPTANCE.md.
+
+## v0.6.2 Home layout and standalone rendering
+
+- Keep full-width Upcoming Shift above a Home-only B/C grid: one shared three-row stats card left, Recent Aircraft right at >=1200px; stack on narrower content. Secondary Journal comes after both. Preserve selectors, card navigation, icons and radar.
+- Desktop connectivity sits alongside the clock inside the existing 88px header; mobile placement is unchanged. Standalone phones reserve one normal-flow opaque safe-area strip outside the header, with base 18px header padding. Explicit Apple status-bar default requests non-translucent presentation. Do not accumulate old standalone offsets or claim OS blur elimination without a physical iPhone.
+- The current owner supersedes prior commit/push authorization: leave v0.6.2 changes local, no staging/commit/push/merge/deployment/history rewrite. Provide the owner-supplied message at the end of the final report, overriding earlier no-message reporting guidance. Use focused tests and one successful build, no repeated audit/dry-run or unrelated testing.

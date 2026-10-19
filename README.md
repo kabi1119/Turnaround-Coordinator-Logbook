@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.1 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.2 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.6.2 Home layout and standalone header
+
+Upcoming Shift spans the content above a wide-screen 1:2 summary/Recent Aircraft split, stacking on mobile before the Journal prompt. Desktop connectivity sits beside the clock within the same header height. Installed mobile mode separates its opaque safe-area inset from the branding box and explicitly requests the default Apple status bar; Safari/browser spacing, app icon and all operational/offline logic remain unchanged. Physical iPhone blur elimination needs device verification. See the short checklist in [prototype status](PROTOTYPE_STATUS.md). No automatic commit, push or deployment for this release.
 
 ## v0.6.1 Home summary, app icon and iPhone spacing
 
