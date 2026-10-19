@@ -13,6 +13,9 @@ it('keeps connectivity behavior while exposing distinct badge states and a large
   expect(status).toHaveAttribute('data-state', 'online');
   expect(status.querySelector('.connection-badge')).toHaveTextContent('Online');
   expect(status.querySelector('svg')).toHaveAttribute('width', '17');
+  expect(status.querySelector('.connection-separator')).toHaveTextContent('·');
+  expect(status.querySelector('.connection-separator')).toHaveAttribute('aria-hidden', 'true');
+  expect(status.querySelector('.connection-local')).toHaveTextContent('Device only');
   online.mockReturnValue(false);
   fireEvent(window, new Event('offline'));
   expect(status).toHaveAttribute('data-state', 'offline');

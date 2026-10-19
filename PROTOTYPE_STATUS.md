@@ -1,4 +1,12 @@
-# TCO Logbook v0.6.3 Pre-release status
+# TCO Logbook v0.6.3a Pre-release status
+
+## v0.6.3a Home verification and desktop status — 2026-10-20 (Hong Kong)
+
+Baseline: clean main / c640ff3 (v0.6.3), with no earlier v0.6.3a edits. Local source already includes matching Handling Statistics/Recent Aircraft headings, one divided summary card and natural-height reflection under stats via Grid. A read-only HTTPS check found the public origin still serving v0.6.2 (index-t0tblVBC.js), whose bundle lacks the new heading/wrapper; this differs from the local baseline and is not evidence that local v0.6.3 omitted those changes. No deployment is authorized.
+
+Preserved that Home implementation and changed only desktop connectivity presentation: >=1024px column layout, badge above unchanged Device only, centered with 3px gap and hidden decorative separator. Mobile remains horizontal with the same separator/icon/colors/type; detection, storage, cloud semantics, header dimensions, iOS metadata/safe-area and all business/offline/backup engines remain unchanged. UI version v0.6.3a; numeric npm version stays 0.6.3 under the suffix convention. Manual release only; no staging/commit/push/deployment.
+
+Verification: **19 targeted tests / 4 files passed**; lint, formatting and one production build passed. Native Edge/production assets at 1440/1024/390px verified centered desktop badge/storage stacking, hidden desktop dot and unchanged mobile row/dot in both Online/Offline states. Header stays 88px on desktop with 20.75px clearance below the lowest status text and no Settings overlap or horizontal overflow. Home headings/card tops align; one natural-height divided summary is retained. DOM-only list-length checks at 0/1/5 records kept the reflection gap exactly 24px, restoring original nodes without persistence. Statistics, View all and keyboard Reflection actions passed; stored bytes unchanged and no observed startup exceptions. Actual screenshots were inspected. No audit/dry-run, new dependency/framework, deployment or physical iPhone test. Public v0.6.2 is distinct from the verified local v0.6.3a build; confirm the version after the owner publishes and follows the existing save/close/reopen update procedure.
 
 ## v0.6.3 Home statistics and reflection alignment — 2026-10-20 (Hong Kong)
 

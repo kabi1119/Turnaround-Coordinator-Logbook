@@ -1,0 +1,12 @@
+/* Connectivity and local storage are separate hints; only desktop changes layout. */
+@media (min-width: 1024px) {
+  .connectivity-status {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  .connectivity-status > .connection-separator {
+    display: none;
+  }
+}

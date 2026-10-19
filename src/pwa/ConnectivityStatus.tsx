@@ -38,7 +38,9 @@ export default function ConnectivityStatus() {
         <Icon size={17} aria-hidden="true" />
         {online ? t('Online', '已連線') : t('Offline', '離線')}
       </span>
-      <span aria-hidden="true">·</span>
+      <span className="connection-separator" aria-hidden="true">
+        ·
+      </span>
       <span className="connection-local">{t('Device only', '僅限此裝置')}</span>
     </span>
   );
