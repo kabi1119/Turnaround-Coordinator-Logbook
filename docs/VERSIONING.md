@@ -23,6 +23,10 @@ Some tools require strict SemVer. A suffix project release must document any nec
 
 From v0.5.2 onward, implementation reports must not generate or suggest Git commit messages; the owner obtains them separately from ChatGPT. This supersedes historical requirements for a final commit-message block. Report verification and Git/deployment status separately. Commit descriptions must not include test counts, build results, deployment status or statements such as "not pushed". Version agreement still does not authorize committing or publishing.
 
+## v0.6.0 authorized direct-to-main workflow
+
+The current owner request explicitly authorizes ordinary commit/push after successful implementation and essential verification. Fetch origin/main, require a clean/compatible main, preserve unrelated work, stage only the release and use the exact supplied title/body. Never force-push, rewrite history, create unnecessary merges or use VS Code Sync Changes. Stop on divergence, unresolved essential failures or unrelated changes. This authorization supersedes older task-specific commit/push restrictions; it does not authorize additional releases or cloud infrastructure. Final reports still omit generated commit messages.
+
 ## Release commit convention
 
 Use a descriptive English title beginning with the agreed version:

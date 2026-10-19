@@ -403,6 +403,7 @@ describe('v0.4.2 Draft / Pending / explicit Confirmed lifecycle', () => {
     click('Edit Handling Record');
     change('Arrival Flight Number *', '450');
     change('Departure Flight Number *', '451');
+    change('Parking Bay *', 'TEST-W121L');
     click('Save & Close');
     expect(localStorage.getItem(STORAGE_KEY)).toBe(bytes);
     expect(screen.getByRole('button', { name: 'Confirm & Save' })).toBeDisabled();

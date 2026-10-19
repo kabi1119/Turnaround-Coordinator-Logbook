@@ -2,6 +2,7 @@ import { flightStatuses, handlingTypes, roles } from './model';
 import { completedDuty } from './roster';
 import { validAircraftIdentity, aircraftModel } from '../data/aircraftCatalogue';
 import type { Aircraft, Database, Filters, Privacy, PrivacyKey, Duty, Journal } from './model';
+import { gateDate } from './blockTime';
 export const normalizeRegistration = (v: string) => v.trim().toUpperCase();
 export const hasArrival = (a: Aircraft) =>
   a.handling === 'Full Turnaround' || a.handling === 'Arrival Only';
@@ -11,8 +12,10 @@ export function classifyDelta(seconds: number) {
   return seconds < -900 ? 'Early' : seconds < 900 ? 'On Time' : 'Delayed';
 }
 export function gateSuggestion(scheduled: string, actual: string) {
-  if (!scheduled || !actual) return null;
-  const delta = (Date.parse(`${actual}+08:00`) - Date.parse(`${scheduled}+08:00`)) / 1000;
+  const planned = gateDate(scheduled),
+    recorded = gateDate(actual);
+  if (!planned || !recorded) return null;
+  const delta = (recorded.getTime() - planned.getTime()) / 1000;
   return Number.isFinite(delta) ? classifyDelta(delta) : null;
 }
 export function visibleAircraft(a: Aircraft, p: Privacy): Aircraft {

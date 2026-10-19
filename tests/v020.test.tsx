@@ -212,7 +212,7 @@ describe('v0.2.0 pre-release presentation', () => {
       'Turnaround Coordinator Logbook',
     );
     expect(container.querySelector('.demo-strip')).toBeNull();
-    expect(container.querySelector('.nav-context')).toHaveTextContent('v0.5.2 Pre-release');
+    expect(container.querySelector('.nav-context')).toHaveTextContent('v0.6.0 Pre-release');
     const nav = screen.getByRole('navigation');
     for (const page of ['Home', 'Logbook', 'Statistics', 'Journal']) {
       fireEvent.click(within(nav).getByRole('button', { name: page }));

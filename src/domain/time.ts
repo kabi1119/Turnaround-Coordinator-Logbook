@@ -1,14 +1,8 @@
 import type { Aircraft, Privacy } from './model';
 import { hkToday } from './model';
 import { hasArrival, hasDeparture } from './selectors';
-
-export function gateDate(value: string): Date | null {
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) return null;
-  const date = new Date(/(?:Z|[+-]\d{2}:\d{2})$/.test(value) ? value : `${value}+08:00`);
-  if (!Number.isFinite(date.getTime())) return null;
-  if (!/(?:Z|[+-]\d{2}:\d{2})$/.test(value) && hkToday(date) !== value.slice(0, 10)) return null;
-  return date;
-}
+import { gateDate } from './blockTime';
+export { gateDate } from './blockTime';
 
 export function gateText(value: string, full = false): string {
   const date = gateDate(value);
@@ -18,7 +12,6 @@ export function gateText(value: string, full = false): string {
     ...(full ? ({ year: 'numeric', month: '2-digit', day: '2-digit' } as const) : {}),
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
     hourCycle: 'h23',
   }).format(date);
 }

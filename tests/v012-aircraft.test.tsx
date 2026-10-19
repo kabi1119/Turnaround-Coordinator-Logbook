@@ -45,8 +45,8 @@ describe('v0.1.2 aircraft card gate times', () => {
       const a = { ...aircraft(), handling };
       const { container } = render(<AircraftCard a={a} privacy={privacy} onClick={() => {}} />);
       const text = container.textContent!;
-      expect(text.includes('AIBT 14:35:00')).toBe(handling !== 'Departure Only');
-      expect(text.includes('AOBT 16:10:00')).toBe(handling !== 'Arrival Only');
+      expect(text.includes('AIBT 14:35')).toBe(handling !== 'Departure Only');
+      expect(text.includes('AOBT 16:10')).toBe(handling !== 'Arrival Only');
       expect(text).toContain('Bay DEMO-W121L');
       expect(text).toContain('Primary Coordinator · A350-1000 (DEMO-TEST)');
     },
@@ -59,7 +59,7 @@ describe('v0.1.2 aircraft card gate times', () => {
     const { container, rerender } = render(
       <AircraftCard a={a} privacy={privacy} onClick={() => {}} />,
     );
-    expect(container.textContent).toContain('Scheduled SIBT 14:00:00');
+    expect(container.textContent).toContain('Scheduled SIBT 14:00');
     a.arrival.scheduled = '';
     a.createdAt = '2026-11-05T01:23:45Z';
     rerender(<AircraftCard a={a} privacy={privacy} onClick={() => {}} />);
@@ -70,7 +70,7 @@ describe('v0.1.2 aircraft card gate times', () => {
     const a = aircraft();
     a.departure.actual = '2026-11-06T00:10';
     expect(aircraftTimes(a, privacy)[1].value).toContain('06/11/2026');
-    a.departure.actual = '2026-11-05T16:10:00Z';
+    a.departure.actual = '2026-11-05T16:10Z';
     expect(aircraftTimes(a, privacy)[1].value).toContain('06/11/2026');
     const { container } = render(
       <AircraftCard
@@ -116,10 +116,10 @@ describe('v0.1.2 aircraft card gate times', () => {
       'AIBT',
       'SOBT',
       'AOBT',
-      '14:00:00',
-      '14:35:00',
-      '16:00:00',
-      '16:10:00',
+      '14:00',
+      '14:35',
+      '16:00',
+      '16:10',
       'A35K',
       'DEMO-W121L',
       'Synthetic full notes',
@@ -145,7 +145,7 @@ describe('v0.1.2 aircraft card gate times', () => {
     expect(
       within(detail).getByRole('heading', { name: 'Assignment Information' }),
     ).toBeInTheDocument();
-    fireEvent.click(within(detail).getByRole('button', { name: 'Open Duty' }));
+    fireEvent.click(within(detail).getByRole('button', { name: /^2026-10-16 ·/ }));
     expect(screen.getByRole('button', { name: 'Edit Duty' })).toBeInTheDocument();
     expect(localStorage.getItem(STORAGE_KEY)).toBe(before);
   });

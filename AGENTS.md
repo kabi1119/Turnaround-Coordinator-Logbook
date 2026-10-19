@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.5.2 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.6.0 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -14,7 +14,7 @@ This repo is **TCO Logbook v0.5.2 Pre-release**, a local frontend personal-tool 
 - A Full Turnaround is **one** Handling Assignment. Departure-only and Arrival-only are separate mutually exclusive handling types; all 3 contribute to Logged. Training does not contribute to Handled or Career coordinated counts.
 - Preserve Arrival and Departure statuses separately; early < -15 minutes, on time from -15 inclusive to +15 exclusive, delayed >= +15 minutes; use stand/gate times, not chocks/landing/takeoff interchangeably.
 - Every Aircraft save requires explicit review sheet + confirm.
-- Parking Bay is optional, search suggestions + custom input; no invented 'official complete' HKIA catalog.
+- From v0.6.0, Parking Bay is free text and required for Confirm only when privacy-enabled; empty Drafts remain allowed. No catalogue restriction or automatic case conversion.
 - v0.1 uses local demo storage only; do not claim cloud sync/auth/backup/privacy guarantees.
 - UI: Home | Logbook | Add | Statistics | Journal; Settings separate; airplane icon; two-line Aircraft cards with Airline+FlightNo title.
 - Keep project code outside OneDrive, in current repo root, and do not create nested Git repo.
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.5.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.6.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -155,3 +155,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Connection badge uses a 17px icon, green Online/red Offline, text plus color and existing device-only messaging. Never change detection logic or block offline work.
 - Final mobile padding must retain env(safe-area-inset-top) after earlier shorthands; standalone mobile adds only 8px extra breathing room. Keep desktop unchanged. Native emulation is not physical Dynamic Island verification. See docs/V0_5_2_ACCEPTANCE.md.
 - Owner's updated policy supersedes earlier final-output commit-message requirements: do not generate or suggest commit titles/bodies in development reports. Report test/Git/deployment status separately. Any separately authorized future commit description excludes test counts, build results, deployment status and "not pushed" statements. No automatic commit/push/deploy or history rewrite.
+
+## v0.6.0 complete Handling entry
+
+- Direct registration/Bay/applicable leg entry. Bay validation respects privacy and Draft/Pending; preserve untouched historical text and trim only edited outer whitespace. Keep local registration history, omit redundant helper/source UI.
+- Reuse schema-1 leg timestamps and origin metadata. Independent HK date + HH:mm inputs; explicit edits write seconds 00 with +08:00, untouched values keep original bytes. No guessed actual times, same-day constraint, automatic flight-status claim or new counting rule. Timing suggestions require explicit adoption.
+- Linked Duty itself is a semantic, focusable date/time button using the existing stable-ID return trail. Missing/trash references never navigate or get rewritten. Preserve worker/storage/backup/privacy/icons/Cloudflare configuration.
+- The v0.6.0 owner request explicitly authorizes direct-to-main development and one ordinary commit/push after checks with the supplied message; it supersedes older no-commit/push guidance for this task. Fetch first, require fast-forward compatibility, stop on divergence/unrelated changes, never force-push/rewrite/merge. Do not repeat or suggest commit messages in the final report; keep test/deployment status out of commit descriptions. See docs/V0_6_0_ACCEPTANCE.md.

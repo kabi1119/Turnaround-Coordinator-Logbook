@@ -156,7 +156,7 @@ describe('Mandatory Aircraft Review Sheet', () => {
       existing = db.aircraft[0],
       user = userEvent.setup(),
       { commit } = setupEditor(db, existing);
-    expect(screen.queryByLabelText(/Registration ·/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Aircraft Registration/)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Arrival Flight Status/)).not.toBeInTheDocument();
     expect(screen.queryByText(existing.registration)).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
@@ -180,11 +180,17 @@ describe('Mandatory Aircraft Review Sheet', () => {
     await user.selectOptions(screen.getByLabelText('Handling Type *'), 'Arrival Only');
     expect(screen.getByLabelText('Arrival Flight Status')).toBeInTheDocument();
     expect(screen.queryByLabelText('Departure Flight Status')).not.toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('Scheduled gate / stand'), {
-      target: { value: '2026-10-16T23:55:00' },
+    fireEvent.change(screen.getByLabelText('SIBT Date · Hong Kong'), {
+      target: { value: '2026-10-16' },
     });
-    fireEvent.change(screen.getByLabelText('Actual gate / stand'), {
-      target: { value: '2026-10-17T00:10:00' },
+    fireEvent.change(screen.getByLabelText('Scheduled In-Block Time (SIBT)'), {
+      target: { value: '23:55' },
+    });
+    fireEvent.change(screen.getByLabelText('AIBT Date · Hong Kong'), {
+      target: { value: '2026-10-17' },
+    });
+    fireEvent.change(screen.getByLabelText('Actual In-Block Time (AIBT)'), {
+      target: { value: '00:10' },
     });
     expect(screen.getByLabelText('Arrival Flight Status')).toHaveValue('Not Recorded');
     await user.click(screen.getByRole('button', { name: 'Use suggestion explicitly' }));
@@ -199,15 +205,16 @@ describe('Mandatory Aircraft Review Sheet', () => {
       { commit } = setupEditor(db);
     await core(user);
     await user.click(screen.getByText('More Details'));
-    await user.type(screen.getByLabelText('Parking Bay · search or custom'), 'demo-w121l');
+    await user.clear(screen.getByLabelText('Parking Bay *'));
+    await user.type(screen.getByLabelText('Parking Bay *'), 'demo-w121l');
     await user.click(screen.getByRole('button', { name: 'Save & Close' }));
     expect(screen.getByRole('dialog', { name: 'Review Handling Record' })).toHaveTextContent(
-      'DEMO-W121L',
+      'demo-w121l',
     );
     attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
     const value = commit.mock.calls[0] as unknown as [Database];
-    expect(value[0].aircraft[0].bay).toBe('DEMO-W121L');
+    expect(value[0].aircraft[0].bay).toBe('demo-w121l');
   });
   it('No actual handling cannot be Confirmed even with complete core fields', async () => {
     const user = userEvent.setup(),

@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.5.2 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.0 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.6.0 Handling entry and Duty navigation
+
+Handling entry now directly exposes registration, required-for-confirmation free-text Bay and independent actual/scheduled block times with Hong Kong dates and minute precision. Drafts can remain empty; privacy-disabled fields remain protected. Untouched historical timestamps keep their seconds/timezone, while explicit edits use minute precision. Redundant status-source labels are hidden without deleting metadata, and linked Duty dates/times open the correct record directly. Existing offline, storage, backup and counting rules remain. See [data conventions and acceptance](docs/V0_6_0_ACCEPTANCE.md).
 
 ## v0.5.2 Home layout and iPhone safe area
 

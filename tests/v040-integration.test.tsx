@@ -69,7 +69,9 @@ describe('v0.4.0 integrated Duty and Handling workflow', () => {
     fireEvent.click(
       within(screen.getByRole('dialog')).getByRole('button', { name: /Cathay Pacific/ }),
     );
-    expect(screen.getByRole('button', { name: 'Open Duty' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: new RegExp('^' + row.date + ' ·') }),
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Back to Duty' }));
     expect(screen.getByRole('dialog', { name: `Duty · ${row.date}` })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Back to Calendar' }));

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Plus, Trash2, Search, ShieldCheck } from 'lucide-react';
+import { Plus, Trash2, ShieldCheck } from 'lucide-react';
 import type { Aircraft, Database, Disruption, Leg } from '../domain/model';
 import {
   disruptionCategories,
@@ -20,7 +20,6 @@ import {
   saveAircraft,
   visibleAircraft,
 } from '../domain/selectors';
-import { demoBays } from '../data/reference';
 import { Confirm, Field, Modal, Select, TextArea, Badge } from '../components/ui';
 import { useLabel, useT } from '../i18n';
 import AirlineLogo from '../components/AirlineLogo';
@@ -43,6 +42,8 @@ import {
 import { validDutyDate } from '../domain/dutyCalendar';
 import { useCalendarNow } from '../lib/useCalendarNow';
 import { focusModalField } from '../lib/modalInteraction';
+import BlockTimeField from '../components/BlockTimeField';
+import { gateText } from '../domain/time';
 export interface EditorProps {
   db: Database;
   existing?: Aircraft;
@@ -101,6 +102,7 @@ export default function AircraftEditor({
     role: t('My Role', '本人角色'),
     arrival: t('Arrival Flight Number', '抵港航班編號'),
     departure: t('Departure Flight Number', '離港航班編號'),
+    bay: t('Parking Bay', '停機位'),
   };
   function fieldError(field: HandlingField) {
     const issue = issues.find((i) => i.field === field);
@@ -157,9 +159,29 @@ export default function AircraftEditor({
           .sort((x, y) => y.date.localeCompare(x.date))[0]
       : undefined;
   const selectedDuty = db.duties.find((d) => d.id === a.dutyId);
+  function validTimes() {
+    const controls =
+      form.current?.querySelectorAll<HTMLInputElement>('.block-time-field input') || [];
+    for (const control of controls) {
+      if (
+        !control.checkValidity() ||
+        (control.type === 'date' && control.value && !validDutyDate(control.value))
+      ) {
+        setError(
+          t(
+            'Enter a valid HH:mm time and Hong Kong date for each recorded block event.',
+            '請為每項停機位事件填寫有效 HH:mm 時間及香港日期。',
+          ),
+        );
+        focusModalField(control);
+        return false;
+      }
+    }
+    return true;
+  }
   function openReview(mode: 'close' | 'next' | 'draft') {
     setError('');
-    if (!validLink()) return;
+    if (!validLink() || !validTimes()) return;
     setAttempted(mode !== 'draft');
     if (a.date && !validDutyDate(a.date)) {
       setError(t('Choose a valid Hong Kong date.', '請選擇有效的香港日期。'));
@@ -180,7 +202,7 @@ export default function AircraftEditor({
   }
   function confirmSave() {
     if (saving.current || !review || (matches.length > 0 && !keep)) return;
-    if (!validLink()) return;
+    if (!validLink() || !validTimes()) return;
     if (a.date && !validDutyDate(a.date)) {
       setError(t('Choose a valid Hong Kong date.', '請選擇有效的香港日期。'));
       return;
@@ -218,7 +240,7 @@ export default function AircraftEditor({
       ...a,
       dutyId: a.dutyId,
       registration: p.registration ? a.registration.trim() : base.registration,
-      bay: p.bay ? a.bay.trim().toUpperCase() : base.bay,
+      bay: p.bay ? (existing && a.bay === existing.bay ? existing.bay : a.bay.trim()) : base.bay,
       arrival: !hasArrival(a)
         ? existing?.handling === a.handling
           ? base.arrival
@@ -318,39 +340,43 @@ export default function AircraftEditor({
                 update({ status: e.target.value as Leg['status'], origin: 'Self-reported' })
               }
             />
-            <small>
-              {l(leg.origin)} · {t('Personal category, not official OTP', '個人分類，並非官方 OTP')}
-            </small>
           </>
         )}
         {p.gateTimes && (
           <>
             <p className="muted">
-              {arrival ? 'SIBT → AIBT' : 'SOBT → AOBT'} · Asia/Hong_Kong (+08:00).{' '}
               {t(
-                'Mock gate/stand times only. Never chocks or runway times.',
-                '僅模擬停機位時間，非輪擋或跑道時間。',
+                'Hong Kong time · choose each date independently for overnight operations. Times are optional; scheduled times are not actual times.',
+                '香港時間 · 跨日作業請分別選擇日期。時間可留空；表定時間不等於實際時間。',
               )}
             </p>
-            <div className="form-grid">
-              <Field
-                label={t('Scheduled gate / stand', '表定停機位時間')}
-                type="datetime-local"
-                step="1"
-                value={leg.scheduled}
-                onChange={(e) => update({ scheduled: e.target.value })}
-              />
-              <Field
-                label={t('Actual gate / stand', '實際停機位時間')}
-                type="datetime-local"
-                step="1"
-                value={leg.actual}
-                onChange={(e) => update({ actual: e.target.value })}
-              />
-            </div>
+            <BlockTimeField
+              key={`${a.id}-${key}-actual`}
+              label={
+                arrival
+                  ? t('Actual In-Block Time (AIBT)', '實際入位時間（AIBT）')
+                  : t('Actual Off-Block Time (AOBT)', '實際離位時間（AOBT）')
+              }
+              code={arrival ? 'AIBT' : 'AOBT'}
+              value={leg.actual}
+              fallbackDate={a.date}
+              onChange={(actual) => update({ actual })}
+            />
+            <BlockTimeField
+              key={`${a.id}-${key}-scheduled`}
+              label={
+                arrival
+                  ? t('Scheduled In-Block Time (SIBT)', '表定入位時間（SIBT）')
+                  : t('Scheduled Off-Block Time (SOBT)', '表定離位時間（SOBT）')
+              }
+              code={arrival ? 'SIBT' : 'SOBT'}
+              value={leg.scheduled}
+              fallbackDate={a.date}
+              onChange={(scheduled) => update({ scheduled })}
+            />
             {suggestion && (
               <div className="notice">
-                {t('Mock gate suggestion', '模擬停機位時間建議')}: <strong>{l(suggestion)}</strong>.{' '}
+                {t('Timing suggestion', '時間分類建議')}: <strong>{l(suggestion)}</strong>.{' '}
                 {p.statuses && (
                   <button
                     type="button"
@@ -515,71 +541,56 @@ export default function AircraftEditor({
             value={a.role}
             onChange={(e) => patch({ role: e.target.value as Aircraft['role'] })}
           />
+          {p.registration && (
+            <>
+              <Field
+                label={t('Aircraft Registration', '機身註冊')}
+                value={a.registration}
+                onChange={(e) => patch({ registration: e.target.value.toUpperCase() })}
+              />
+              {history && (
+                <div className="notice">
+                  {t('Local history suggests', '本機歷史建議')}: {history.airline} ·{' '}
+                  {history.variant}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      changeAirline(history.airline);
+                      patch({
+                        aircraftType: aircraftModel(history),
+                        variant: history.variant,
+                        family: history.family,
+                        icao: history.icao,
+                      });
+                    }}
+                  >
+                    {t('Use suggestion', '採用建議')}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+          {p.bay && (
+            <Field
+              name="bay"
+              label={t('Parking Bay *', '停機位 *')}
+              error={fieldError('bay')}
+              value={a.bay}
+              onChange={(e) => patch({ bay: e.target.value })}
+            />
+          )}
+          {(p.statuses || p.gateTimes) && (
+            <>
+              {hasArrival(a) && legFields('arrival')}
+              {hasDeparture(a) && legFields('departure')}
+            </>
+          )}
           <details className="more-details">
             <summary>
               {t('More Details', '更多資料')}{' '}
               <span>{t('Optional fields & disruptions', '選填欄位及異常事件')}</span>
             </summary>
             <div className="details-content">
-              {p.registration && (
-                <>
-                  <Field
-                    label={t('Registration · local history lookup', '機身註冊 · 本機歷史查詢')}
-                    value={a.registration}
-                    onChange={(e) => patch({ registration: e.target.value.toUpperCase() })}
-                  />
-                  {history && (
-                    <div className="notice">
-                      {t('Local history suggests', '本機歷史建議')}: {history.airline} ·{' '}
-                      {history.variant}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          changeAirline(history.airline);
-                          patch({
-                            variant: history.variant,
-                            family: history.family,
-                            icao: history.icao,
-                          });
-                        }}
-                      >
-                        {t('Use suggestion', '採用建議')}
-                      </button>
-                    </div>
-                  )}
-                  <button type="button" disabled>
-                    <Search size={16} />
-                    {t('Search Public Database · Not connected', '搜尋公開資料庫 · 尚未連接')}
-                  </button>
-                </>
-              )}
-              {p.bay && (
-                <>
-                  <Field
-                    label={t('Parking Bay · search or custom', '停機位 · 搜尋或自訂')}
-                    list="demo-bays"
-                    value={a.bay}
-                    onChange={(e) => patch({ bay: e.target.value.toUpperCase() })}
-                  />
-                  <datalist id="demo-bays">
-                    {demoBays.map((b) => (
-                      <option key={b} value={b} />
-                    ))}
-                  </datalist>
-                  <p className="muted">
-                    {t(
-                      'Reference suggestions only — not a complete current stand catalogue. Custom values welcome.',
-                      '僅供參考，並非完整現行停機位清單；可自行輸入。',
-                    )}
-                  </p>
-                </>
-              )}
-              {(p.statuses || p.gateTimes) && (
-                <>
-                  {hasArrival(a) && legFields('arrival')}
-                  {hasDeparture(a) && legFields('departure')}
-                </>
-              )}
               <Select
                 label={t(
                   'Disruption Status · independent of flight status',
@@ -708,8 +719,8 @@ export default function AircraftEditor({
           <p className="muted">
             <ShieldCheck size={15} />{' '}
             {t(
-              'Restricted optional fields can be enabled for synthetic data in Settings.',
-              '可在設定啟用受限制選填欄位，以測試虛構資料。',
+              'Privacy-controlled fields can be enabled for synthetic data in Settings.',
+              '可在設定啟用私隱控制欄位，以測試虛構資料。',
             )}
           </p>
           {!review && issues.length > 0 && (
@@ -810,16 +821,15 @@ export default function AircraftEditor({
                           ? t('Arrival Status', '抵港狀態')
                           : t('Departure Status', '離港狀態')}
                       </dt>
-                      <dd>
-                        {l(a[key].status)} · {l(a[key].origin)}
-                      </dd>
+                      <dd>{l(a[key].status)}</dd>
                     </>
                   )}
                   {p.gateTimes && (
                     <>
                       <dt>{key === 'arrival' ? 'SIBT → AIBT' : 'SOBT → AOBT'}</dt>
                       <dd>
-                        {a[key].scheduled || '—'} → {a[key].actual || '—'} (+08:00)
+                        {a[key].scheduled ? gateText(a[key].scheduled, true) : '—'} →{' '}
+                        {a[key].actual ? gateText(a[key].actual, true) : '—'} HKT
                       </dd>
                     </>
                   )}

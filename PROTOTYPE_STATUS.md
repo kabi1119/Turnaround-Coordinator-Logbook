@@ -1,4 +1,10 @@
-# TCO Logbook v0.5.2 Pre-release status
+# TCO Logbook v0.6.0 Pre-release status
+
+## v0.6.0 Handling Entry and Duty Navigation — 2026-10-19 (Hong Kong)
+
+Started from clean main / 11d919d, matching origin/main after fetch. Exposed existing leg fields directly, added independent minute/date controls, made Bay conditional-confirmation-required free text, cleaned registration/source presentation and made the linked Duty reference itself interactive. Preserved all schema/key/IDs/relationships/provenance, existing timestamps unless explicitly edited, review/privacy/lifecycle/counting and offline safety. See docs/V0_6_0_ACCEPTANCE.md for the sample/form comparison, compatibility and acceptance. The owner authorizes one supplied ordinary release commit and normal push only after essential checks; no history rewrite or force push.
+
+Verification: **410 tests / 31 files passed**; lint, production build, static guard, formatting and Wrangler dry-run passed; npm audit **0 vulnerabilities**. Native Edge/local Workers verified confirmed creation/review, required custom-case Bay, independent overnight minute/date editing, exact keyboard Duty navigation, stable IDs/links/counts, and bilingual 1440/390/320px layouts without overflow. Final inputs visibly use 24-hour numeric HH:mm rather than locale-dependent AM/PM. Server-stopped offline launch/edit/reload, Draft persistence, backup restore/rejection and quota retry passed. A waiting update activated after client closure with the full stored database unchanged byte-for-byte. No observed startup exceptions. Physical iPhone/Home Screen and native keyboard verification remain owner acceptance tasks; storage retention is not guaranteed. Publication/remote verification is reported separately.
 
 ## v0.5.2 Home Layout, Status Indicator and iPhone Safe Area — 2026-10-19 (Hong Kong)
 

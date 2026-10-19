@@ -31,7 +31,15 @@ export function changeFlightAirline(oldAirline: string, nextAirline: string, val
   return parsed.valid ? flightPrefix(nextAirline) + parsed.input : value;
 }
 export type HandlingField =
-  'date' | 'airline' | 'handling' | 'aircraftType' | 'variant' | 'role' | 'arrival' | 'departure';
+  | 'date'
+  | 'airline'
+  | 'handling'
+  | 'aircraftType'
+  | 'variant'
+  | 'role'
+  | 'arrival'
+  | 'departure'
+  | 'bay';
 export type HandlingIssue = { field: HandlingField; reason: 'required' | 'invalid' | 'future' };
 export function confirmedHandlingIssues(
   a: Aircraft,
@@ -54,6 +62,10 @@ export function confirmedHandlingIssues(
   if (!a.variant) add('variant');
   else if (!validAircraftIdentity(a)) add('variant', 'invalid');
   if (!a.role) add('role');
+  if (p.bay) {
+    if (!a.bay.trim()) add('bay');
+    else if (/\p{Cc}/u.test(a.bay)) add('bay', 'invalid');
+  }
   for (const key of ['arrival', 'departure'] as const) {
     if (p.flights && (key === 'arrival' ? hasArrival(a) : hasDeparture(a))) {
       if (!a[key].flight.trim()) add(key);

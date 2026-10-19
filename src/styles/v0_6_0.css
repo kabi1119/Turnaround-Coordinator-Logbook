@@ -1,0 +1,19 @@
+.block-time-field {
+  margin: 12px 0;
+}
+.block-time-field .field,
+.block-time-field input {
+  min-width: 0;
+  max-width: 100%;
+}
+.linked-duty {
+  justify-content: flex-start;
+  min-height: 44px;
+  text-align: left;
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}

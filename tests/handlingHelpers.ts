@@ -23,4 +23,6 @@ export function chooseRequiredHandling(language: 'en' | 'zh-HK' = 'en') {
   const departure = screen.queryByLabelText(zh ? '離港航班編號 *' : 'Departure Flight Number *');
   if (arrival) fireEvent.change(arrival, { target: { value: '9401' } });
   if (departure) fireEvent.change(departure, { target: { value: '9402' } });
+  const bay = screen.queryByLabelText(zh ? '停機位 *' : 'Parking Bay *') as HTMLInputElement | null;
+  if (bay && !bay.value) fireEvent.change(bay, { target: { value: 'TEST-W121L' } });
 }

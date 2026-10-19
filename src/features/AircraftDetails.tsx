@@ -100,7 +100,7 @@ export default function AircraftDetails({
             </>
           )}
           <dt>{t('Actual handling', '實際處理')}</dt>
-          <dd>{a.actualHandling ? t('Yes · self-reported', '有 · 自行申報') : t('No', '無')}</dd>
+          <dd>{a.actualHandling ? t('Yes', '有') : t('No', '無')}</dd>
         </dl>
       </section>
       {(['arrival', 'departure'] as const)
@@ -147,8 +147,6 @@ export default function AircraftDetails({
                       : t('Departure Status', '離港狀態')}
                   </dt>
                   <dd>{l(a[key].status)}</dd>
-                  <dt>{t('Status source', '狀態來源')}</dt>
-                  <dd>{l(a[key].origin)}</dd>
                 </>
               )}
             </dl>
@@ -165,17 +163,18 @@ export default function AircraftDetails({
           <dt>{t('Linked Duty', '連結更次')}</dt>
           <dd>
             {duty ? (
-              <>
-                <span>
+              onDuty ? (
+                <button className="linked-duty" onClick={() => onDuty(duty.id)}>
                   {duty.date} · {duty.start || missing} – {duty.end || missing}{' '}
                   {duty.start && duty.end && duty.end < duty.start ? '(+1)' : ''}
+                </button>
+              ) : (
+                <span>
+                  {duty.date} · {duty.start || missing} – {duty.end || missing}
                 </span>
-                {onDuty && (
-                  <button className="text-button" onClick={() => onDuty(duty.id)}>
-                    {t('Open Duty', '開啟更次')}
-                  </button>
-                )}
-              </>
+              )
+            ) : a.dutyId ? (
+              t('Linked Duty unavailable', '連結更次無法使用')
             ) : (
               t('Unlinked', '未連結')
             )}
