@@ -1,3 +1,4 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useRef, useState } from 'react';
 import type { Database, Duty } from '../domain/model';
 import { hkToday, id } from '../domain/model';
@@ -15,7 +16,7 @@ export default function DutyEditor({
   db: Database;
   existing?: Duty;
   onClose: () => void;
-  commit: (db: Database) => boolean;
+  commit: Commit;
 }) {
   const t = useT();
   const { closing, close: onClose } = useMotionClose(leave);
@@ -112,19 +113,21 @@ export default function DutyEditor({
               return;
             }
             saving.current = true;
-            if (
+            afterSave(
               commit({
                 ...db,
                 duties: existing
                   ? db.duties.map((b) => (b.id === d.id ? d : b))
                   : [...db.duties, d],
-              })
-            )
-              onClose();
-            else {
-              saving.current = false;
-              setError(t('Could not save locally.', '未能在本機儲存。'));
-            }
+              }),
+              (ok) => {
+                if (ok) onClose();
+                else {
+                  saving.current = false;
+                  setError(t('Could not save locally.', '未能在本機儲存。'));
+                }
+              },
+            );
           }}
         >
           <Field

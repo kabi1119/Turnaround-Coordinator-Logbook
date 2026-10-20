@@ -1,3 +1,4 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useRef, useState } from 'react';
 import type { Database } from '../domain/model';
 import { sampleRefreshPlan, refreshSamples } from '../data/sampleRefresh';
@@ -10,7 +11,7 @@ export default function DemoAirlineRefresh({
   onClose,
 }: {
   db: Database;
-  commit: (db: Database) => boolean;
+  commit: Commit;
   onClose: () => void;
 }) {
   const t = useT(),
@@ -123,16 +124,18 @@ export default function DemoAirlineRefresh({
               return;
             }
             saving.current = true;
-            if (commit(next)) onClose();
-            else {
-              saving.current = false;
-              setError(
-                t(
-                  'Could not save locally. No refresh was applied.',
-                  '未能在本機儲存，尚未套用更新。',
-                ),
-              );
-            }
+            afterSave(commit(next), (ok) => {
+              if (ok) onClose();
+              else {
+                saving.current = false;
+                setError(
+                  t(
+                    'Could not save locally. No refresh was applied.',
+                    '未能在本機儲存，尚未套用更新。',
+                  ),
+                );
+              }
+            });
           }}
         >
           {t('Confirm sample refresh', '確認更新樣本')}

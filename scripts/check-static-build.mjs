@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import process from 'node:process';
+import { Buffer } from 'node:buffer';
 
 const root = resolve('dist');
 const required = [
@@ -33,6 +34,19 @@ function scan(directory) {
       )
     )
       failures.push(`Development URL: ${relative(root, path)}`);
+    const privilegedToken = [
+      ...content.matchAll(/\beyJ[A-Za-z0-9_-]+\.([A-Za-z0-9_-]+)\.[A-Za-z0-9_-]+\b/g),
+    ].some((match) => {
+      try {
+        return ['service_role', 'supabase_admin', 'authenticated'].includes(
+          JSON.parse(Buffer.from(match[1], 'base64url').toString('utf8')).role,
+        );
+      } catch {
+        return false;
+      }
+    });
+    if (privilegedToken || /\bsb_secret_[A-Za-z0-9_-]{20,}/.test(content))
+      failures.push(`Possible private Supabase credential: ${relative(root, path)}`);
     if (
       /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\bgh[pousr]_[A-Za-z0-9]{30,}|\bgithub_pat_[A-Za-z0-9_]{30,}|\bAKIA[A-Z0-9]{16}\b/.test(
         content,

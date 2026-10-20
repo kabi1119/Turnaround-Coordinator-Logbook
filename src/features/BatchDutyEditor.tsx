@@ -1,3 +1,4 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useRef, useState } from 'react';
 import { useMotionClose } from '../lib/useMotionClose';
 import type { Database, Duty } from '../domain/model';
@@ -23,7 +24,7 @@ export default function BatchDutyEditor({
   onClose,
 }: {
   db: Database;
-  commit: (next: Database) => boolean;
+  commit: Commit;
   onClose: () => void;
 }) {
   const t = useT(),
@@ -135,16 +136,18 @@ export default function BatchDutyEditor({
       return;
     saving.current = true;
     const next = commitDutyBatch(db, entries, kind, override);
-    if (next && commit(next)) finishClose();
-    else {
-      saving.current = false;
-      setError(
-        t(
-          'Could not save locally. Your pending entries are retained; retry after resolving storage access.',
-          '未能在本機儲存，待存更次仍保留；請處理儲存問題後重試。',
-        ),
-      );
-    }
+    afterSave(next ? commit(next) : false, (ok) => {
+      if (ok) finishClose();
+      else {
+        saving.current = false;
+        setError(
+          t(
+            'Could not save locally. Your pending entries are retained; retry after resolving storage access.',
+            '未能在本機儲存，待存更次仍保留；請處理儲存問題後重試。',
+          ),
+        );
+      }
+    });
   }
   return (
     <>

@@ -1,19 +1,15 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useRef, useState } from 'react';
 import type { Database } from '../domain/model';
 import { SectionTitle, Modal, Field } from '../components/ui';
 import { useT } from '../i18n';
 import { BackupError, createBackup, parseBackup, MAX_BACKUP_BYTES } from '../lib/backup';
 import type { FullBackup, BackupCode } from '../lib/backup';
-import { STORAGE_KEY } from '../lib/storage';
+import { useWorkspaceStore } from '../workspaces/context';
 
-export default function BackupManager({
-  db,
-  restore,
-}: {
-  db: Database;
-  restore: (db: Database) => boolean;
-}) {
+export default function BackupManager({ db, restore }: { db: Database; restore: Commit }) {
   const t = useT();
+  const workspace = useWorkspaceStore();
   const [mode, setMode] = useState<'export' | 'import' | null>(null);
   const [preview, setPreview] = useState<FullBackup | null>(null),
     [confirmed, setConfirmed] = useState(false);
@@ -95,7 +91,7 @@ export default function BackupManager({
       try {
         const incoming = parseBackup(String(reader.result));
         snapshot.current = JSON.stringify(db);
-        storedSnapshot.current = localStorage.getItem(STORAGE_KEY);
+        storedSnapshot.current = workspace.snapshot();
         setPreview(incoming);
       } catch (e) {
         showError(e);
@@ -105,8 +101,7 @@ export default function BackupManager({
   }
   function download() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw !== null && JSON.stringify(JSON.parse(raw)) !== JSON.stringify(db)) {
+      if (!workspace.current(db)) {
         setError(
           t(
             'Stored data changed or cannot be read. Backup was not created. Reload and review your local data first; do not clear site data.',
@@ -150,7 +145,7 @@ export default function BackupManager({
     try {
       if (
         snapshot.current !== JSON.stringify(db) ||
-        storedSnapshot.current !== localStorage.getItem(STORAGE_KEY)
+        storedSnapshot.current !== workspace.snapshot()
       ) {
         setError(
           t(
@@ -162,19 +157,21 @@ export default function BackupManager({
       }
       const validated = parseBackup(JSON.stringify(preview));
       saving.current = true;
-      if (!restore(validated.data)) {
-        saving.current = false;
-        setError(
-          t(
-            'Could not restore this backup, possibly due to storage space. Existing data was not replaced. The preview is retained; you can retry.',
-            '可能因儲存空間不足而未能還原備份；既有資料未被取代。預覽已保留，可重試。',
-          ),
-        );
-        return;
-      }
-      setMode(null);
-      setPreview(null);
-      setSuccess('restore');
+      afterSave(restore(validated.data), (ok) => {
+        if (!ok) {
+          saving.current = false;
+          setError(
+            t(
+              'Could not restore this backup, possibly due to storage space. Existing data was not replaced. The preview is retained; you can retry.',
+              '可能因儲存空間不足而未能還原備份；既有資料未被取代。預覽已保留，可重試。',
+            ),
+          );
+          return;
+        }
+        setMode(null);
+        setPreview(null);
+        setSuccess('restore');
+      });
     } catch (e) {
       saving.current = false;
       showError(e);

@@ -1,3 +1,4 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useState } from 'react';
 import {
   Shield,
@@ -50,8 +51,8 @@ export default function Settings({
   onAircraftRestore,
 }: {
   db: Database;
-  commit: (db: Database) => boolean;
-  resetCommit: (db: Database) => boolean;
+  commit: Commit;
+  resetCommit: Commit;
   onReport: () => void;
   onBack: () => void;
   onAircraftRestore: (id: string) => void;
@@ -73,7 +74,9 @@ export default function Settings({
       next.journals = [];
     }
     next.settings = db.settings;
-    if (resetCommit(next)) setReset(null);
+    afterSave(resetCommit(next), (ok) => {
+      if (ok) setReset(null);
+    });
   }
   return (
     <>
@@ -253,9 +256,9 @@ export default function Settings({
       <section className="panel">
         <SectionTitle title={t('Future Protection — Coming Soon', '未來保護功能 — 即將推出')} />
         {[
-          t('Authentication / Email OTP / Passkey', '身份驗證／Email OTP／Passkey'),
+          t('Passkey authentication', '通行密鑰身份驗證'),
           t('Cloud sync / Conflict resolution', '雲端同步／衝突處理'),
-          t('Production encryption and cloud backup', '正式加密及雲端備份'),
+          t('Encrypted cloud backup', '加密雲端備份'),
           t('Live public aircraft lookup', '即時公開航機查詢'),
         ].map((s) => (
           <div className="future-row" key={s}>
@@ -280,7 +283,9 @@ export default function Settings({
                       privacy: { ...db.settings.privacy, [privacy]: false },
                     },
                   };
-            if (commit(next)) setPrivacy(null);
+            afterSave(commit(next), (ok) => {
+              if (ok) setPrivacy(null);
+            });
           }}
         >
           <p>
@@ -344,7 +349,9 @@ export default function Settings({
           title={t('Restore Duty · association preview', '還原更次 · 關聯預覽')}
           onClose={() => setRestore('')}
           onConfirm={() => {
-            if (commit(restoreDuty(db, restore, reconnect))) setRestore('');
+            afterSave(commit(restoreDuty(db, restore, reconnect)), (ok) => {
+              if (ok) setRestore('');
+            });
           }}
         >
           <p>{db.duties.find((d) => d.id === restore)?.date}</p>

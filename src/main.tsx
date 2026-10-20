@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import AuthApp from './auth/AuthApp';
 import './styles/tokens.css';
 import './styles.css';
 import './styles/airlines.css';
@@ -7,7 +7,7 @@ import './styles/radar.css';
 import './styles/responsive.css';
 import './styles/v0_1_2.css';
 import './styles/v0_1_4.css';
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(<AuthApp />);
 import './styles/v0_2_0.css';
 import './styles/v0_3_0.css';
 import './styles/v0_3_3.css';
@@ -27,3 +27,5 @@ import './styles/v0_6_3.css';
 import './styles/v0_6_3a.css';
 import './styles/v0_6_3b.css';
 import './styles/v0_6_4.css';
+
+import './styles/v0_7_0.css';

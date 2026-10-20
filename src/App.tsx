@@ -20,7 +20,10 @@ import {
 import type { Aircraft, Database } from './domain/model';
 import { canRestore, normalizeRegistration, stats, trashDuty } from './domain/selectors';
 import { LanguageContext, useLabel, useT } from './i18n';
-import { readDatabase, persistDatabase, STORAGE_KEY } from './lib/storage';
+import type { ReactNode } from 'react';
+import { guestStore, afterSave } from './workspaces/store';
+import type { WorkspaceStore, WriteResult } from './workspaces/store';
+import { WorkspaceContext } from './workspaces/context';
 import OfflineSetup from './pwa/OfflineSetup';
 import ConnectivityStatus from './pwa/ConnectivityStatus';
 import { AircraftCard, Badge, Confirm, Empty, Modal, SectionTitle } from './components/ui';
@@ -56,12 +59,26 @@ type Overlay =
   | { type: 'report' }
   | { type: 'history'; registration: string }
   | null;
-export default function App() {
-  const [loaded] = useState(readDatabase);
+export default function App({
+  workspace = guestStore,
+  accountControl,
+  workspaceNotice = '',
+}: { workspace?: WorkspaceStore; accountControl?: ReactNode; workspaceNotice?: string } = {}) {
+  const [loaded] = useState(() => workspace.read());
   const [db, setDb] = useState(loaded.db);
   return (
     <LanguageContext.Provider value={db.settings.language}>
-      <Workspace db={db} setDb={setDb} loadError={loaded.error} snapshot={loaded.snapshot} />
+      <WorkspaceContext.Provider value={workspace}>
+        <Workspace
+          db={db}
+          setDb={setDb}
+          loadError={loaded.error}
+          snapshot={loaded.snapshot}
+          workspace={workspace}
+          accountControl={accountControl}
+          workspaceNotice={workspaceNotice}
+        />
+      </WorkspaceContext.Provider>
     </LanguageContext.Provider>
   );
 }
@@ -70,11 +87,17 @@ function Workspace({
   setDb,
   loadError,
   snapshot,
+  workspace,
+  accountControl,
+  workspaceNotice,
 }: {
   db: Database;
   setDb: (db: Database) => void;
   loadError: string;
   snapshot: string | null | undefined;
+  workspace: WorkspaceStore;
+  accountControl?: ReactNode;
+  workspaceNotice: string;
 }) {
   const t = useT(),
     l = useLabel();
@@ -119,7 +142,7 @@ function Workspace({
   }, [toast, saveSequence]);
   useEffect(() => {
     const changed = (event: StorageEvent) => {
-      if (event.key !== STORAGE_KEY && event.key !== null) return;
+      if (event.key !== workspace.key && event.key !== null) return;
       setToast('');
       setStorageError(
         t(
@@ -130,36 +153,49 @@ function Workspace({
     };
     window.addEventListener('storage', changed);
     return () => window.removeEventListener('storage', changed);
-  }, [t]);
-  function commit(next: Database, explicitReset = false) {
+  }, [t, workspace]);
+  const writePending = useRef(false);
+  function commit(next: Database, explicitReset = false): boolean | Promise<boolean> {
+    if (writePending.current) return false;
     if (unreadableStorage.current && !explicitReset) {
       setToast('');
       setStorageError(loadError);
       return false;
     }
-    const result = persistDatabase(next, storedSnapshot.current);
-    if (!result.ok) {
-      setToast('');
-      setStorageError(
-        result.reason === 'conflict'
-          ? t(
-              'Local data changed in another tab. Nothing was saved. Review the other tab and reload before retrying.',
-              '另一分頁已更改本機資料，未儲存任何修改。請檢查另一分頁並重新載入後再試。',
-            )
-          : t(
-              'Could not write browser storage. Changes have not been saved.',
-              '未能寫入瀏覽器儲存空間，修改尚未儲存。',
-            ),
-      );
-      return false;
+    const finish = (result: WriteResult) => {
+      writePending.current = false;
+      if (!result.ok) {
+        setToast('');
+        setStorageError(
+          result.reason === 'conflict'
+            ? t(
+                'Local data changed in another tab. Nothing was saved. Review the other tab and reload before retrying.',
+                '另一分頁已更改本機資料，未儲存任何修改。請檢查另一分頁並重新載入後再試。',
+              )
+            : t(
+                'Could not write browser storage. Changes have not been saved.',
+                '未能寫入瀏覽器儲存空間，修改尚未儲存。',
+              ),
+        );
+        return false;
+      }
+      storedSnapshot.current = result.snapshot;
+      unreadableStorage.current = false;
+      setDb(next);
+      setSaveSequence((n) => n + 1);
+      setStorageError('');
+      setToast(t('Saved on this device', '已儲存在此裝置'));
+      return true;
+    };
+    writePending.current = true;
+    try {
+      const result = workspace.write(next, storedSnapshot.current);
+      return result instanceof Promise
+        ? result.then(finish, () => finish({ ok: false, reason: 'unavailable' }))
+        : finish(result);
+    } catch {
+      return finish({ ok: false, reason: 'unavailable' });
     }
-    storedSnapshot.current = result.snapshot;
-    unreadableStorage.current = false;
-    setDb(next);
-    setSaveSequence((n) => n + 1);
-    setStorageError('');
-    setToast(t('Saved on this device', '已儲存在此裝置'));
-    return true;
   }
   const active = db.aircraft
     .filter((a) => a.status !== 'Trashed')
@@ -208,6 +244,7 @@ function Workspace({
             <HongKongClock />
             <ConnectivityStatus />
           </div>
+          {accountControl}
           <button
             className="icon-button"
             aria-label={t('Settings', '設定')}
@@ -223,6 +260,11 @@ function Workspace({
       </header>
       <main id="main-content">
         <OfflineSetup />
+        {workspaceNotice && (
+          <p className="notice amber" role="status">
+            {workspaceNotice}
+          </p>
+        )}
         {storageError && (
           <div className="notice amber" role="alert">
             {storageError}
@@ -389,7 +431,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.6.4 {t('Pre-release', '預發佈')} ·{' '}
+            v0.7.0 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -412,7 +454,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.6.4 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.7.0 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
@@ -697,10 +739,12 @@ function Workspace({
                   };
                 }),
               };
-            if (commit(next)) {
-              setPending(null);
-              close();
-            }
+            afterSave(commit(next), (ok) => {
+              if (ok) {
+                setPending(null);
+                close();
+              }
+            });
           }}
         >
           {pending.kind === 'dutyTrash' ? (

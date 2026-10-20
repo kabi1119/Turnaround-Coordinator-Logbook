@@ -6,7 +6,7 @@ const object = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === 'object');
 const strings = (value: Record<string, unknown>, keys: string[]) =>
   keys.every((k) => typeof value[k] === 'string');
-function validDatabase(value: unknown): value is Database {
+export function validDatabase(value: unknown): value is Database {
   if (
     !object(value) ||
     value.version !== 1 ||

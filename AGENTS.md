@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.6.4 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.7.0 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.6.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.7.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -198,3 +198,11 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Draft/Pending counts and Logbook status scopes reuse handlingDisplayStatus; Pending remains derived from a future-dated Draft, with no new stored state/schema. Home shortcuts reset conflicting filters and open the existing timeline. Do not blend samples with another dataset or write records to compute summaries.
 - Keep one combined card, unfinished work then reflection on the desktop left; mobile places reflection after Recent Aircraft. Four desktop Recent Aircraft rows use content-driven Grid plus scoped resize calibration to remove fractional rounding; sparse lists/mobile retain natural height. Preserve palette, header/safe-area, worker/storage/backup and Cloudflare behavior.
 - Manual Git/deployment only; leave all changes unstaged. Focused tests, 1440/390px checks and one successful build; no audit/dry-run or new framework. Final report ends with the exact owner-supplied message.
+
+## v0.7.0 invitation-only Auth and workspace boundary
+
+- The latest owner request authorizes Supabase Auth/minimal profiles foundation, superseding older no-auth/backend restrictions for this scope only. No operational sync/upload, public registration, passkeys or automatic Guest transfer. Follow docs/V0_7_0_AUTH_SETUP.md; hosted setup and live RLS/email checks must never be claimed from static files/mocks.
+- Main entry uses AuthApp; the reusable App core receives an explicit WorkspaceStore. Guest owns the established legacy key in place, without rewriting/copying/deleting records. Account reads/writes/backups must use its user-bound vault adapter, never the Guest key. Fresh Account has no samples or Guest records. Remount all views/forms on workspace switches.
+- Verify server identity and expiry before Account entry, use shouldCreateUser=false and server-disabled signup, local-scope sign-out, no privileged browser keys. Keep refresh/session and network/storage/auth concepts separate; explicit offline vault access is not server authentication. No raw provider errors, credential logging or arbitrary redirects.
+- Account persistence is AES-GCM/PBKDF2 with random salt/IV and a user-held passphrase; keys/secrets stay in memory. Lock on sign-out/switch/invalid sessions; asynchronous writes must recheck lock and stale snapshots. Never downgrade to plaintext or overwrite a damaged/unsupported vault. Success/closing forms occurs after persistence, with retryable failures. Full JSON exports remain explicitly unencrypted and reviewed Restore remains workspace-scoped.
+- Preserve business rules, Home layout, PWA cache/update safety, privacy/assets/disclaimers and Cloudflare architecture. Manual Git only; no commit/push/merge/deploy. Final report uses the supplied exact message, qualifying externally unverified configuration clearly.

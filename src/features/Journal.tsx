@@ -1,3 +1,4 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useRef, useState } from 'react';
 import { ArrowUpRight, Plus, BookOpen } from 'lucide-react';
 import { competencies, hkToday, id } from '../domain/model';
@@ -136,7 +137,7 @@ export function JournalEditor({
   db: Database;
   existing?: JournalRecord;
   onClose: () => void;
-  commit: (db: Database) => boolean;
+  commit: Commit;
 }) {
   const t = useT(),
     l = useLabel();
@@ -205,19 +206,21 @@ export function JournalEditor({
             e.preventDefault();
             if (saving.current) return;
             saving.current = true;
-            if (
+            afterSave(
               commit({
                 ...db,
                 journals: existing
                   ? db.journals.map((x) => (x.id === j.id ? j : x))
                   : [...db.journals, j],
-              })
-            )
-              onClose();
-            else {
-              saving.current = false;
-              setError(t('Could not save locally.', '未能在本機儲存。'));
-            }
+              }),
+              (ok) => {
+                if (ok) onClose();
+                else {
+                  saving.current = false;
+                  setError(t('Could not save locally.', '未能在本機儲存。'));
+                }
+              },
+            );
           }}
         >
           <Field

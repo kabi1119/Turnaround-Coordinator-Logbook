@@ -1,0 +1,193 @@
+﻿.auth-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: max(32px, env(safe-area-inset-top, 0px)) 20px max(32px, env(safe-area-inset-bottom, 0px));
+}
+.auth-card {
+  width: min(100%, 530px);
+  padding: clamp(24px, 5vw, 42px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+}
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 23px;
+  font-weight: 600;
+}
+.auth-brand img {
+  flex: 0 0 auto;
+}
+.auth-brand small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.auth-languages {
+  display: flex;
+  gap: 8px;
+  margin: 22px 0;
+  flex-wrap: wrap;
+}
+.auth-languages button {
+  padding: 8px 12px;
+}
+.auth-card h1 {
+  font-size: 28px;
+  line-height: 1.25;
+}
+.sign-in-form h2 {
+  font-size: 20px;
+  margin-top: 26px;
+}
+.auth-card p,
+.sign-in-form p {
+  line-height: 1.6;
+}
+.sign-in-form form,
+.vault-gate form {
+  display: grid;
+  gap: 14px;
+}
+.sign-in-form input,
+.vault-gate input {
+  min-width: 0;
+  font-size: 16px;
+}
+.auth-secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.passkey-soon {
+  width: 100%;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  background: #435357;
+  color: #e0e7e7;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.auth-email {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.auth-invitation {
+  font-size: 13px;
+  color: var(--muted);
+}
+.auth-guest,
+.offline-vault-option {
+  padding-top: 20px;
+  margin-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.auth-guest button {
+  width: 100%;
+}
+.auth-guest p {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+.vault-gate > button {
+  margin-top: 18px;
+}
+.account-control {
+  position: relative;
+}
+.account-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.account-menu {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(300px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 12px 35px #0003;
+}
+.account-menu p {
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+.account-menu small {
+  display: block;
+  color: var(--muted);
+}
+.account-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+}
+@media (max-width: 767px) {
+  .header-right {
+    flex-wrap: wrap;
+  }
+  .account-trigger {
+    padding: 8px 10px;
+  }
+  .account-trigger > span {
+    font-size: 12px;
+  }
+  .auth-page {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
+  }
+}
+
+.auth-card h1 {
+  margin: 24px 0 10px;
+}
+.auth-card h1:focus {
+  outline: none;
+}
+.sign-in-form h2 {
+  margin-bottom: 8px;
+}
+.passkey-soon:disabled {
+  background: #435357;
+  color: #e0e7e7;
+  opacity: 0.7;
+}
+@media (max-width: 767px) {
+  .header-right {
+    flex-wrap: nowrap;
+  }
+  .header-clock {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .account-trigger,
+  .account-control {
+    flex: 0 0 auto;
+  }
+  .account-control .account-trigger {
+    gap: 4px;
+    padding: 8px;
+  }
+}
+@media (max-width: 360px) {
+  .account-control .account-trigger > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}

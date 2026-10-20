@@ -99,3 +99,31 @@ The Vite build emits a copy of this file as THIRD_PARTY_NOTICES.txt alongside th
 ## Geographic data — Natural Earth (v0.4.5)
 
 Made with Natural Earth. The radar derives regional land/coastline vectors from Natural Earth 1:50m data, which its authors place in the public domain, including modification and electronic redistribution. Source commit, SHA-256 values, projection and simplification are recorded in docs/RADAR_GEOGRAPHY.md. Terms: https://www.naturalearthdata.com/about/terms-of-use/. This public-domain status applies only to that geographic data; it does not authorize original project code or any airline branding.
+
+## Supabase JavaScript client and core packages — MIT
+
+Added for invitation-only Email OTP and minimal profiles in v0.7.0: @supabase/supabase-js 2.118.0 and its installed Supabase core packages (auth-js, functions-js, postgrest-js, realtime-js, storage-js). Exact versions are in package-lock.json. The production build replaces the unused Auth SDK localhost default with an unconfigured.invalid placeholder; all actual clients require explicit HTTPS configuration. Original app licensing and all airline asset permissions remain unchanged.
+
+```text
+MIT License
+
+Copyright (c) 2020 Supabase
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

@@ -1,4 +1,14 @@
-# TCO Logbook v0.6.4 Pre-release status
+# TCO Logbook v0.7.0 Pre-release status
+
+## v0.7.0 Auth and workspace foundation — 2026-10-20 (Hong Kong)
+
+Baseline: clean main / 911d373 (v0.6.4). Added official pinned Supabase SDK, real Email OTP/invitation adapters, a first-visit welcome and genuinely disabled Passkey. Returning Guest/legacy users keep the exact legacy database with idempotent ownership metadata; Account starts empty in a separate authenticated-identity-bound encrypted vault. No Guest record copying/deletion or operational upload. Header keeps connection, local storage and account state separate; menu/Account Settings and explicit offline vault unlock are functional and bilingual.
+
+AES-256-GCM uses a random 16-byte salt, fresh 12-byte IV, 600,000-iteration PBKDF2-SHA256 and identity-bound AAD. No local vault secret/key is persisted. Server getUser/expiry checks precede Account entry, with session-change/expiry locking and cancellation fences. All saves and reviewed backups use the active workspace adapter; async encrypted writes must succeed before save/close/success and recheck lock/staleness. Existing data schema, IDs/links, operational rules and worker safety remain. Full JSON backup is still explicitly unencrypted; a forgotten vault passphrase has no recovery without a usable backup.
+
+Minimal profile SQL/RLS, disabled-signup reference config, invitation/OTP templates and rollback-only A/B/anonymous SQL tests are prepared. Production CSP adds only the configured HTTPS Auth/profile origin; strict bundle URL/secret checks remain. Guest works with missing configuration. **No Supabase project/env/SMTP/hosted signup policy/migration or live account was configured or tested here.** No hosted RLS/OTP security pass or complete release acceptance is claimed. Setup, threat boundaries and owner checks: docs/V0_7_0_AUTH_SETUP.md. Verification: one full regression passed **446 tests / 39 files**. Subsequent scoped security/auth checks passed **33 tests / 6 files**, including two added private-Supabase-key detection cases; no second unrelated full run. Lint, format, the final production build and static artifact checks passed; the build was rechecked after the final offline-session isolation fix. Install-time dependency audit reported zero vulnerabilities. The SDK increases the main JS chunk to 738.45 kB / 229.34 kB gzip, retaining Vite's non-failing size advisory.
+
+Native Edge 1440/390px screenshots verified the welcome, honest missing configuration, gray disabled Passkey, Guest and simulated-Account controls, long email wrapping, menu Escape/focus, light/dark and no overflow. Desktop header stays 88px; final phone Account and Settings share the same row with the existing 177.48px header and horizontal connectivity indicators. The simulated provider is not a live Supabase test. Production-output Guest smoke confirmed no write before mandatory review, five records after a reviewed fictional Draft save, a controlled Service Worker reload, and an offline reload retaining identical database bytes and Draft count. Offline unfinished navigation returned exactly that Draft. Explicit local unlock also survives stale-provider SIGNED_OUT notifications without being mislabeled as server authentication. No observed startup exceptions or operational upload; only local/static/data URLs were requested in the unconfigured build. All checks used isolated synthetic browser data. No physical iPhone, live RLS/OTP/SMTP or deployment verification. Manual release only.
 
 ## v0.6.4 Home insights and unfinished work — 2026-10-20 (Hong Kong)
 
@@ -360,6 +370,8 @@ The workflow table below continues to describe the preserved v0.1 functionality.
 - Browser visual checks / actual animation frames / 375–1920px overflow measurements / iPhone / real-logo screenshots — **not performed** because no browser surface is available. See the exact [manual matrix](docs/V0_1_1_VISUAL_ACCEPTANCE.md). Zero airline images are bundled pending permission evidence, rather than implying a completed logo licence audit approved them.
 
 ## Workflow coverage
+
+Historical v0.1 matrix below: current release sections above supersede its Auth, PWA, persistence and import/deployment boundaries. It is not a v0.7.0 acceptance report.
 
 `Implemented` means functional local UI and state; `Demo-only` means deliberately limited simulation; `Deferred` is outside v0.1.
 

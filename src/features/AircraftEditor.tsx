@@ -1,3 +1,4 @@
+import { afterSave, type Commit } from '../workspaces/store';
 import { useRef, useState } from 'react';
 import { Plus, Trash2, ShieldCheck } from 'lucide-react';
 import type { Aircraft, Database, Disruption, Leg } from '../domain/model';
@@ -49,7 +50,7 @@ export interface EditorProps {
   existing?: Aircraft;
   dutyId?: string;
   onClose: () => void;
-  commit: (db: Database) => boolean;
+  commit: Commit;
   onSaved: () => void;
 }
 export default function AircraftEditor({
@@ -282,25 +283,27 @@ export default function AircraftEditor({
         },
       ],
     };
-    if (!commit(saveAircraft(db, record))) {
-      saving.current = false;
-      setError(t('Storage is unavailable. Nothing was saved.', '儲存空間無法使用，尚未儲存。'));
-      return;
-    }
-    onSaved();
-    if (review === 'next') {
-      setA({
-        ...emptyAircraft(a.date, record.dutyId),
-        handling: '',
-        role: '',
-        actualHandling: false,
-      });
-      setAttempted(false);
-      setPerformed(false);
-      setReview(null);
-      setError('');
-      saving.current = false;
-    } else onClose();
+    afterSave(commit(saveAircraft(db, record)), (ok) => {
+      if (!ok) {
+        saving.current = false;
+        setError(t('Storage is unavailable. Nothing was saved.', '儲存空間無法使用，尚未儲存。'));
+        return;
+      }
+      onSaved();
+      if (review === 'next') {
+        setA({
+          ...emptyAircraft(a.date, record.dutyId),
+          handling: '',
+          role: '',
+          actualHandling: false,
+        });
+        setAttempted(false);
+        setPerformed(false);
+        setReview(null);
+        setError('');
+        saving.current = false;
+      } else onClose();
+    });
   }
   function validLink() {
     // Preserve historical associations on edits; never create a new leave/trash/orphan link.

@@ -29,7 +29,13 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.4 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.7.0 Pre-release** keeps operational records browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.7.0 Account foundation and Guest workspaces
+
+First-time visitors can choose unrestricted Guest access or invitation-only Supabase Email OTP. Returning Guest/legacy records retain their original storage bytes and relationships. Account workspaces start empty, use a separate local passphrase-encrypted AES-GCM vault and never import/upload Guest records automatically. Online, Device only and Account status describe separate concepts. Passkey remains disabled.
+
+**Owner setup is required; live authentication/RLS has not been verified by this development session.** See [Supabase/SMTP/RLS setup and acceptance](docs/V0_7_0_AUTH_SETUP.md). Without public configuration, the app honestly disables sign-in and preserves Guest. Account records have no cloud copy; losing the local vault passphrase may make them unrecoverable without a usable backup. Existing full JSON exports are explicitly unencrypted. The app remains a pre-release, source-available personal project; original code is not open source. Cloud synchronization is deferred.
 
 ## v0.6.4 Home insights and unfinished records
 
@@ -257,11 +263,11 @@ Run the local prototype with the instructions below. The [v0.1.2 acceptance chec
 
 ## Technology Stack
 
-React 19, TypeScript 5.9, Vite 7, plain CSS/design tokens, Lucide React icons and browser localStorage. Tests use Vitest 4 with jsdom and React Testing Library. ESLint and Prettier provide code checks. There is no backend framework or external data service.
+React 19, TypeScript 5.9, Vite 7, plain CSS/design tokens, Lucide React icons and browser localStorage. Tests use Vitest 4 with jsdom and React Testing Library. ESLint and Prettier provide code checks. There is no custom application backend. v0.7.0 uses Supabase Auth and minimal profile REST; operational records remain device-local.
 
 ## Getting Started
 
-Use **Node.js 24 LTS**, npm, Git and a modern Edge/Chrome browser. This preparation was tested with Node.js 24.20.0. No environment variables, accounts or database setup are needed.
+Use **Node.js 24 LTS**, npm, Git and a modern Edge/Chrome browser. This preparation was tested with Node.js 24.20.0. Guest usage needs no environment variables, accounts or database setup. Invitation-only Account access requires the owner setup below.
 
 For a new checkout, once you have repository access:
 
@@ -320,8 +326,8 @@ Open the Windows LAN address printed by Vite on the phone; allow private-network
 - **v0.2.0 Pre-release:** Refined branding and footer metadata, local SVG East Asia radar map, compact fictional records, quieter interface and simpler batch scheduling acknowledgement.
 - **v0.2.0c (documentation only):** Reworked owner statements into my first-person voice in English and Traditional Chinese, and corrected the recorded logo download sources. Application functionality remains at v0.2.0.
 - **v0.2.0d:** Fixed the LAN HTTP initialization crash with native UUID generation or a cryptographically random RFC 4122 v4 fallback. No schema change, record ID regeneration or automatic storage reset. The custom release suffix is shown in the UI/docs; the npm package retains its numeric 0.2.0 version without introducing a different SemVer encoding.
-- **Not implemented:** Production backend, real authentication/passkeys, cloud synchronization, encrypted backup, merge import, Service Worker/offline reload and validated iOS PWA installation.
-- **Verification:** Local Edge viewport/layout and new workflow checks completed; actual iPhone/Safari, physical touch/keyboard, download and print acceptance remains pending. No deployment has been performed.
+- **Current boundaries:** No operational backend/sync, passkeys, encrypted cloud backup or merge import. Auth/profile infrastructure is prepared in v0.7.0 and needs hosted owner configuration/live validation. Static offline support exists; actual iPhone acceptance remains separate.
+- **Verification:** Local automated and Edge viewport checks are recorded in prototype status. Hosted Auth/RLS/SMTP and actual iPhone/Safari acceptance remain pending for v0.7.0; this session performs no deployment.
 
 The approved PRD describes a larger future product. It does not mean all production features are complete. See [prototype status](PROTOTYPE_STATUS.md), [manual acceptance](docs/MANUAL_ACCEPTANCE.md) and [publication preparation](docs/PUBLICATION_PREPARATION.md).
 
@@ -329,7 +335,7 @@ The approved PRD describes a larger future product. It does not mean all product
 
 I only use fictional data in public demonstrations. The v0.2.0 initial sample set contains **3 duties, 4 Confirmed aircraft assignments and 2 journal entries**. The former 18- and 24-assignment fixtures are retained solely for historical recognition and compatibility tests. The sample size does not limit personal records, and existing stored records are not automatically replaced.
 
-Changes persist in this browser origin's **unencrypted localStorage**, key `tco-logbook-demo-v0.1`. Local Storage is not secure production cloud storage, authentication, access control or backup. Browser clearing, private browsing and storage failures can lose data; other browsers, devices, ports and origins have separate data. Multi-tab conflict handling is not implemented.
+Guest changes remain in this origin's **unencrypted localStorage**, key `tco-logbook-demo-v0.1`. Account operational payloads use a separate passphrase-encrypted local vault; the Auth SDK session uses normal browser-SPA session storage and is not protected by that vault. Only sign-in credentials and a minimal profile ID go to Supabase, never operational records. Browser clearing, private browsing, lost vault secrets and storage failures can lose data. Origins/devices remain separate; stale-write guards are not cross-tab transactions. See the account setup/recovery guide above.
 
 **I do not use this public prototype to collect confidential workplace records, employee/passenger information, internal screenshots or proprietary procedures, and I ask users not to enter them.** Any actual workplace use would require appropriate authorization; the privacy switches do not grant it.
 
@@ -359,9 +365,9 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 ## Development Roadmap
 
-**My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, real authentication, durable backend storage, offline synchronization/conflicts, public aircraft lookup, validated import/restore, encrypted backups and production/iPhone PWA acceptance. These are future phases described by the approved PRD, not delivered v0.2.0 functionality.
+**My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, passkeys, durable operational cloud storage, record synchronization/conflicts, public aircraft lookup, encrypted cloud backups and production/iPhone PWA acceptance. v0.7.0 prepares account authentication, with hosted configuration/live validation still required.
 
-I am keeping v0.2.0 as a local frontend pre-release. OCR/Excel roster imports, HR integrations, cloud services and production features remain deferred.
+The current v0.7.0 remains a pre-release with device-local operational data. OCR/Excel roster imports, HR integrations and production operational services remain deferred.
 
 ## Language Precedence
 
@@ -400,7 +406,13 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.4.3 Pre-release** 在本機執行，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.7.0 Pre-release** 將操作紀錄保留於本機，使用虛構樣本。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+
+## v0.7.0 帳戶基礎與訪客工作區
+
+首次使用可選擇免登入 Guest 或邀請制 Supabase 電郵 OTP；再次開啟 Guest 不會重複提示，舊紀錄以原有儲存鍵保留。Account 初始為空白，使用獨立的 AES-GCM 本機加密資料庫及本機密語，不會自動匯入或上傳 Guest 紀錄。連線、僅限本機與帳戶狀態分開呈現；Passkey 真正停用。
+
+**真實 Supabase／SMTP／邀請限制／RLS 尚須擁有人設定與驗證。** 沒有設定時登入按鈕會明確停用，Guest 照常可用。詳見[設定及驗收指南](docs/V0_7_0_AUTH_SETUP.md)。帳戶紀錄沒有雲端副本，遺失密語且沒有可用備份可能無法復原；完整 JSON 匯出仍未加密。程式維持 source-available、非開源個人預發佈項目，雲端同步未推出。
 
 ## 關於本項目
 
@@ -562,7 +574,7 @@ Header 透過 `Asia/Hong_Kong` 顯示香港日期、星期及 HH:mm:ss HKT。系
 
 ## 技術架構
 
-React 19、TypeScript 5.9、Vite 7、原生 CSS／設計 Token、Lucide React 圖示，以及瀏覽器 localStorage。測試使用 Vitest 4、jsdom 及 React Testing Library。ESLint 和 Prettier 用於程式碼檢查。項目沒有後端框架或外部資料服務。
+React 19、TypeScript 5.9、Vite 7、原生 CSS／設計 Token、Lucide React 圖示，以及瀏覽器 localStorage。測試使用 Vitest 4、jsdom 及 React Testing Library。ESLint 和 Prettier 用於程式碼檢查。項目沒有自建應用程式後端；v0.7.0 使用 Supabase Auth 及最小 profile REST，操作紀錄仍留在裝置。
 
 ## 開始使用
 
@@ -625,7 +637,7 @@ npm.cmd run dev -- --host 0.0.0.0
 - **v0.2.0 Pre-release：** 更新品牌／頁尾資料、本機 SVG 東亞雷達地圖、精簡虛構樣本、簡化介面及批次更表操作。
 - **v0.2.0c（僅文件更新）：** 我將中英文 README 涉及項目決策及責任的敘述改成第一人稱，並更正 Logo 下載來源紀錄；App 功能仍維持 v0.2.0。
 - **v0.2.0d：** 修正 LAN HTTP 初始化崩潰，優先使用原生 UUID，否則以密碼學安全亂數產生 RFC 4122 v4 UUID。不更改 Schema、重新產生既有 ID 或自動重設儲存資料。介面及文件使用自訂版本後綴；npm 套件保留數字版本 0.2.0，不另設 SemVer 編碼。
-- **尚未實作：** 正式後端、真實身份驗證／Passkey、雲端同步、加密備份、合併匯入、Service Worker／離線重新載入，以及經驗證的 iOS PWA 安裝。
+- **目前界線：** 未提供操作資料雲端後端／同步、Passkey、加密雲端備份或合併匯入。v0.7.0 帳戶／profile 基礎已備妥，仍須設定及實測；已有靜態離線支援，實體 iPhone 驗收另行進行。
 - **驗證：** 已完成本機 Edge 不同視窗尺寸／排版及新功能流程檢查；實體 iPhone／Safari、實際觸控／鍵盤、下載及列印驗收仍有待完成。項目尚未部署。
 
 已批准的 PRD 描述的是更完整的未來產品，並不代表所有正式版功能已經完成。詳見 [原型狀態](PROTOTYPE_STATUS.md)、[人工驗收](docs/MANUAL_ACCEPTANCE.md) 及 [公開準備](docs/PUBLICATION_PREPARATION.md)。
@@ -634,7 +646,7 @@ npm.cmd run dev -- --host 0.0.0.0
 
 我在公開示範中只使用虛構資料。v0.2.0 初始樣本包含 **3 個 Duty、4 筆 Confirmed Aircraft 任務及 2 篇 Journal**。舊版 18／24 筆任務資料僅保留作歷史識別及相容性測試。樣本數量並非個人紀錄的上限；瀏覽器既有資料不會自動被替換。
 
-修改內容儲存在此瀏覽器來源（origin）的**未加密 localStorage**，Key 為 `tco-logbook-demo-v0.1`。Local Storage 並非安全的正式雲端儲存、身份驗證、存取控制或備份。清除瀏覽器資料、私人瀏覽模式或儲存失敗都可能導致資料遺失；不同瀏覽器、裝置、Port 及來源各自使用獨立資料。尚未實作多分頁衝突處理。
+Guest 仍使用此來源的**未加密 localStorage**，Key 為 `tco-logbook-demo-v0.1`；Account 操作資料則使用獨立的本機密語加密資料庫。Auth SDK 會話使用一般瀏覽器 SPA 儲存機制，不受操作資料 vault 加密保護。只有登入資料與最小 profile ID 會傳送至 Supabase，不會上傳操作紀錄。清除資料、遺失密語或儲存失敗都可能令紀錄遺失；各裝置及來源互相獨立。已有舊快照寫入保護，並非跨分頁交易。
 
 **我不會使用這個公開原型收集機密工作紀錄、員工／乘客資料、內部截圖或專有程序，也請使用者不要輸入此類資料。** 任何真實工作用途均須先取得適當授權；應用程式的私隱開關並不構成相關授權。
 
@@ -664,9 +676,9 @@ npm.cmd run dev -- --host 0.0.0.0
 
 ## 開發路線圖
 
-**我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、真實身份驗證、持久後端儲存、離線同步與衝突處理、公開航機資料查詢、經驗證的匯入／還原、加密備份，以及正式版／iPhone PWA 驗收。這些是已批准 PRD 所描述的未來階段，並非已交付的 v0.2.0 功能。
+**我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、Passkey、操作資料雲端儲存與同步／衝突處理、公開航機查詢、加密雲端備份，以及正式版／實體 iPhone 驗收。v0.7.0 已準備帳戶登入基礎，但仍須設定及驗證線上服務。
 
-我暫時將 v0.2.0 維持為本機前端預發佈版；OCR／Excel 更表匯入、人力資源系統整合、雲端服務及正式生產功能均繼續延後。
+目前 v0.7.0 維持操作資料只存裝置的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及正式操作雲端服務繼續延後。
 
 ## 語言版本效力
 

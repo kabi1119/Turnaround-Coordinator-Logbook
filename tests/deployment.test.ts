@@ -94,4 +94,21 @@ describe('static deployment boundary', () => {
     expect(result.stderr).toContain('Possible credential');
     expect(result.stderr).not.toContain(credential);
   });
+  it.each(['new-secret', 'service-role-jwt'])(
+    'blocks private Supabase credential %s without printing it',
+    (kind) => {
+      const root = fixture();
+      const credential =
+        kind === 'new-secret'
+          ? 'sb_secret_' + 'x'.repeat(30)
+          : 'eyJhbGciOiJIUzI1NiJ9.' +
+            Buffer.from(JSON.stringify({ role: 'service_role' })).toString('base64url') +
+            '.synthetic';
+      writeFileSync(join(root, 'dist/assets/app.js'), credential);
+      const result = check(root);
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain('Possible private Supabase credential');
+      expect(result.stderr).not.toContain(credential);
+    },
+  );
 });
