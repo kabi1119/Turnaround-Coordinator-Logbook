@@ -1,4 +1,16 @@
-# TCO Logbook v0.6.3b Pre-release status
+# TCO Logbook v0.6.4 Pre-release status
+
+## v0.6.4 Home insights and unfinished work — 2026-10-20 (Hong Kong)
+
+Baseline: clean main / 23b3ff1 (v0.6.3b). Home now reuses lifetime Handled eligibility (Confirmed Primary/Supporting, once per assignment) and derives airline/aircraft frequency from today plus 29 prior HK operational dates, excluding future/Draft/Pending/Training. Canonical airline code and variant/type keys keep identities distinct; ties use count, latest date and ascending key. Unknown/missing identities return No data. Complete Statistics calculations remain unchanged.
+
+Unfinished counts and optional Logbook lifecycle filters reuse the existing derived Pending presentation for future Drafts. Home shortcuts reset conflicting filters, open Timeline and preserve all saved records/IDs/links. Drafts without dates and retained references to trashed/missing Duties remain accessible. No schema/key migration, data writes/reseed, sample blending, dependency changes or worker/backup/Cloudflare/header/iOS changes.
+
+One responsive Home instance keeps Statistics/Unfinished/Reflection on the left and Recent Aircraft on the right at >=1200px. Mobile order is Statistics, Unfinished, Recent Aircraft, Reflection. Four desktop rows use equal fractional tracks and a lifecycle-scoped ResizeObserver calibration for subpixel equality; it measures natural content again on content/size changes and cleans up queued work/listeners. Sparse lists/mobile do not receive matched heights. Existing alternating teal surfaces remain.
+
+Verification: **77 targeted tests / 8 files passed** (including 8 new v0.6.4 cases), lint, format and one production build passed. Native Edge at 1440/390px confirmed matching desktop heading/card tops, one summary card, correct mobile order and no overflow. Four desktop rows measured exactly 218.625px each; a much longer wrapped title expanded every row equally to 321.375px without clipping. Normal column bottoms differed by only 0.016px including the existing footer note. Zero/one-record checks retained natural list sizes (no matched-height stretching); alternating primary/raised backgrounds remain intact. Actual desktop/mobile screenshots were inspected.
+
+Native production-output checks confirmed v0.6.4 startup, aircraft-detail and keyboard reflection dialogs, keyboard Statistics navigation and offline unfinished navigation, with no observed startup exceptions. Isolated synthetic-profile checks showed Draft/Pending counts 01/01, combined history containing only those two entries, and complete history retaining all six records. Automated integration also verifies reset of conflicting query/calendar state, undated and trashed-parent drafts, unchanged full Statistics and unchanged storage bytes. No genuine browser data was opened or altered. No dependencies/audit/dry-run, new framework, staging/commit/push/deployment or physical iPhone test. User acceptance: check the three Home insights, resume Draft/Pending through the new link, then inspect desktop four-row and mobile card ordering.
 
 ## v0.6.3b Home card palette — 2026-10-20 (Hong Kong)
 

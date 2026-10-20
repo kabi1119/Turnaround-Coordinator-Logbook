@@ -29,7 +29,13 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.3b Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.6.4 Pre-release** remains browser-local and is prepared for static HTTPS hosting with fictional samples. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.6.4 Home insights and unfinished records
+
+Home now shows lifetime qualifying handled assignments and the most frequent airline and aircraft from today plus the preceding 29 Hong Kong calendar days. Confirmed Primary/Supporting assignments count once; Draft, Pending and Training/Observation are excluded. Frequency ties use the latest handling date, then canonical code/type. Unknown identities show No data rather than an invented winner.
+
+Unfinished Records shows live Draft/Pending counts and opens the existing Logbook with a combined status filter; View all stats and View aircraft history open their existing pages. Pending remains a future-dated Draft presentation, not a new stored status. Desktop keeps one summary card above unfinished work and reflection, beside four equal-height Recent Aircraft rows. Mobile uses natural heights and places reflection after Recent Aircraft. Existing data, detailed Statistics, offline/backup behavior and the alternating teal palette remain unchanged.
 
 ## v0.6.3b Home card palette
 

@@ -398,7 +398,7 @@ describe('v0.4.2 Draft / Pending / explicit Confirmed lifecycle', () => {
     const bytes = JSON.stringify(db);
     localStorage.setItem(STORAGE_KEY, bytes);
     const view = render(<App />);
-    expect(view.container.querySelector('.metrics strong')).toHaveTextContent('04');
+    expect(view.container.querySelector('.home-metrics strong')).toHaveTextContent('03');
     fireEvent.click(view.container.querySelector('.aircraft-card')!);
     click('Edit Handling Record');
     change('Arrival Flight Number *', '450');
@@ -417,7 +417,7 @@ describe('v0.4.2 Draft / Pending / explicit Confirmed lifecycle', () => {
     });
     expect(saved.aircraft).toHaveLength(5);
     expect(stats(saved.aircraft).logged).toBe(5);
-    expect(view.container.querySelector('.metrics strong')).toHaveTextContent('05');
+    expect(view.container.querySelector('.home-metrics strong')).toHaveTextContent('04');
     expect(saved.journals).toEqual(db.journals);
   });
   it('Loads legacy Confirmed records byte-for-byte and flags inconsistencies without rewriting their state', () => {

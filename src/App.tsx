@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Plane,
   Home,
@@ -23,10 +23,12 @@ import { LanguageContext, useLabel, useT } from './i18n';
 import { readDatabase, persistDatabase, STORAGE_KEY } from './lib/storage';
 import OfflineSetup from './pwa/OfflineSetup';
 import ConnectivityStatus from './pwa/ConnectivityStatus';
-import { AircraftCard, Badge, Confirm, Empty, Metric, Modal, SectionTitle } from './components/ui';
+import { AircraftCard, Badge, Confirm, Empty, Modal, SectionTitle } from './components/ui';
 import AircraftEditor from './features/AircraftEditor';
 import DutyEditor from './features/DutyEditor';
-import Logbook from './features/Logbook';
+import Logbook, { type LogbookView } from './features/Logbook';
+import HomeInsights from './features/HomeInsights';
+import { useRecentRowHeights } from './lib/useRecentRowHeights';
 import Statistics from './features/Statistics';
 import { JournalEditor, JournalPage } from './features/Journal';
 import Settings, { ReportPreview } from './features/Settings';
@@ -90,6 +92,8 @@ function Workspace({
       kind: 'aircraftTrash' | 'dutyTrash' | 'aircraftRestore';
       id: string;
     } | null>(null);
+  const homeLayout = useRecentRowHeights(page === 'home', db);
+  const [logbookView, setLogbookView] = useState<LogbookView>({ mode: 'timeline', filters: {} });
   const [visited, setVisited] = useState<Page[]>(['home']);
   const positions = useRef<Partial<Record<Page, number>>>({});
   const storedSnapshot = useRef(snapshot);
@@ -157,10 +161,9 @@ function Workspace({
     setToast(t('Saved on this device', '已儲存在此裝置'));
     return true;
   }
-  const s = useMemo(() => stats(db.aircraft, db.duties), [db.aircraft, db.duties]),
-    active = db.aircraft
-      .filter((a) => a.status !== 'Trashed')
-      .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
+  const active = db.aircraft
+    .filter((a) => a.status !== 'Trashed')
+    .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
   const openAircraft = (a: Aircraft) => setOverlay({ type: 'detail', id: a.id });
   const detail =
     overlay?.type === 'detail' ? db.aircraft.find((a) => a.id === overlay.id) : undefined;
@@ -181,6 +184,11 @@ function Workspace({
     }
     setOverlay(null);
     changePage(key);
+  }
+  function openLogbook(unfinished = false) {
+    setLogbookView({ mode: 'timeline', filters: unfinished ? { lifecycle: 'unfinished' } : {} });
+    positions.current.logbook = 0;
+    navigate('logbook');
   }
   return (
     <div className="app-shell">
@@ -255,42 +263,28 @@ function Workspace({
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
               onCalendar={() => setCalendarOpen(true)}
             />
-            <div className="home-operations">
-              <div className="home-statistics">
-                <SectionTitle title={t('Handling Statistics', '處理統計')} />
-                <section
-                  className="metrics home-metrics surface-dark"
-                  aria-label={t('Handling summary', '處理紀錄摘要')}
-                >
-                  <Metric
-                    value={s.logged}
-                    label={t('Total Aircraft Logged', '航機記錄總數')}
-                    detail={t('Every confirmed assignment', '每項已確認的處理紀錄')}
-                  />
-                  <Metric
-                    value={s.handled}
-                    label={t('Total Aircraft Handled', '航機處理總數')}
-                    detail={t('Primary + Supporting', '主要協調 + 支援協調')}
-                  />
-                  <Metric
-                    value={s.primary}
-                    label={t('Primary Coordinator', '主要協調員')}
-                    detail={t('A subset of Logged & Handled', '包含於記錄及處理總數內')}
-                  />
-                </section>
-              </div>
+            <div
+              className="home-operations"
+              ref={homeLayout}
+              data-four-records={active.length >= 4}
+            >
+              <HomeInsights
+                records={db.aircraft}
+                onStats={() => navigate('statistics')}
+                onUnfinished={() => openLogbook(true)}
+              />
               <section className="home-recent">
                 <SectionTitle
                   title={t('Recent Aircraft', '最近航機紀錄')}
                   action={
-                    <button className="text-button" onClick={() => navigate('logbook')}>
-                      {t('View all', '查看全部')}
+                    <button className="text-button" onClick={() => openLogbook()}>
+                      {t('View aircraft history', '查看航機歷史')}
                       <ArrowRight size={16} />
                     </button>
                   }
                 />
                 <div className="panel records-panel surface-dark">
-                  {active.slice(0, 5).map((a) => (
+                  {active.slice(0, 4).map((a) => (
                     <AircraftCard
                       key={a.id}
                       a={a}
@@ -343,6 +337,8 @@ function Workspace({
           >
             <Logbook
               db={db}
+              view={logbookView}
+              onViewChange={setLogbookView}
               onAircraft={openAircraft}
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
               onNew={() => setOverlay({ type: 'aircraft' })}
@@ -393,7 +389,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.6.3b {t('Pre-release', '預發佈')} ·{' '}
+            v0.6.4 {t('Pre-release', '預發佈')} ·{' '}
             {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
           </span>
         </footer>
@@ -416,7 +412,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.6.3b {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.6.4 {t('Pre-release', '預發佈')}</span>
           <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

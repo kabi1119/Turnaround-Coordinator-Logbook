@@ -1,21 +1,28 @@
 import { useState } from 'react';
 import DutyCalendar from '../components/DutyCalendar';
 import { hkToday } from '../domain/model';
+import { matchesHandlingScope, type HandlingScope } from '../domain/homeSummary';
+import { useCalendarNow } from '../lib/useCalendarNow';
 import { dutyOptionText } from '../domain/roster';
 import { CalendarDays, List, ChevronRight, Plus } from 'lucide-react';
 import type { Aircraft, Database, Duty, Filters } from '../domain/model';
 import { filterAircraft, timelineDate } from '../domain/selectors';
-import { AircraftCard, Badge, Empty } from '../components/ui';
+import { AircraftCard, Badge, Empty, Select } from '../components/ui';
 import RecordFilters from '../components/RecordFilters';
 import { useLabel, useT } from '../i18n';
+export type LogbookView = { mode: string; filters: Filters & { lifecycle?: HandlingScope } };
 export default function Logbook({
   db,
   onAircraft,
   onDuty,
   onNew,
   initialMode = 'timeline',
+  view,
+  onViewChange,
 }: {
   initialMode?: string;
+  view?: LogbookView;
+  onViewChange?: (view: LogbookView) => void;
   db: Database;
   onAircraft: (a: Aircraft) => void;
   onDuty: (d: Duty) => void;
@@ -23,12 +30,17 @@ export default function Logbook({
 }) {
   const t = useT(),
     l = useLabel();
-  const [mode, setMode] = useState(initialMode),
-    [filters, setFilters] = useState<Filters>({}),
-    [month, setMonth] = useState(hkToday().slice(0, 7)),
+  const [localView, setLocalView] = useState<LogbookView>({ mode: initialMode, filters: {} });
+  const { mode, filters } = view || localView;
+  const updateView = (patch: Partial<LogbookView>) =>
+    (onViewChange || setLocalView)({ mode, filters, ...patch });
+  const setFilters = (filters: LogbookView['filters']) => updateView({ filters });
+  const setMode = (mode: string) => updateView({ mode });
+  const today = hkToday(new Date(useCalendarNow()));
+  const [month, setMonth] = useState(hkToday().slice(0, 7)),
     [day, setDay] = useState(hkToday());
   const rows = filterAircraft(
-    db.aircraft.filter((a) => a.status !== 'Trashed'),
+    db.aircraft.filter((a) => matchesHandlingScope(a, filters.lifecycle, today)),
     filters,
     db.settings.privacy,
   ).sort((a, b) => b.date.localeCompare(a.date));
@@ -99,7 +111,7 @@ export default function Logbook({
           </section>
         ))}
       {rows
-        .filter((a) => !a.dutyId && a.date === date)
+        .filter((a) => !dutyRows.some((d) => d.id === a.dutyId) && a.date === date)
         .map((a) => (
           <AircraftCard
             key={a.id}
@@ -133,6 +145,28 @@ export default function Logbook({
         privacy={db.settings.privacy}
         value={filters}
         onChange={setFilters}
+        extra={
+          <Select
+            label={t('Handling record status', '航機處理紀錄狀態')}
+            value={filters.lifecycle || ''}
+            options={[
+              { value: '', label: t('All records', '全部紀錄') },
+              {
+                value: 'unfinished',
+                label: t('Unfinished · Drafts + Pending', '未完成 · 草稿及待處理'),
+              },
+              { value: 'Draft', label: t('Drafts', '草稿') },
+              { value: 'Pending', label: t('Pending', '待處理') },
+              { value: 'Confirmed', label: t('Confirmed', '已確認') },
+            ]}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                lifecycle: (e.target.value || undefined) as HandlingScope | undefined,
+              })
+            }
+          />
+        }
       />
       <div className="section-title">
         <div className="segmented">
@@ -152,6 +186,7 @@ export default function Logbook({
           </button>
         </div>
         <span className="muted">
+          {filters.lifecycle === 'unfinished' && <>{t('Unfinished Records', '未完成紀錄')} · </>}
           {rows.length} {t('records', '項紀錄')}
         </span>
       </div>

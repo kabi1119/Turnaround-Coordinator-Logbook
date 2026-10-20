@@ -41,9 +41,9 @@ it('orders Home hero, Upcoming Shift, three metrics and secondary content withou
   ])
     expect(before.compareDocumentPosition(after) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   expect([...metrics.querySelectorAll('strong')].map((el) => el.textContent)).toEqual([
-    '04',
     '03',
-    '02',
+    'Cathay Pacific (CX)',
+    'A321neo',
   ]);
   fireEvent.click(screen.getByRole('button', { name: 'View Duty' }));
   expect(screen.getByRole('dialog', { name: 'Duty · 2026-11-05' })).toBeInTheDocument();

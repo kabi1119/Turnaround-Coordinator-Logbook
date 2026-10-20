@@ -2,16 +2,19 @@ import type { Aircraft, Filters, Privacy } from '../domain/model';
 import { flightStatuses, handlingTypes, roles } from '../domain/model';
 import { Field, Select } from './ui';
 import { useT } from '../i18n';
+import type { ReactNode } from 'react';
 export default function RecordFilters({
   records,
   privacy,
   value,
   onChange,
+  extra,
 }: {
   records: Aircraft[];
   privacy: Privacy;
   value: Filters;
   onChange: (f: Filters) => void;
+  extra?: ReactNode;
 }) {
   const t = useT();
   const set = (k: keyof Filters, v: string) => onChange({ ...value, [k]: v });
@@ -43,6 +46,7 @@ export default function RecordFilters({
           </span>
         </summary>
         <div className="filters">
+          {extra}
           <Select
             label={t('Period', '期間')}
             value=""

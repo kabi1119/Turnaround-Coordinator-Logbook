@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.6.3b Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.6.4 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.6.3b Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.6.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -191,3 +191,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 - Reuse surface-dark for the Home reflection and Recent Aircraft panel, plus Upcoming Shift empty/next panels, matching the existing shift/summary primary tone. Preserve layout, wording and interactions. Scope odd/even dark-surface/dark-raised backgrounds and dark-hover/focus-visible to .home-recent rows only; preserve logo light plates and visible focus outlines. No new color shades or global striping.
 - Keep all Header/safe-area/status, models/calculations/records, offline/backup/worker, PWA icons/metadata and Cloudflare logic unchanged. UI v0.6.3b retains numeric npm 0.6.3. Manual release only, unstaged local changes; final report ends with the supplied exact message. One build, focused tests and desktop/mobile visual checks only.
+
+## v0.6.4 Home insights and unfinished work
+
+- Home lifetime count reuses established Confirmed Primary/Supporting Handled eligibility. Thirty-day rankings use today plus 29 preceding HK operational dates, exclude future records and use canonical airline/variant identities. Tie-break: frequency, latest operational date, then canonical key ascending. Missing identities never invent a winner. Keep comprehensive Statistics unchanged.
+- Draft/Pending counts and Logbook status scopes reuse handlingDisplayStatus; Pending remains derived from a future-dated Draft, with no new stored state/schema. Home shortcuts reset conflicting filters and open the existing timeline. Do not blend samples with another dataset or write records to compute summaries.
+- Keep one combined card, unfinished work then reflection on the desktop left; mobile places reflection after Recent Aircraft. Four desktop Recent Aircraft rows use content-driven Grid plus scoped resize calibration to remove fractional rounding; sparse lists/mobile retain natural height. Preserve palette, header/safe-area, worker/storage/backup and Cloudflare behavior.
+- Manual Git/deployment only; leave all changes unstaged. Focused tests, 1440/390px checks and one successful build; no audit/dry-run or new framework. Final report ends with the exact owner-supplied message.

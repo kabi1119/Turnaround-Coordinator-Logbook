@@ -1,12 +1,13 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { readFileSync } from 'node:fs';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import App from '../src/App';
 import { seedDatabase } from '../src/data/seed';
 import { STORAGE_KEY } from '../src/lib/storage';
 
 it('keeps A above the shared operational grid with one summary, Recent Aircraft and reflection', () => {
+  vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-10-20T12:00:00+08:00'));
   const bytes = JSON.stringify(seedDatabase());
   localStorage.setItem(STORAGE_KEY, bytes);
   const { container } = render(<App />);
@@ -16,6 +17,7 @@ it('keeps A above the shared operational grid with one summary, Recent Aircraft 
   const recent = home.querySelector('.home-recent')!;
   expect([...operations.children]).toEqual([
     home.querySelector('.home-statistics'),
+    home.querySelector('.home-unfinished'),
     recent,
     home.querySelector('.home-secondary'),
   ]);
@@ -25,14 +27,15 @@ it('keeps A above the shared operational grid with one summary, Recent Aircraft 
   ).toBeInTheDocument();
   expect(stats.querySelectorAll('.metric')).toHaveLength(3);
   expect([...stats.querySelectorAll('strong')].map((el) => el.textContent)).toEqual([
-    '04',
     '03',
-    '02',
+    'Cathay Pacific (CX)',
+    'A321neo',
   ]);
   const order = [
     home.querySelector('.home-intro')!,
     home.querySelector('.upcoming-shift')!,
     stats,
+    home.querySelector('.home-unfinished')!,
     recent,
     home.querySelector('.home-secondary')!,
   ];
@@ -49,7 +52,7 @@ it('keeps A above the shared operational grid with one summary, Recent Aircraft 
 it('retains keyboard View All navigation and the secondary Journal action', async () => {
   const { container } = render(<App />);
   const recent = container.querySelector('.home-recent') as HTMLElement;
-  within(recent).getByRole('button', { name: 'View all' }).focus();
+  within(recent).getByRole('button', { name: 'View aircraft history' }).focus();
   await userEvent.setup().keyboard('{Enter}');
   expect(container.querySelector('[data-page="logbook"]')).toHaveAttribute('data-active', 'true');
   fireEvent.click(within(screen.getByRole('navigation')).getByRole('button', { name: 'Home' }));
