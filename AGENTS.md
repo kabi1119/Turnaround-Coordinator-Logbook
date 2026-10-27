@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.8.1 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.8.2 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.8.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.8.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -218,3 +218,9 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 - Preserve committed migrations; apply the additive 202610280001 correction after v0.8.0. Use the private SECURITY INVOKER request-claims helper consistently in sync RLS/RPCs; never depend on granting a custom executor Auth schema access. Claims are trusted only after gateway JWT validation, not as client-supplied owner IDs.
 - Keep anonymous rejection, fixed search paths, the NOLOGIN/NOINHERIT/NOBYPASSRLS RPC owner and authenticated-only EXECUTE. Fail closed on unsafe grants/memberships or an unexpected schema; never reset records/key envelopes to repair authorization. No crypto/sync-engine redesign or hosted changes. Report embedded PostgreSQL tests separately from hosted Supabase and physical-device acceptance.
+
+## v0.8.2 hosted migration ownership
+
+- The owner explicitly authorizes correcting v0.8.0/v0.8.1 migration sources in a new commit because a later migration cannot repair failed initial table creation. This supersedes the earlier source-immutability rule, without authorizing Git history rewriting or any hosted execution.
+- Use temporary postgres-issued executor membership with ADMIN FALSE, INHERIT FALSE, SET TRUE and narrowly scoped schema CREATE. Perform RPC ownership/ACL/replacement as the proper owner, switch back, revoke exactly the migration grantor and schema CREATE, and assert cleanup before commit. Preserve bootstrap ADMIN-only membership; block unknown existing grants instead of silently replacing them.
+- Verify actual migrations as a non-superuser postgres session, not only a bootstrap superuser. The optional in-memory PostgreSQL harness never accepts hosted connection settings. Keep RLS, claims identity, key/ciphertext formats, vault/sync engine, consent and Guest isolation unchanged. Document fresh, failed and successful-install paths separately.

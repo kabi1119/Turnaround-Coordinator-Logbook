@@ -2,9 +2,84 @@
 
 **Status: local implementation for owner acceptance. No hosted migration, account configuration, deployment or physical iPhone test was performed. SQL inspection/unit tests do not prove live RLS isolation. Complete disposable-database and real-device checks before enabling this release for other users.**
 
-## v0.8.1 additive authorization correction — 2026-10-28
+## v0.8.2 migration role ownership — 2026-10-28
 
-**Owner review / disposable testing only until hosted acceptance.** v0.8.0 was committed at f8fb8d6; its migration remains unchanged. The correction is `supabase/migrations/202610280001_sync_authorization.sql`.
+The owner reported a hosted test-project failure in v0.8.0: `42501 must be able to SET ROLE "tco_sync_executor"`. The v0.8.1 prerequisite failure then correctly followed because the v0.8.0 transaction had not installed its tables. The earlier local migration tests ran DDL as a superuser; that model did not detect the hosted ownership restrictions. This release corrects both the SQL sources and the test model.
+
+### Exact permission changes
+
+Following [Supabase's temporary ownership-transfer pattern](https://supabase.com/kb/troubleshooting/cant-revoke-a-role-membership-granted-by-supabase_admin) and [PostgreSQL ALTER FUNCTION requirements](https://www.postgresql.org/docs/current/sql-alterfunction.html):
+
+- The corrected v0.8.0 source grants schema CREATE and a **postgres-issued** executor membership with `ADMIN FALSE, INHERIT FALSE, SET TRUE` only within the transaction. It transfers RPC ownership, performs their ACL changes while explicitly acting as the restricted owner, returns to postgres, revokes only the postgres-issued membership, and revokes CREATE before commit.
+- The corrected v0.8.1 source builds its private invoker helper/policies as postgres. It temporarily grants public-schema CREATE and the same non-inheriting SET membership, uses `SET LOCAL ROLE tco_sync_executor` for existing RPC replacement and ACLs, then returns to postgres and removes both temporary grants. Helper and RPC encryption/authorization bodies are unchanged.
+- Both sources assert cleanup before commit. Errors roll back role grants, function definitions and ACLs together. Executor remains NOLOGIN, NOINHERIT, NOBYPASSRLS; no gateway role receives membership and no Auth schema usage is granted. The unsupported v0.8.0 Auth grant is removed.
+- Supabase/PostgreSQL may retain a bootstrap-granted **ADMIN-only** membership for the role creator. `admin_option=true, inherit_option=false, set_option=false` is expected and is not unrestricted execution access. Do not try to revoke a membership granted by `supabase_admin` from postgres. The temporary grant uses `GRANTED BY postgres`, and cleanup revokes that exact grantor only.
+- The v0.8.1 preflight refuses pre-existing postgres-issued membership or active SET/INHERIT access, rather than silently overwriting unrelated grants. If it stops, inspect grantor/options and review the existing authorization with the project owner. Do not replace the RPC owner with postgres/service_role or remove cloud data to get past the check.
+
+These are explicitly authorized source corrections in a new v0.8.2 Git commit, **not Git history rewriting**. A new later migration alone could not fix an earlier failed installation. No new v0.8.2 data migration is needed: table definitions, ciphertext, key envelopes, IDs, revisions and local vault formats are unchanged. Use current corrected files, not copies from old release commits. The membership option syntax requires PostgreSQL 16+; the isolated test runtime is PostgreSQL 18.6. Hosted acceptance remains owner-run.
+
+### Installation and upgrade paths
+
+Always inspect the target project and existing migration history first. Execute each complete file as the hosted postgres migration role, including BEGIN/COMMIT; do not execute only the ownership-transfer selection.
+
+| Observed installation                                                 | Action using corrected v0.8.2 repository files                                                                                                                                        |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| New database                                                          | `202610200001_profiles.sql` → `202610270001_encrypted_sync.sql` → `202610280001_sync_authorization.sql`                                                                               |
+| Profiles succeeded, v0.8.0 failed and rolled back (the reported case) | Confirm the sync tables/role are absent, then run corrected `202610270001_encrypted_sync.sql`, followed by corrected `202610280001_sync_authorization.sql`. Do not rerun profiles.    |
+| v0.8.0 succeeded; v0.8.1 absent/failed                                | Run corrected `202610280001_sync_authorization.sql` only. Preserve existing encrypted rows and keys.                                                                                  |
+| All three previously succeeded                                        | No schema/data migration is required. Run the read-only cleanup verification. Controlled reapplication of corrected v0.8.1 is supported if needed; never rerun v0.8.0 table creation. |
+| Unknown/partial objects or unexpected memberships                     | Stop and review object owners, grantors and transaction/history state. Do not reset tables/roles/keys or guess that the project is empty.                                             |
+
+If the SQL session is still in an aborted transaction, finish its rollback before retrying. Existing migration tools normally do not rerun already-recorded versions just because source text changed. Do not delete migration-history rows or mark a failed migration successful. Use the inspected state and the owner-approved path above; retain the existing migration mechanism rather than mixing manual files and automatic history blindly.
+
+Read-only starting checks:
+
+```sql
+show server_version;
+select to_regclass('public.profiles') as profiles,
+       to_regclass('tco_sync.accounts') as sync_accounts,
+       to_regclass('tco_sync.records') as sync_records;
+select rolname from pg_roles where rolname='tco_sync_executor';
+```
+
+### Cleanup and security verification
+
+After the complete installation, execute `supabase/tests/sync_role_ownership_v082.sql`. Despite its tests directory, this file reads catalogs only: it does not read operational/Auth rows, change roles, seed users or write data. It checks restricted owners/attributes, forced RLS, direct-table denial, authenticated-only RPC access, private helper ACLs and removal of temporary privileges. It deliberately refuses a superuser postgres test model.
+
+For the hosted non-superuser role, both capabilities below must be false; membership rows may still show the expected bootstrap ADMIN-only entry:
+
+```sql
+select pg_has_role('postgres','tco_sync_executor','SET') as can_set_role,
+       pg_has_role('postgres','tco_sync_executor','USAGE') as inherits_executor,
+       has_schema_privilege('tco_sync_executor','public','CREATE') as can_create;
+select m.roleid::regrole as role, m.member::regrole as member,
+       m.grantor::regrole as grantor, m.admin_option, m.inherit_option, m.set_option
+from pg_auth_members m where m.roleid='tco_sync_executor'::regrole;
+```
+
+All three booleans must be false. No postgres-issued temporary membership may remain. Do not interpret a harmless bootstrap ADMIN-only row as failed cleanup, or ignore a row with SET/INHERIT enabled. Existing grants from another grantor need owner review rather than a broad revoke.
+
+### Reproducible local verification and limits
+
+`node scripts/check-sync-migrations.mjs` uses only `new PGlite()` in-memory databases and accepts no hosted database URL/token. Bootstrap role setup stays entirely inside that memory instance; never copy that bootstrap SQL into a hosted project. It then runs every actual migration as **current_user=postgres, session_user=postgres, rolsuper=false** and verifies all three conditions, so a superuser cannot mask this regression.
+
+The four scenarios cover failed fresh-install rollback/retry, existing v0.8.0 ciphertext/key preservation, existing v0.8.1 reapplication/pre-existing-grant rejection, and interruption during owner-scoped RPC replacement. They reproduce both missing SET ROLE and missing function-owner errors, assert removal of migration-issued grants while preserving bootstrap ADMIN-only membership, verify unchanged ciphertext/revisions/timestamps, and run the existing account/RLS fixtures.
+
+Optional PowerShell setup, kept outside repository dependencies:
+
+```powershell
+$sqlTestRuntime = Join-Path $env:TEMP 'tco-sql-v082'
+npm.cmd install --prefix $sqlTestRuntime --no-save --package-lock=false --ignore-scripts @electric-sql/pglite@0.5.12
+$env:TCO_PGLITE_MODULE = Join-Path $sqlTestRuntime 'node_modules\@electric-sql\pglite\dist\index.js'
+node scripts/check-sync-migrations.mjs
+Remove-Item Env:TCO_PGLITE_MODULE
+```
+
+Local results: all four non-superuser migration scenarios passed. The full v0.8.2 release gate passed 494 tests / 46 files, lint, build, static artifact checks and formatting. Full and production-only npm audits each reported 0 vulnerabilities; the existing non-failing bundle-size advisory remains. Exact results are recorded in PROTOTYPE_STATUS.md. Hosted Supabase migration/REST and physical iPhone acceptance of this correction remain unverified. Test the corrected three-file sequence in a disposable hosted project, run the read-only verifier, then use two empty invited accounts for `scripts/check-sync-isolation.mjs`. Run the mutating RLS fixtures only in a disposable database under an appropriate test administrator; a production browser/migration role must not be granted executor access merely to run fixtures. Do not apply anything to production until owner acceptance.
+
+## v0.8.1 additive authorization correction (historical) — 2026-10-28
+
+**Owner review / disposable testing only until hosted acceptance.** v0.8.0 was committed at f8fb8d6. Its source was unchanged at v0.8.1; v0.8.2 subsequently corrects deployment permissions as described above. The correction is `supabase/migrations/202610280001_sync_authorization.sql`.
 
 ### Root cause and corrected trust boundary
 
@@ -18,11 +93,11 @@ No inheritance from authenticated, broad Auth schema grants, service-role shortc
 
 ### Exact migration order
 
-- **Fresh database:** apply `202610200001_profiles.sql`, then `202610270001_encrypted_sync.sql`, then `202610280001_sync_authorization.sql`, in that order. The ineffective Auth grant in committed v0.8.0 may warn; the correction removes runtime reliance on it. Do not edit historical migrations to hide that warning.
+- **Fresh database:** apply `202610200001_profiles.sql`, then `202610270001_encrypted_sync.sql`, then `202610280001_sync_authorization.sql`, in that order. Use the corrected v0.8.2 source files; its v0.8.0 source removes the ineffective Auth grant and fixes ownership transfer. Older committed copies may warn and fail before the correction can run.
 - **v0.8.0 already applied:** apply only `202610280001_sync_authorization.sql` as the same project administrator used for the earlier migration. Do not rerun v0.8.0 table/key creation.
 - **Incomplete/unknown v0.8.0 installation:** the correction blocks execution when prerequisites are missing or unsafe. Investigate the previous transaction and migration history; do not guess, delete or recreate cloud keys/tables.
 
-The correction is one transaction and changes functions/policy expressions/ACLs only. It never rewrites key envelopes or cloud records. Reapplying it against the expected v0.8.x objects is supported. Repeat read-only verification freely; do not mark migration history manually or run data fixtures in production.
+The correction is one transaction and changes functions/policy expressions/ACLs and transaction-scoped role permissions only. It never rewrites key envelopes or cloud records. Reapplying it against the expected v0.8.x objects is supported. Repeat read-only verification freely; do not mark migration history manually or run data fixtures in production.
 
 ### Safe read-only verification
 

@@ -64,11 +64,12 @@ describe('v0.8.1 additive authorization contract (hosted acceptance separate)', 
     expect(patch).toContain('to authenticated;');
     expect(patch).not.toMatch(/grant\s+authenticated\s+to\s+tco_sync_executor/i);
   });
-  it('is additive and preserves existing key/record rows and committed migration history', () => {
+  it('updates authorization without rewriting existing key/record rows', () => {
     expect(patch.trim()).toMatch(/commit;$/);
     expect(patch).not.toMatch(/\b(drop|truncate)\b|\bdelete\s+from\b/i);
     expect(patch).not.toMatch(/update\s+tco_sync\.accounts\s+set\s+key_envelope/i);
-    expect(original).toContain('grant usage on schema tco_sync, auth to tco_sync_executor');
+    expect(original).toContain('grant usage on schema tco_sync to tco_sync_executor');
+    expect(original).not.toMatch(/^\s*grant\b[^;]*\bauth\b/im);
   });
   it('ships disposable SQL regression cases for modern, legacy, malformed and anonymous JWT claims', () => {
     const sql = readFileSync('supabase/tests/sync_authorization_v081.sql', 'utf8');

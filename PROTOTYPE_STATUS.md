@@ -1,4 +1,12 @@
-# TCO Logbook v0.8.1 Pre-release status
+# TCO Logbook v0.8.2 Pre-release status
+
+## v0.8.2 hosted SQL ownership compatibility — 2026-10-28 (Hong Kong)
+
+Started on clean main at f5cf298 (committed v0.8.1). The owner reported real hosted SET ROLE failure in the v0.8.0 ownership transfer. Prior local DDL used a superuser and did not detect this restriction. Corrected the two existing SQL sources as explicitly authorized; no Git history rewrite or later data migration is used. Both use postgres-issued temporary ADMIN FALSE / INHERIT FALSE / SET TRUE membership and public-schema CREATE, owner-scoped RPC operations and transactional cleanup assertions. The v0.8.1 replacement runs as executor; helper/policy administration stays with postgres. Unknown pre-existing memberships fail closed, while bootstrap ADMIN-only membership is retained.
+
+Added a reproducible optional in-memory PGlite 0.5.12 / PostgreSQL 18.6 runner. All four scenarios passed with current_user and session_user both postgres and rolsuper=false: failed fresh-install retry; existing v0.8.0 data upgrade; existing v0.8.1 reapplication/pre-existing-grant rejection; interrupted replacement rollback. It reproduces both original permission errors, asserts SET/INHERIT/CREATE cleanup, verifies RLS/ACLs, runs the account-isolation SQL fixtures and compares every encrypted row/key/revision/timestamp before/after. A separate catalog-only verifier is safe for owner inspection without reading operational rows. Final npm.cmd run check:release passed 494 tests / 46 files, lint, production build, static bundle checks and formatting. Both npm.cmd audit and npm.cmd audit --omit=dev reported 0 vulnerabilities. The build retains the existing non-failing main-chunk size advisory (about 763 kB minified / 238 kB gzip). No application dependency or deployment configuration changed.
+
+Application dependencies, encryption, sync engine, storage schemas, vaults and opt-in behavior are unchanged. Frontend changes are release labels only. No hosted migration/REST, production access or physical iPhone test was performed. Follow docs/V0_8_0_CLOUD_SYNC_SETUP.md; do not rerun table creation on installed databases. No commit/push/deploy.
 
 ## v0.8.1 Supabase authorization compatibility — 2026-10-28 (Hong Kong)
 

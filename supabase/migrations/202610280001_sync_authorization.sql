@@ -1,8 +1,12 @@
+-- v0.8.2 source correction: run RPC replacement briefly as its restricted owner, then clean up.
 -- v0.8.1 additive correction. Apply AFTER 202610270001_encrypted_sync.sql.
--- Never rewrite cloud rows/keys or committed migrations. Transactional and repeatable.
+-- Preserve cloud rows/keys. Source permissions corrected in v0.8.2 without rewriting Git history.
 -- Supabase KB: custom executor roles cannot rely on postgres granting auth schema USAGE.
 -- Identity comes only from request settings installed by JWT-validating PostgREST.
 begin;
+do $$ begin
+  if current_user<>'postgres' then raise exception 'Run sync migrations as the postgres migration role'; end if;
+end $$;
 do $$
 declare executor oid; count_ok integer;
 begin
@@ -18,6 +22,14 @@ begin
   if exists(select 1 from pg_catalog.pg_auth_members m join pg_catalog.pg_roles r on r.oid=m.member
     where (m.roleid=executor and r.rolname in ('anon','authenticated','authenticator','service_role')) or m.member=executor) then
     raise exception 'Unsafe sync executor membership; do not grant gateway roles executor access';
+  end if;
+  if exists(select 1 from pg_catalog.pg_auth_members where roleid=executor and member='postgres'::regrole
+    and grantor='postgres'::regrole) then
+    raise exception 'Existing postgres-issued executor membership requires owner review before migration';
+  end if;
+  if exists(select 1 from pg_catalog.pg_auth_members where roleid=executor and member='postgres'::regrole
+    and (set_option or inherit_option)) then
+    raise exception 'Existing executor SET/INHERIT access requires owner review before migration';
   end if;
   if pg_catalog.has_schema_privilege(executor,'tco_sync','CREATE')
     or pg_catalog.has_schema_privilege(executor,'public','CREATE') then
@@ -74,6 +86,11 @@ alter policy accounts_update on tco_sync.accounts using (user_id=(select tco_syn
 alter policy records_select on tco_sync.records using (user_id=(select tco_sync.request_user_id()));
 alter policy records_insert on tco_sync.records with check (user_id=(select tco_sync.request_user_id()));
 alter policy records_update on tco_sync.records using (user_id=(select tco_sync.request_user_id())) with check (user_id=(select tco_sync.request_user_id()));
+
+-- CREATE OR REPLACE requires schema CREATE and the existing owning role, not merely ADMIN membership.
+grant create on schema public to tco_sync_executor;
+grant tco_sync_executor to postgres with admin false, inherit false, set true granted by postgres;
+set local role tco_sync_executor;
 
 create or replace function public.tco_sync_pull(p_cursor bigint) returns jsonb
 language plpgsql security definer set search_path = '' as $$
@@ -141,4 +158,17 @@ end $$;
 -- CREATE OR REPLACE preserves the restricted v0.8.0 function owner and signatures.
 revoke all on function public.tco_sync_pull(bigint), public.tco_sync_initialize(jsonb), public.tco_sync_push(bigint,uuid,jsonb) from public, anon, authenticated, service_role;
 grant execute on function public.tco_sync_pull(bigint), public.tco_sync_initialize(jsonb), public.tco_sync_push(bigint,uuid,jsonb) to authenticated;
+set local role postgres;
+-- Remove only the temporary grant issued by this migration, not bootstrap ADMIN membership.
+revoke tco_sync_executor from postgres granted by postgres;
+revoke create on schema public from tco_sync_executor;
+do $$ begin
+  if exists(select 1 from pg_catalog.pg_auth_members where roleid='tco_sync_executor'::regrole
+    and member='postgres'::regrole and (set_option or inherit_option)) then
+    raise exception 'Temporary executor SET/INHERIT permission was not fully removed';
+  end if;
+  if pg_catalog.has_schema_privilege('tco_sync_executor','public','CREATE') then
+    raise exception 'Temporary executor schema CREATE permission was not fully removed';
+  end if;
+end $$;
 commit;

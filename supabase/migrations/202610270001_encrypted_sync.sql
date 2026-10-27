@@ -1,11 +1,15 @@
-﻿-- Apply manually after review. No plaintext operational columns. No existing profiles changes.
+-- v0.8.2 source correction: temporary ownership-transfer privileges; existing installations must not rerun table creation.
+-- Apply manually after review. No plaintext operational columns. No existing profiles changes.
 -- The NOLOGIN/NOBYPASSRLS executor permits CAS-only API writes without granting
 -- unrestricted table DML to browser roles. Every function derives ownership from auth.uid().
 begin;
+do $$ begin
+  if current_user<>'postgres' then raise exception 'Run sync migrations as the postgres migration role'; end if;
+end $$;
 create role tco_sync_executor nologin noinherit nosuperuser nocreatedb nocreaterole noreplication nobypassrls;
 create schema tco_sync;
 revoke all on schema tco_sync from public, anon, authenticated;
-grant usage on schema tco_sync, auth to tco_sync_executor;
+grant usage on schema tco_sync to tco_sync_executor;
 create table tco_sync.accounts (
   user_id uuid primary key references auth.users(id) on delete cascade,
   format integer not null default 1 check (format = 1),
@@ -102,10 +106,24 @@ begin
 end $$;
 -- Restrict function ownership to a role with neither BYPASSRLS nor table ownership.
 grant usage, create on schema public to tco_sync_executor;
+grant tco_sync_executor to postgres with admin false, inherit false, set true granted by postgres;
 alter function public.tco_sync_pull(bigint) owner to tco_sync_executor;
 alter function public.tco_sync_initialize(jsonb) owner to tco_sync_executor;
 alter function public.tco_sync_push(bigint,uuid,jsonb) owner to tco_sync_executor;
-revoke create on schema public from tco_sync_executor;
+set local role tco_sync_executor;
 revoke all on function public.tco_sync_pull(bigint), public.tco_sync_initialize(jsonb), public.tco_sync_push(bigint,uuid,jsonb) from public, anon, authenticated;
 grant execute on function public.tco_sync_pull(bigint), public.tco_sync_initialize(jsonb), public.tco_sync_push(bigint,uuid,jsonb) to authenticated;
+set local role postgres;
+-- Remove only the temporary grant issued by this migration, not bootstrap ADMIN membership.
+revoke tco_sync_executor from postgres granted by postgres;
+revoke create on schema public from tco_sync_executor;
+do $$ begin
+  if exists(select 1 from pg_catalog.pg_auth_members where roleid='tco_sync_executor'::regrole
+    and member='postgres'::regrole and (set_option or inherit_option)) then
+    raise exception 'Temporary executor SET/INHERIT permission was not fully removed';
+  end if;
+  if pg_catalog.has_schema_privilege('tco_sync_executor','public','CREATE') then
+    raise exception 'Temporary executor schema CREATE permission was not fully removed';
+  end if;
+end $$;
 commit;
