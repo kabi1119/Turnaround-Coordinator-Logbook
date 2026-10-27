@@ -91,8 +91,8 @@ export default function SignIn({
       <h2>{t('Sign in to your account', '登入你的帳戶')}</h2>
       <p>
         {t(
-          'Secure cross-device cloud sync is coming soon. Sign in to get your account ready.',
-          '安全跨裝置雲端同步即將推出，先登入以準備好帳戶。',
+          'Sign in to access your encrypted Account Workspace. Cloud Sync is optional and requires separate consent.',
+          '登入以使用加密帳戶工作區。雲端同步屬自選功能，需要另行同意。',
         )}
       </p>
       {!client && (

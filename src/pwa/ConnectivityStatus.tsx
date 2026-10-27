@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { StorageLabel } from '../sync/StorageLabel';
 import { Wifi, WifiOff } from 'lucide-react';
 import { useT } from '../i18n';
 
@@ -30,8 +31,8 @@ export default function ConnectivityStatus() {
       role="status"
       aria-label={t('Connection status', '連線狀態')}
       title={t(
-        'Browser connection status; internet access is not verified. Records stay on this device. Offline launch requires installed app assets.',
-        '瀏覽器連線狀態，未驗證網際網路是否可用。紀錄留在此裝置；離線啟動須先完成安裝應用程式資產。',
+        'Browser connection status; internet access is not verified. Storage/sync status is shown separately. Offline launch requires installed app assets.',
+        '瀏覽器連線狀態，未驗證網際網路是否可用。儲存／同步狀態另行顯示；離線啟動須先完成安裝應用程式資產。',
       )}
     >
       <span className="connection-badge">
@@ -41,7 +42,9 @@ export default function ConnectivityStatus() {
       <span className="connection-separator" aria-hidden="true">
         ·
       </span>
-      <span className="connection-local">{t('Device only', '僅限此裝置')}</span>
+      <span className="connection-local">
+        <StorageLabel />
+      </span>
     </span>
   );
 }

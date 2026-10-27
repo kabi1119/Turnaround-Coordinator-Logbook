@@ -11,6 +11,8 @@ export interface WorkspaceStore {
   current: (db: Database) => boolean;
   write: (db: Database, expected: string | null | undefined) => WriteResult | Promise<WriteResult>;
   lock: () => void;
+  sync?: import('../sync/types').SyncVault;
+  subscribe?: (listener: (reason: 'local' | 'sync' | 'lock') => void) => () => void;
 }
 export const guestStore: WorkspaceStore = {
   key: STORAGE_KEY,

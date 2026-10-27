@@ -101,6 +101,10 @@ function Workspace({
 }) {
   const t = useT(),
     l = useLabel();
+  const storageDescription =
+    workspace.kind === 'account'
+      ? t('Encrypted account vault', '加密帳戶資料庫')
+      : t('Stored on this device only', '僅儲存於此裝置');
   const [calendarOpen, setCalendarOpen] = useState(false);
   const {
     current: overlay,
@@ -154,6 +158,16 @@ function Workspace({
     window.addEventListener('storage', changed);
     return () => window.removeEventListener('storage', changed);
   }, [t, workspace]);
+  useEffect(
+    () =>
+      workspace.subscribe?.((reason) => {
+        if (reason !== 'sync') return;
+        const current = workspace.read();
+        storedSnapshot.current = current.snapshot;
+        setDb(current.db);
+      }),
+    [workspace, setDb],
+  );
   const writePending = useRef(false);
   function commit(next: Database, explicitReset = false): boolean | Promise<boolean> {
     if (writePending.current) return false;
@@ -431,8 +445,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.7.1 {t('Pre-release', '預發佈')} ·{' '}
-            {t('Stored on this device only', '僅儲存於此裝置')} · Hong Kong · UTC+08
+            v0.8.0 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
           </span>
         </footer>
       </main>
@@ -454,8 +467,8 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.7.1 {t('Pre-release', '預發佈')}</span>
-          <span>{t('Stored on this device only', '僅儲存於此裝置')}</span>
+          <span className="release-version">v0.8.0 {t('Pre-release', '預發佈')}</span>
+          <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
       </nav>

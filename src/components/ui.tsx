@@ -24,6 +24,7 @@ export function Modal({
   sheet = false,
   closing = false,
   upperKeyboardFocus = false,
+  syncControl = false,
 }: {
   title: string;
   children: ReactNode;
@@ -32,6 +33,7 @@ export function Modal({
   sheet?: boolean;
   closing?: boolean;
   upperKeyboardFocus?: boolean;
+  syncControl?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -62,6 +64,7 @@ export function Modal({
   return (
     <dialog
       ref={ref}
+      data-sync-control={syncControl || undefined}
       data-upper-keyboard-focus={upperKeyboardFocus || undefined}
       aria-labelledby={titleId}
       inert={closing}

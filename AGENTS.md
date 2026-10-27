@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.7.1 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.8.0 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.7.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.8.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -206,3 +206,10 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Verify server identity and expiry before Account entry, use shouldCreateUser=false and server-disabled signup, local-scope sign-out, no privileged browser keys. Keep refresh/session and network/storage/auth concepts separate; explicit offline vault access is not server authentication. No raw provider errors, credential logging or arbitrary redirects.
 - Account persistence is AES-GCM/PBKDF2 with random salt/IV and a user-held passphrase; keys/secrets stay in memory. Lock on sign-out/switch/invalid sessions; asynchronous writes must recheck lock and stale snapshots. Never downgrade to plaintext or overwrite a damaged/unsupported vault. Success/closing forms occurs after persistence, with retryable failures. Full JSON exports remain explicitly unencrypted and reviewed Restore remains workspace-scoped.
 - Preserve business rules, Home layout, PWA cache/update safety, privacy/assets/disclaimers and Cloudflare architecture. Manual Git only; no commit/push/merge/deploy. Final report uses the supplied exact message, qualifying externally unverified configuration clearly.
+
+## v0.8.0 encrypted cloud sync
+
+- The owner explicitly authorizes opt-in encrypted Account synchronization, superseding historical no-operational-sync rules for this release. Guest remains local-only; no automatic import or upload on sign-in/unlock. No passkeys, production migration, commit, push or deployment.
+- Follow docs/V0_8_0_CLOUD_SYNC_SETUP.md. Preserve the local vault and operational schema/IDs/backups; sync metadata is encrypted in the internal vault payload. Never reset an existing cloud key or truncate tombstones.
+- Require consent, unlocked cloud keys, server-verified account/expiry and Web Locks. Keep revision CAS, complete graph validation, local-before-remote persistence, conflict alternatives and stale-operation fencing. No direct browser table writes or service-role credentials.
+- RPCs use the narrow NOLOGIN/NOBYPASSRLS executor with forced ownership RLS; never replace it with postgres or expose the private sync schema. Test SQL/REST only in disposable projects; static inspection is not live isolation evidence.

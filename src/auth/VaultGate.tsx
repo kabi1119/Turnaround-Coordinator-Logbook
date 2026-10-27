@@ -53,14 +53,14 @@ export default function VaultGate({
       </p>
       <p>
         {t(
-          'Account records stay on this device, encrypted with your local vault passphrase. This is separate from Email OTP sign-in; Guest records are not imported.',
-          '帳戶紀錄以本機密語加密並只存此裝置。這與電郵一次性密碼登入不同，亦不會匯入訪客紀錄。',
+          'Your local account vault is encrypted with its passphrase. After unlocking, encrypted Cloud Sync can be explicitly enabled in Account Settings. Guest records are not imported.',
+          '本機帳戶資料庫以密語加密。解鎖後可在帳戶設定明確啟用加密雲端同步；不會匯入訪客紀錄。',
         )}
       </p>
       <p className="notice amber">
         {t(
-          'There is no cloud copy. A lost vault passphrase cannot be reset to recover records. Keep a verified JSON backup; exported JSON is not encrypted.',
-          '沒有雲端副本。遺失本機密語後，不能藉重設密語取回紀錄。請保留已核對的 JSON 備份；匯出的 JSON 並未加密。',
+          'Signing in does not create a cloud copy. A lost vault/cloud passphrase cannot be reset to decrypt records. Keep a verified JSON backup; exported JSON is not encrypted.',
+          '登入不會自動建立雲端副本。遺失本機／雲端密語後，不能藉重設密語解密紀錄。請保留已核對的 JSON 備份；匯出的 JSON 並未加密。',
         )}
       </p>
       {(!vaultAvailable() || !readable || (offline && create)) && (

@@ -2,14 +2,18 @@
 import { LogIn, UserRound, ChevronDown } from 'lucide-react';
 import { LanguageContext, useT } from '../i18n';
 import { Modal } from '../components/ui';
+import SyncControl from '../sync/SyncControl';
+import type { SyncEngine } from '../sync/engine';
 import type { AccountIdentity } from './client';
 export default function AccountControl({
   user,
+  syncEngine = null,
   offline,
   onSignIn,
   onLeave,
 }: {
   user: AccountIdentity | null;
+  syncEngine?: SyncEngine | null;
   offline: boolean;
   onSignIn: (language: 'en' | 'zh-HK') => void;
   onLeave: () => void;
@@ -88,8 +92,10 @@ export default function AccountControl({
             </strong>
           </p>
           <p>
-            {t('Device only', '僅限本機')}
-            <small>{t('Cloud sync coming soon', '雲端同步即將推出')}</small>
+            {t('Account workspace', '帳戶工作區')}
+            <small>
+              {t('Manage encrypted sync in Account Settings', '在帳戶設定管理加密同步')}
+            </small>
           </p>
           <button
             role="menuitem"
@@ -120,14 +126,13 @@ export default function AccountControl({
         </div>
       )}
       {settings && (
-        <Modal title={t('Account Settings', '帳戶設定')} onClose={() => setSettings(false)}>
+        <Modal
+          syncControl
+          title={t('Account Settings', '帳戶設定')}
+          onClose={() => setSettings(false)}
+        >
           <p>{user.email || t('Server session not verified', '未驗證伺服器登入狀態')}</p>
-          <p>
-            {t(
-              'Device only · Cloud sync coming soon. Account records are encrypted locally and never uploaded in this release.',
-              '僅限本機 · 雲端同步即將推出。帳戶紀錄在本機加密，此版本不會上傳紀錄。',
-            )}
-          </p>
+          <SyncControl engine={syncEngine} />
           <p>
             {t(
               'Sign out locks the vault without deleting it. Keep a verified JSON backup; losing the vault passphrase can make local records unrecoverable.',

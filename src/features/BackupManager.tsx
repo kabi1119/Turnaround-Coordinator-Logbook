@@ -179,6 +179,14 @@ export default function BackupManager({ db, restore }: { db: Database; restore: 
   }
   return (
     <section className="panel">
+      {workspace.sync?.read()?.enabled && (
+        <p className="notice amber">
+          {t(
+            'Cloud Sync is enabled. Restoring or replacing Account data queues those changes, including deletions, for cloud sync. Disable sync in Account Settings first if you only intend local recovery.',
+            '雲端同步已啟用。還原或取代帳戶資料會將變更（包括刪除）排入雲端同步。若只打算本機復原，請先在帳戶設定停用同步。',
+          )}
+        </p>
+      )}
       <SectionTitle
         title={t('Full local backup', '完整本機備份')}
         subtitle={t(

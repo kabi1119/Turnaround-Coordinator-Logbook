@@ -1,0 +1,136 @@
+﻿# v0.8.0 encrypted Cloud Sync setup and acceptance
+
+**Status: local implementation for owner acceptance. No hosted migration, account configuration, deployment or physical iPhone test was performed. SQL inspection/unit tests do not prove live RLS isolation. Complete disposable-database and real-device checks before enabling this release for other users.**
+
+## Architecture and scope
+
+- Cloudflare remains a static HTTPS SPA. Existing `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` point to the same configured Supabase HTTPS origin. No service key, Worker backend, Storage bucket, Realtime, passkey or paid service is introduced.
+- Guest retains its existing key and never receives a sync engine. Signing in or unlocking an Account does not enable sync. Account Settings requires consent plus a cloud vault passphrase. Every newly opened Account session must explicitly unlock the cloud key again; consent/enabled state alone cannot upload.
+- Handling records (including archived/private values, revisions and nested disruptions), Duties, Journals and privacy settings are synchronized. Record IDs and all links are preserved. Trash is a normal encrypted record; permanent removals become encrypted tombstones. Privacy switches control collection/display, not removal of previously archived values; the consent explicitly includes those values.
+- Language stays device-local. Authentication sessions, workspace choice, PWA caches, update notices, filters/navigation and the sync controller are not cloud records. Existing schema-1 JSON exports contain operational data/settings only, never keys or sync state.
+- One encrypted cloud row per operational record plus one privacy-settings row. Nested events remain in their parent Handling record. Keyed opaque IDs conceal record type and original ID. The provider sees account UUID, row/byte counts, revisions, timing and usage patterns; it cannot infer permission to store employer data from encryption.
+
+## Cryptography and key lifecycle
+
+1. Initial explicit enablement generates a cryptographically random 256-bit account root secret. It is independent of the v0.7 local vault encryption key.
+2. PBKDF2-HMAC-SHA256 (600,000 iterations, fresh 128-bit salt) derives a non-extractable AES-256-GCM wrapping key from the selected passphrase. The root is wrapped with a fresh 96-bit IV and a 128-bit GCM tag. AAD binds purpose, format version, account UUID, key UUID, salt and KDF parameters.
+3. HKDF-SHA256 derives separate non-extractable AES-256-GCM record and HMAC-SHA256 ID keys from the root, with account/purpose/key-ID separation. The unwrapped byte buffer is overwritten after derivation. JavaScript garbage collection cannot promise forensic memory erasure.
+4. Each record encryption uses a fresh random 96-bit IV and a 128-bit GCM tag. AAD binds purpose, version, account UUID, key UUID, opaque record ID and target revision. Decryption checks the HMAC-derived ID against the decrypted collection/ID, then validates the complete database and relationships before integration.
+5. Remote storage holds only the wrapped root and ciphertext envelopes. The passphrase and unwrapped keys are never persisted remotely or logged. Keys live only in the unlocked controller and are dropped on lock/sign-out/switch/invalid session. Another authenticated device uses the **original cloud vault passphrase**, which may differ from that device's independently created local vault secret.
+6. Cloud keys are immutable in v0.8.0. No passphrase change, rotation, escrow or automatic reset exists. Losing the cloud passphrase makes cloud records unrecoverable through OTP/password reset. An unlocked local vault plus a verified JSON export may still preserve the operational data, but does not recover the cloud key. Do not delete/reset the cloud key to troubleshoot.
+
+Standard references: [Web Crypto key derivation](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey), [OWASP PBKDF2 parameters](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html), [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [database function security](https://supabase.com/docs/guides/database/functions).
+
+This protects records at rest and in transport to the database; it does not protect an unlocked app from malicious same-origin JavaScript, a compromised frontend host, browser extensions, malware, weak passphrases or an authorized user sharing decrypted data. A malicious database administrator can delete/withhold data; authenticated envelopes are not a proof of server availability or a complete anti-rollback transparency system. Existing devices reject revision rollback; a newly provisioned device has no external history anchor.
+
+## Local compatibility and adoption
+
+- v0.7.0/v0.7.1 vault envelopes and database payloads remain readable. Merely opening the upgraded app does not rewrite them. The first successful opt-in persists an internal encrypted payload `{vaultFormat:2, db, sync}` under the same user-bound local key. The outer local AES-GCM envelope remains version 1. No original record IDs or operational schema change.
+- Sync metadata includes the acknowledged encrypted-at-rest baseline, cursor, conflicts, enabled flag, wrapped key and last acknowledgement. Pending changes are derived from the durable local database versus that baseline. Both data and metadata are written atomically as one encrypted localStorage value.
+- Web Locks serialize Account encryption/CAS/write across tabs. Sync refuses to enable without Web Locks. A stale tab pauses and requires reload/unlock rather than overwriting a newer vault. Existing local-only behavior remains available where sync cannot safely run.
+- Distinct device datasets are reconciled: unique records are combined, differing same-ID records and privacy settings require explicit review. An empty remote account never replaces valid local records. First-time cloud key creation races fail safely; retry using the passphrase of the device that successfully created the key.
+- **Guest-to-Account merge/import is not implemented.** Guest remains separate. Do not use sign-in as a transfer mechanism. Existing reviewed JSON Restore/Replace still targets the explicitly selected workspace and is not a merge; it preserves Guest only when Guest is not the selected restore destination.
+
+## Database migration and authorization
+
+Apply **only after review and successful disposable testing**:
+
+- Existing prerequisite: `supabase/migrations/202610200001_profiles.sql`.
+- New migration: `supabase/migrations/202610270001_encrypted_sync.sql`.
+
+The new private `tco_sync` schema has:
+
+| Table      | Contents                                                                                      | Access                                                        |
+| ---------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `accounts` | Owner UUID, format, immutable wrapped key, account revision, operation UUID, server timestamp | Forced RLS; no browser table grants                           |
+| `records`  | Owner UUID, opaque ID, revision, ciphertext envelope, server timestamp                        | Forced RLS; ownership/revision index; no browser table grants |
+
+The public API consists only of `tco_sync_pull`, `tco_sync_initialize` and `tco_sync_push`. Anonymous EXECUTE is revoked. Ownership is always derived from `auth.uid()`, never an owner parameter. Anonymous-auth identities are also rejected. Keep public registration disabled as documented for v0.7.0.
+
+**Why a restricted SECURITY DEFINER role:** ordinary SECURITY INVOKER functions would require granting browser roles table writes, allowing direct revision bypass. Instead, all three fixed-search-path functions are owned by `tco_sync_executor`, a NOLOGIN, NOINHERIT, NOBYPASSRLS role that does not own the tables. It receives only the required SELECT/INSERT/UPDATE privileges. Forced RLS still applies to the caller's `auth.uid()`. No dynamic SQL or broad privileged operation exists. Do not grant membership in this role, give it BYPASSRLS, or expose `tco_sync` as a PostgREST schema.
+
+Push locks the user's account row, compares the expected revision and atomically commits all changed records plus the next revision. This account-level CAS protects cross-record links; concurrent changes are pulled/reconciled rather than overwritten. Pull holds a shared account lock and returns one coherent incremental snapshot with counts. Keys cannot be overwritten, and physical record DELETE is not granted. Tombstone ciphertext remains indefinitely to prevent stale-device resurrection. Deleting an Auth account through an authorized administrator cascades its cloud rows; this app does not expose account deletion, and local browser vaults/backups remain until separately managed.
+
+Bounds: maximum 5,000 cloud rows including privacy/tombstones, 256 KiB encrypted record payload, 8 MiB cloud ciphertext text per account and bounded atomic request/response sizes. Local full data still uses the existing 5 MiB backup bound; encrypted baseline duplication and browser quotas can impose a lower practical limit. These are app safeguards, not guarantees of Supabase Free Tier capacity. Monitor actual project quotas; no plan upgrade is automatic.
+
+Before the migration exists, the missing-RPC response is shown as a setup error; no partial record synchronization occurs. The app does not create tables or apply migrations.
+
+Read-only owner verification queries:
+
+```sql
+select n.nspname, c.relname, c.relrowsecurity, c.relforcerowsecurity,
+       pg_get_userbyid(c.relowner) as owner
+from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where n.nspname='tco_sync' and c.relkind='r';
+select rolname, rolcanlogin, rolbypassrls, rolsuper from pg_roles where rolname='tco_sync_executor';
+select schemaname, tablename, policyname, roles, cmd, qual, with_check
+from pg_policies where schemaname='tco_sync';
+select p.proname, p.prosecdef, p.proconfig, pg_get_userbyid(p.proowner)
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname='public' and p.proname like 'tco_sync_%';
+```
+
+## Synchronization, failures and conflict review
+
+- Local edits are saved durably before success. Debounced local edits, foreground/focus, reconnect and manual retry trigger bounded attempts after the cloud key is unlocked. There is no polling or Realtime connection and no background-tab/offline guarantee. `navigator.onLine` is not treated as proof of a usable session/server.
+- Each RPC revalidates server identity and session expiry. Existing authenticated fetch has a 15-second timeout. Sign-out, switching, vault lock and invalid authentication fence/abort requests. Cancellation cannot recall an already committed server request; a later authenticated pull reconciles its acknowledgement.
+- Pull decrypts and validates all changes before integration. Unsupported versions, corrupt ciphertext, wrong identity/key, response count mismatches, missing relationships or rollback stop the attempt. Open operational/backup dialogs defer sync to protect unsaved forms; close them and retry.
+- Lost upload acknowledgement is recovered by pulling: matching encrypted-record contents advance the baseline without another duplicate creation. A stale CAS is retried through a new pull, never last-write-wins. Rapid edits during an upload remain pending against that exact acknowledged version.
+- Conflicts retain the local record and the remote alternative inside the encrypted vault. Account Settings → Review differences → choose each local/cloud version → confirm. Deletions are explicit alternatives. Cross-record dependency conflicts must be resolved together; invalid combinations fail atomically without removing either graph. There is no automatic text merge or silent winner.
+- Network/paused-project/rate-limit errors pause safely; reconnect, focus or manual retry starts another attempt. No uncontrolled retry loop exists. Quota errors retain local work and do not claim Synced. `Synced` refers to the last validated/acknowledged current dataset, not provider durability guarantees or an independent backup.
+- Disable stops future sync on **this device** and retains pending work, key envelope, baseline and conflicts. It does not purge remote copies or stop other enabled devices. All sessions still require explicit cloud-key unlock after reload.
+
+## Production setup and Windows commands
+
+1. Export and verify full JSON backups from each existing Account and Guest workspace. Keep these unencrypted files private. Do not clear browser data.
+2. In a disposable Supabase project, retain invitation-only configuration and apply both reviewed migrations in order. If `CREATE ROLE` is unavailable, resolve permissions with the project owner; do not substitute the table-owning postgres/service-role as RPC owner.
+3. Run disposable SQL and REST tests below. Inspect Dashboard Security Advisor and grants/RLS. Do not publish until actual authenticated A/B isolation passes.
+4. Owner manually applies the new migration to the intended project after approval. Keep `tco_sync` out of exposed API schemas. Do not change existing profiles or Auth/email templates.
+5. Keep the same two Vite public variables and HTTPS origin. No new secret or wildcard CSP is needed; existing `connect-src` includes only the configured HTTPS Supabase origin. The unchanged Service Worker ignores cross-origin/API/POST responses and never caches tokens, plaintext, or sync data.
+6. In PowerShell at `C:\Projects\Turnaround-Coordinator-Logbook`: `npm.cmd ci`, `npm.cmd run check:release`. Owner reviews/commits/pushes/deploys through the existing Cloudflare workflow. This implementation session performs none of those Git or hosted actions.
+7. Sign in online, unlock the local Vault, open Account Settings, review the data-policy consent, enter/confirm the cloud vault passphrase, and explicitly enable. Confirm status/last acknowledgement and inspect encrypted-only rows server-side.
+
+## Disposable SQL and real REST isolation tests
+
+SQL is **not** an authenticated REST isolation test. Against an expendable test project only, as its admin:
+
+```sql
+SET tco.disposable_test = 'yes';
+-- Then execute supabase/tests/encrypted_sync_rls.sql in this same session.
+```
+
+It seeds synthetic users and rolls back; the explicit marker is required. Do not run against production, even though it rolls back. The fixtures test authorization/constraints and intentionally do not represent decryptable operational records.
+
+For actual signed-token API verification, invite two fresh disposable test accounts and obtain their short-lived user access tokens through normal OTP in a trusted test harness. Never use service-role tokens. Set these environment variables only in a temporary local PowerShell session (do not commit, paste into chat, or print tokens):
+
+- `TCO_SYNC_DISPOSABLE=yes`
+- `TCO_SYNC_TEST_URL` = the disposable project's HTTPS URL
+- `TCO_SYNC_TEST_KEY` = its public publishable key
+- `TCO_SYNC_TEST_A_TOKEN` and `TCO_SYNC_TEST_B_TOKEN` = distinct authenticated test-user tokens
+
+Run `node scripts/check-sync-isolation.mjs`. It refuses pre-existing cloud data, verifies both tokens with Auth, creates random synthetic encrypted-format fixtures, checks key/record ownership, forged ownership, stale CAS, anonymous denial, private-schema denial and incremental reads. It prints assertions only, never tokens/records. Fixtures remain in those disposable accounts; remove the test project/accounts through the owner's administration workflow afterward. Do not reuse the fixture keys for application data. Clear the temporary environment variables when finished.
+
+## Two-device and physical-device acceptance
+
+Use fictional records only, with separate Windows Edge/Chrome and physical iPhone Safari/Home Screen PWA sessions:
+
+1. Back up both devices; sign into the same invited account. Create distinct local records before enabling. Verify Guest data remains identical.
+2. Enable on device A. Inspect cloud rows for ciphertext only. On B unlock its local vault, then enter A's cloud vault passphrase in Account Settings. Review privacy/same-ID conflicts; verify unique records, links, archived values and counts on both devices.
+3. Offline on A, create/edit/delete and restart. Confirm pending work survives local unlock. Reconnect/sign in and explicitly unlock cloud sync; verify B receives changes once.
+4. Edit the same record offline on both devices, including edit-versus-delete. Confirm two versions survive and the reviewed choice propagates. Test linked Duty/Handling/Journal deletions; invalid mixed choices must stay blocked.
+5. Interrupt an upload, retry after a paused project/rate limit, and test a storage-quota failure. No false saved/synced message; records remain recoverable.
+6. Sign out/switch A→B during a delayed request. No A response appears in B. Open two browser tabs; the stale tab must pause instead of overwriting. An expired/revoked session must stop sync.
+7. Verify consent, passphrase keyboard, conflict scrolling, long values, light/dark, English/Traditional Chinese and safe areas on the actual iPhone. Desktop emulation is not physical iOS validation.
+8. Disable sync, change a local record, and verify no upload. Confirm old cloud copies remain. Export/verify an independent JSON backup. Re-enable with the original cloud phrase and resolve any intervening remote changes.
+
+## Recovery, rollback and retention
+
+- Never reset a damaged cloud key/envelope, clear localStorage, unregister the worker or reinstall the PWA as a troubleshooting shortcut. Preserve ciphertext and independent JSON backups first.
+- Existing JSON Restore/Replace remains explicit and workspace-scoped. With sync enabled, replacement/deletion becomes pending cloud work. **Disable sync before a local recovery-only restore**, then carefully reconcile before re-enabling.
+- A pre-v0.8 app cannot read the adopted internal vault payload. Do not roll back static assets blindly. First disable sync, use v0.8 to unlock/export/verify every affected workspace, and preserve original encrypted bytes. Prefer a forward fix. A deliberate old-version recovery requires separately reviewed restoration from verified JSON; no automatic downgrade exists.
+- Do not drop/truncate cloud tables during rollback; that loses tombstones and enables stale resurrection. Stop clients and retain encrypted data for a reviewed recovery plan. Removing cloud records requires an explicit owner retention/deletion decision; disabling sync is not erasure.
+- Browser-local data is origin-specific. Keep the stable production origin. Future passkeys (v0.9) will authenticate identity, not automatically supply this encryption key. v1.0 still requires owner production approval and hosted security/device acceptance.
+
+## Verification record
+
+Final local continuation: `npm.cmd run check:release` passed 482 tests / 44 files, lint, build, static artifact checks and formatting. `npm.cmd audit` and `npm.cmd audit --omit=dev` each reported zero vulnerabilities after the existing development-only Vitest 4.1.12 / Wrangler 4.153.0 updates. The Account sidebar/footer says encrypted account vault rather than implying cloud-enabled records exist only on-device. Exact release commands and review notes are recorded in `PROTOTYPE_STATUS.md`. Tests use real Web Crypto and simulated devices/transports; they do not establish hosted RLS, SMTP, Internet reliability or physical iPhone behavior. No local PostgreSQL/Supabase runtime was available for executing the migration/SQL fixtures. Live SQL, signed-token REST, owner Windows and physical iPhone acceptance remain mandatory.

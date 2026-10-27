@@ -1,4 +1,16 @@
-# TCO Logbook v0.7.1 Pre-release status
+# TCO Logbook v0.8.0 Pre-release status
+
+## v0.8.0 Secure encrypted Cloud Sync — 2026-10-27 (Hong Kong)
+
+Started on clean main at 8531e23 (committed v0.7.1). Added opt-in Account-only sync, portable wrapped account keys, individually encrypted records, account-revision CAS, permanent encrypted tombstones, durable local baselines/conflicts, reviewed resolution and session/tab fencing. Old local vaults and schema-1 backups remain readable; first explicit sync adoption adds encrypted internal metadata. Guest never receives a sync controller. No Guest merge/import, key rotation or passkeys.
+
+Prepared a separate SQL migration with forced ownership RLS and a narrow NOLOGIN/NOBYPASSRLS RPC executor; no migration or deployment was applied. CSP remains restricted to the existing configured HTTPS origin; Service Worker and operational rules are unchanged. Full setup, threat model, rollback, quota, retention, recovery and disposable SQL/REST acceptance are in docs/V0_8_0_CLOUD_SYNC_SETUP.md.
+
+Final continuation independently confirmed the existing dependency/ESLint fixes: Vitest 4.1.12 / @vitest/mocker 4.1.12 and Wrangler 4.153.0 / undici 7.30.1 are development-only updates; runtime dependencies were unchanged. Both npm audit and npm audit --omit=dev reported 0 vulnerabilities. No force fix or major direct-dependency upgrade was used. The script-specific Node globals ESLint rule was already present and passes without disabled assertions/rules.
+
+Release verification: npm.cmd run check:release passed 482 tests across 44 files, lint, production build, static build checks and formatting. The build retains the non-failing >500 kB main-chunk advisory (about 763 kB minified / 238 kB gzip). The static scan detected no development URLs or credential patterns; this is not a complete secrets/security audit. A final Account-only footer/sidebar wording fix removes the misleading device-only claim after sync; Guest retains its device-only wording, with Account/Guest UI regression coverage.
+
+Focused review covered forced ownership RLS/restricted RPC role, immutable wrapped keys and legacy vault adoption, durable baselines and conflicts, tombstones/revision CAS, sign-out/switch fencing, explicit consent and Guest exclusion. No hosted migration/deployment or local data reset occurred. PostgreSQL/Supabase runtime and physical iPhone were unavailable; live SQL, two real authenticated accounts and actual iOS acceptance remain mandatory. Ready for owner testing, not production acceptance. Manual Git/deployment only.
 
 ## v0.7.1 Handling keyboard positioning ? 2026-10-27 (Hong Kong)
 

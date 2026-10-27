@@ -1,0 +1,34 @@
+﻿.sync-control {
+  min-width: 0;
+}
+.sync-control form,
+.sync-control fieldset {
+  display: grid;
+  gap: 12px;
+}
+.sync-control fieldset {
+  min-width: 0;
+  margin-block: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.sync-control legend {
+  overflow-wrap: anywhere;
+}
+.sync-diff {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.sync-diff pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 260px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .sync-diff {
+    grid-template-columns: 1fr;
+  }
+}

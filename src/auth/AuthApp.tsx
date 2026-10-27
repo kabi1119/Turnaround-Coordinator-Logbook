@@ -21,6 +21,9 @@ import {
 import type { AccountIdentity } from './client';
 import { CHOICE_KEY, chooseGuest, guestReturning, guestStore } from '../workspaces/store';
 import type { WorkspaceStore } from '../workspaces/store';
+import { SyncContext } from '../sync/context';
+import { SyncEngine } from '../sync/engine';
+import { transport } from '../sync/transport';
 import { hasVault } from '../workspaces/vault';
 
 type Target = { user: AccountIdentity; offline: boolean };
@@ -35,6 +38,8 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     navigator.language.startsWith('zh') ? 'zh-HK' : 'en',
   );
   const [expires, setExpires] = useState(0);
+  const [syncEngine, setSyncEngine] = useState<SyncEngine | null>(null);
+  useEffect(() => syncEngine?.attach(), [syncEngine]);
   const active = useRef<WorkspaceStore | null>(null),
     generation = useRef(0),
     mounted = useRef(true);
@@ -45,6 +50,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     active.current = null;
     activeMode.current = null;
     setStore(null);
+    setSyncEngine(null);
   }
   function guest() {
     generation.current++;
@@ -261,22 +267,25 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     <LanguageContext.Provider value={language}>
       {stage === 'workspace' && store ? (
         <>
-          <App
-            key={store.key}
-            workspace={store}
-            workspaceNotice={notice}
-            accountControl={
-              <AccountControl
-                user={target?.user || null}
-                offline={target?.offline || false}
-                onLeave={guest}
-                onSignIn={(lang) => {
-                  setLanguage(lang);
-                  setLogin(true);
-                }}
-              />
-            }
-          />
+          <SyncContext.Provider value={syncEngine}>
+            <App
+              key={store.key}
+              workspace={store}
+              workspaceNotice={notice}
+              accountControl={
+                <AccountControl
+                  syncEngine={syncEngine}
+                  user={target?.user || null}
+                  offline={target?.offline || false}
+                  onLeave={guest}
+                  onSignIn={(lang) => {
+                    setLanguage(lang);
+                    setLogin(true);
+                  }}
+                />
+              }
+            />
+          </SyncContext.Provider>
           {login && (
             <Modal
               title={t('Sign in to TCO Logbook', '登入 TCO Logbook')}
@@ -302,7 +311,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
             <div className="auth-brand">
               <img src="/airplane.svg?v=0.6.1" width="64" height="64" alt="" />
               <span>
-                TCO Logbook<small>v0.7.1 · {t('Device only', '僅限本機')}</small>
+                TCO Logbook<small>v0.8.0 · {t('Device only', '僅限本機')}</small>
               </span>
             </div>
             <div className="auth-languages">
@@ -347,6 +356,16 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
                       next.lock();
                       return;
                     }
+                    if (client && !target.offline)
+                      setSyncEngine(
+                        new SyncEngine(
+                          next,
+                          target.user.id,
+                          transport(client, target.user.id),
+                          undefined,
+                          invalidate,
+                        ),
+                      );
                     active.current = next;
                     activeMode.current = target.offline ? 'offline' : 'verified';
                     setStore(next);

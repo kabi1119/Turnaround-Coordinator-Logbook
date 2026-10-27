@@ -7,6 +7,7 @@ export default ts.config(
   { ignores: ['dist', 'node_modules', '.wrangler'] },
   js.configs.recommended,
   ...ts.configs.recommended,
+  { files: ['scripts/check-sync-isolation.mjs'], languageOptions: { globals: globals.node } },
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },

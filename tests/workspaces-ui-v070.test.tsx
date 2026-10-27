@@ -11,6 +11,10 @@ it('keeps reviewed Account drafts open on an asynchronous persistence failure wi
   const store = await openVault(uid, 'a lengthy unique test passphrase', true);
   vi.spyOn(store, 'write').mockResolvedValue({ ok: false, reason: 'unavailable' });
   render(<App workspace={store} />);
+  expect(document.querySelector('.nav-context')).toHaveTextContent('Encrypted account vault');
+  expect(document.querySelector('.nav-context')).not.toHaveTextContent(
+    'Stored on this device only',
+  );
   fireEvent.click(within(screen.getByRole('navigation')).getByRole('button', { name: 'Add' }));
   fireEvent.click(screen.getByRole('button', { name: /New Handling Record/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Save Draft' }));
