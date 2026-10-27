@@ -60,6 +60,19 @@ for (const token of [a, b]) {
     'Refusing non-empty or unconfigured test accounts',
   );
 }
+const tokenParts = a.split('.');
+assert(tokenParts.length === 3, 'A signed Supabase test access JWT is required');
+const forgedClaims = JSON.parse(Buffer.from(tokenParts[1], 'base64url').toString('utf8'));
+forgedClaims.sub = userB.data.id;
+const forgedToken = [
+  tokenParts[0],
+  Buffer.from(JSON.stringify(forgedClaims)).toString('base64url'),
+  tokenParts[2],
+].join('.');
+assert(
+  !(await rpc(forgedToken, 'pull', { p_cursor: 0 })).ok,
+  'Gateway must reject modified JWT claims with an invalid signature',
+);
 const envelope = (userId) => ({
   version: 1,
   userId,
@@ -100,6 +113,17 @@ assert(
   !(await rpc(a, 'push', { p_expected: 0, p_operation: randomUUID(), p_records: [record] })).ok,
   'Stale revision must fail',
 );
+const ownA = await rpc(a, 'pull', { p_cursor: 0 });
+assert(
+  ownA.ok &&
+    ownA.data.envelope.userId === userA.data.id &&
+    ownA.data.records[0].ciphertext === record.ciphertext,
+  'Authenticated owner must recover its unchanged cloud key/record without executor Auth schema grants',
+);
+assert(
+  !(await rpc(a, 'pull', { p_cursor: 0, p_user_id: userB.data.id })).ok,
+  'RPC must reject a client-supplied ownership argument',
+);
 const isolated = await rpc(b, 'pull', { p_cursor: 0 });
 assert(
   isolated.ok && isolated.data.total === 0 && isolated.data.envelope.userId === userB.data.id,
@@ -122,7 +146,7 @@ assert(
   'Incremental read must not repeat unchanged records',
 );
 console.log(
-  'PASS: disposable REST key ownership, record isolation, revision guards, anonymous denial and private-schema restrictions.',
+  'PASS: disposable REST own-account access, key/record isolation, tampered-JWT rejection, ownership-argument rejection, revision guards, anonymous denial and private-schema restrictions.',
 );
 console.log(
   'Synthetic fixture rows remain in these two disposable accounts. Remove the disposable project/accounts using the owner test administration workflow.',

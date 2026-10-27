@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.8.0 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.8.1 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.8.0 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.8.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -213,3 +213,8 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Follow docs/V0_8_0_CLOUD_SYNC_SETUP.md. Preserve the local vault and operational schema/IDs/backups; sync metadata is encrypted in the internal vault payload. Never reset an existing cloud key or truncate tombstones.
 - Require consent, unlocked cloud keys, server-verified account/expiry and Web Locks. Keep revision CAS, complete graph validation, local-before-remote persistence, conflict alternatives and stale-operation fencing. No direct browser table writes or service-role credentials.
 - RPCs use the narrow NOLOGIN/NOBYPASSRLS executor with forced ownership RLS; never replace it with postgres or expose the private sync schema. Test SQL/REST only in disposable projects; static inspection is not live isolation evidence.
+
+## v0.8.1 Supabase authorization correction
+
+- Preserve committed migrations; apply the additive 202610280001 correction after v0.8.0. Use the private SECURITY INVOKER request-claims helper consistently in sync RLS/RPCs; never depend on granting a custom executor Auth schema access. Claims are trusted only after gateway JWT validation, not as client-supplied owner IDs.
+- Keep anonymous rejection, fixed search paths, the NOLOGIN/NOINHERIT/NOBYPASSRLS RPC owner and authenticated-only EXECUTE. Fail closed on unsafe grants/memberships or an unexpected schema; never reset records/key envelopes to repair authorization. No crypto/sync-engine redesign or hosted changes. Report embedded PostgreSQL tests separately from hosted Supabase and physical-device acceptance.

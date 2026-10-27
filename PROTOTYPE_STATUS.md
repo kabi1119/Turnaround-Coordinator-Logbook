@@ -1,4 +1,10 @@
-# TCO Logbook v0.8.0 Pre-release status
+# TCO Logbook v0.8.1 Pre-release status
+
+## v0.8.1 Supabase authorization compatibility — 2026-10-28 (Hong Kong)
+
+Started on clean main at f8fb8d6 (committed v0.8.0). Preserved that migration and all encrypted-data/engine/vault formats. Added 202610280001_sync_authorization.sql: a protected, parameterless SECURITY INVOKER request-claims helper replaces Auth schema calls consistently in all six sync RLS policies and three RPCs. Anonymous/malformed/mismatched identity fails closed; the existing restricted RPC owner, CAS, ciphertext, key immutability and opt-in remain. Migration preflight blocks unsafe role attributes, memberships, schema CREATE grants or unexpected RPC ownership/overloads instead of resetting data.
+
+Temporary PGlite 0.5.12 / PostgreSQL outside application dependencies reproduced old Auth schema denial and passed 22 executable fresh/upgrade/reapply/data-preservation/security scenarios, including both SQL fixtures with Auth access denied. Focused application tests: 48 passed / 8 files. Final npm.cmd run check:release passed 488 tests / 45 files, lint, production build, static bundle checks and formatting. npm.cmd audit and npm.cmd audit --omit=dev both reported 0 vulnerabilities; no repository dependency changed except the root version. The unchanged main bundle retains its non-failing >500 kB advisory (about 763 kB minified / 238 kB gzip). The disposable REST checker also passed its local no-opt-in refusal and syntax checks; its real network assertions remain unexecuted. No hosted Supabase migration/REST or physical iPhone test was performed. See docs/V0_8_0_CLOUD_SYNC_SETUP.md for exact migration order, read-only checks and owner acceptance. Manual Git only.
 
 ## v0.8.0 Secure encrypted Cloud Sync — 2026-10-27 (Hong Kong)
 

@@ -1,6 +1,64 @@
-﻿# v0.8.0 encrypted Cloud Sync setup and acceptance
+﻿# v0.8.x encrypted Cloud Sync setup and acceptance
 
 **Status: local implementation for owner acceptance. No hosted migration, account configuration, deployment or physical iPhone test was performed. SQL inspection/unit tests do not prove live RLS isolation. Complete disposable-database and real-device checks before enabling this release for other users.**
+
+## v0.8.1 additive authorization correction — 2026-10-28
+
+**Owner review / disposable testing only until hosted acceptance.** v0.8.0 was committed at f8fb8d6; its migration remains unchanged. The correction is `supabase/migrations/202610280001_sync_authorization.sql`.
+
+### Root cause and corrected trust boundary
+
+The [official Supabase knowledge base](https://supabase.com/kb/troubleshooting/permission-errors-when-granting-custom-roles-access-to-the-auth-schema) explains that hosted `postgres` does not hold the grant option for the managed Auth schema. The old USAGE grant may complete with a warning but grant nothing. A custom RPC executor then fails when RLS or an RPC reaches Auth functions.
+
+The patch follows the documented request-claims option. Private, parameterless `tco_sync.request_user_id()` is STABLE, SECURITY INVOKER, has an empty search_path, and reads only `request.jwt.claims` / compatible legacy claim settings. It has no Auth schema dependency, Auth table access, privileged helper body or client-supplied owner argument. PostgREST must first verify the signed JWT and install these request settings. The helper does not independently verify a JWT signature; direct administrative SQL can set GUCs and is a different trusted boundary.
+
+Only an authenticated-role, non-anonymous identity is returned. Missing/malformed claims, invalid UUIDs, service/anonymous roles, true or malformed anonymous flags, and conflicting modern/legacy subjects or roles return NULL. Missing anonymous flags remain compatible with legacy non-anonymous tokens; Supabase anonymous-auth tokens explicitly carry true. All six sync RLS policies and all three RPCs use this same helper. The three RPCs retain their restricted NOLOGIN/NOINHERIT/NOBYPASSRLS owner, fixed search_path, revision CAS and ciphertext-only operations. The helper is owned by postgres but is **not** SECURITY DEFINER; EXECUTE is granted only to the executor. Browser roles cannot reach it or the private tables directly.
+
+No inheritance from authenticated, broad Auth schema grants, service-role shortcut, encryption-format change or sync-engine rebuild is introduced. The migration fails transactionally on unexpected role attributes/memberships, executor schema CREATE privileges (including inherited PUBLIC grants), missing forced RLS, unexpected RPC overloads or incorrect ownership. If a preflight fails, stop and review the specific grant/installation; do not clear records, drop the schema or substitute a privileged RPC owner.
+
+### Exact migration order
+
+- **Fresh database:** apply `202610200001_profiles.sql`, then `202610270001_encrypted_sync.sql`, then `202610280001_sync_authorization.sql`, in that order. The ineffective Auth grant in committed v0.8.0 may warn; the correction removes runtime reliance on it. Do not edit historical migrations to hide that warning.
+- **v0.8.0 already applied:** apply only `202610280001_sync_authorization.sql` as the same project administrator used for the earlier migration. Do not rerun v0.8.0 table/key creation.
+- **Incomplete/unknown v0.8.0 installation:** the correction blocks execution when prerequisites are missing or unsafe. Investigate the previous transaction and migration history; do not guess, delete or recreate cloud keys/tables.
+
+The correction is one transaction and changes functions/policy expressions/ACLs only. It never rewrites key envelopes or cloud records. Reapplying it against the expected v0.8.x objects is supported. Repeat read-only verification freely; do not mark migration history manually or run data fixtures in production.
+
+### Safe read-only verification
+
+Expected: helper SECURITY DEFINER=false / STABLE / postgres owner; three RPCs SECURITY DEFINER=true / executor owner; empty search paths throughout. Helper EXECUTE for anon/authenticated=false, executor=true; only authenticated has gateway RPC EXECUTE. Auth schema usage is not a prerequisite and may remain false.
+
+```sql
+select p.oid::regprocedure as function, p.prosecdef, p.provolatile,
+       pg_get_userbyid(p.proowner) as owner, p.proconfig
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where (n.nspname='tco_sync' and p.proname='request_user_id')
+   or (n.nspname='public' and p.proname in ('tco_sync_pull','tco_sync_initialize','tco_sync_push'));
+select has_schema_privilege('tco_sync_executor','auth','USAGE') as auth_usage_not_required,
+       has_function_privilege('tco_sync_executor','tco_sync.request_user_id()','EXECUTE') as helper_executor,
+       has_function_privilege('authenticated','tco_sync.request_user_id()','EXECUTE') as helper_browser_denied,
+       has_function_privilege('anon','public.tco_sync_pull(bigint)','EXECUTE') as anon_rpc_denied;
+select schemaname,tablename,policyname,cmd,qual,with_check
+from pg_policies where schemaname='tco_sync';
+select rolname,rolcanlogin,rolinherit,rolsuper,rolbypassrls,rolcreaterole
+from pg_roles where rolname='tco_sync_executor';
+select pg_get_userbyid(m.roleid) as granted_role, pg_get_userbyid(m.member) as member
+from pg_auth_members m where m.roleid='tco_sync_executor'::regrole
+   or m.member='tco_sync_executor'::regrole;
+```
+
+Policies must reference only the private request helper for identity. The executor must not inherit another role or be granted to gateway/browser roles; ordinary administrator membership from PostgreSQL role administration is distinct from browser access. Do not grant schema CREATE or Auth access merely to make a failing test pass.
+
+### Actual local results and remaining acceptance
+
+- A temporary embedded PostgreSQL runtime (PGlite 0.5.12, outside application dependencies) reproduced original `42501 permission denied for schema auth` with executor Auth usage denied.
+- **22 executable database scenario checks passed:** fresh sequential installation; existing v0.8.0 data upgrade; exact row/key/ciphertext/revision/timestamp preservation; correction reapplication; own-account RPCs; original/new rollback-only SQL fixtures (including repeated verification); fail-closed unsafe membership/BYPASSRLS/CREATE grants.
+- Focused application regressions passed **48 tests / 8 files**, including authorization contracts, actual Web Crypto, Guest exclusion, old Vault compatibility, interrupted upload/retry, revision conflicts and UI consent. The full v0.8.1 release gate passed **488 tests / 45 files**, lint, production build, static bundle scan and formatting. Both full and production-only npm audits reported **0 vulnerabilities**. Details are recorded in PROTOTYPE_STATUS.md.
+- These are real local PostgreSQL permission/RLS checks against a simulated Auth schema, **not** hosted Supabase or authenticated Internet REST acceptance. No production migration, deployment or data deletion was performed. Real signed-token tests and physical iPhone remain unverified.
+
+In a **disposable Supabase project only**, apply all three migrations, verify executor Auth usage is false, then run `SET tco.disposable_test='yes';` and execute both `supabase/tests/encrypted_sync_rls.sql` and `supabase/tests/sync_authorization_v081.sql` in the same administrative session. Both fixtures roll back. The v0.8.1 fixture refuses to run if the executor can use Auth, so it cannot accidentally miss this regression. Do not revoke or modify production Auth permissions to arrange a fixture test.
+
+Then run `scripts/check-sync-isolation.mjs` with two empty disposable invited accounts and short-lived user JWTs, using the environment setup below. It now also checks own-account key/ciphertext recovery, rejects an owner argument and modified JWT signature, and verifies cross-account isolation. Never use a service-role credential. Do not run this mutating REST fixture against real user accounts. Confirm hosted RPC ownership, claims handling and old/new-device sync before the owner manually applies the correction to the intended project. Finally perform Windows/iPhone Safari and standalone-PWA acceptance, preserving backups and the existing opt-in requirement.
 
 ## Architecture and scope
 
@@ -36,7 +94,8 @@ This protects records at rest and in transport to the database; it does not prot
 Apply **only after review and successful disposable testing**:
 
 - Existing prerequisite: `supabase/migrations/202610200001_profiles.sql`.
-- New migration: `supabase/migrations/202610270001_encrypted_sync.sql`.
+- Original sync migration: `supabase/migrations/202610270001_encrypted_sync.sql`.
+- Required additive correction: `supabase/migrations/202610280001_sync_authorization.sql`.
 
 The new private `tco_sync` schema has:
 
@@ -45,9 +104,9 @@ The new private `tco_sync` schema has:
 | `accounts` | Owner UUID, format, immutable wrapped key, account revision, operation UUID, server timestamp | Forced RLS; no browser table grants                           |
 | `records`  | Owner UUID, opaque ID, revision, ciphertext envelope, server timestamp                        | Forced RLS; ownership/revision index; no browser table grants |
 
-The public API consists only of `tco_sync_pull`, `tco_sync_initialize` and `tco_sync_push`. Anonymous EXECUTE is revoked. Ownership is always derived from `auth.uid()`, never an owner parameter. Anonymous-auth identities are also rejected. Keep public registration disabled as documented for v0.7.0.
+The public API consists only of `tco_sync_pull`, `tco_sync_initialize` and `tco_sync_push`. Anonymous EXECUTE is revoked. Ownership is always derived from server-installed JWT request claims through the private request helper, never an owner parameter. Anonymous-auth identities are also rejected. Keep public registration disabled as documented for v0.7.0.
 
-**Why a restricted SECURITY DEFINER role:** ordinary SECURITY INVOKER functions would require granting browser roles table writes, allowing direct revision bypass. Instead, all three fixed-search-path functions are owned by `tco_sync_executor`, a NOLOGIN, NOINHERIT, NOBYPASSRLS role that does not own the tables. It receives only the required SELECT/INSERT/UPDATE privileges. Forced RLS still applies to the caller's `auth.uid()`. No dynamic SQL or broad privileged operation exists. Do not grant membership in this role, give it BYPASSRLS, or expose `tco_sync` as a PostgREST schema.
+**Why a restricted SECURITY DEFINER role:** ordinary SECURITY INVOKER functions would require granting browser roles table writes, allowing direct revision bypass. Instead, all three fixed-search-path functions are owned by `tco_sync_executor`, a NOLOGIN, NOINHERIT, NOBYPASSRLS role that does not own the tables. It receives only the required SELECT/INSERT/UPDATE privileges. Forced RLS still applies to the caller's JWT identity through the private request helper. No dynamic SQL or broad privileged operation exists. Do not grant membership in this role, give it BYPASSRLS, or expose `tco_sync` as a PostgREST schema.
 
 Push locks the user's account row, compares the expected revision and atomically commits all changed records plus the next revision. This account-level CAS protects cross-record links; concurrent changes are pulled/reconciled rather than overwritten. Pull holds a shared account lock and returns one coherent incremental snapshot with counts. Keys cannot be overwritten, and physical record DELETE is not granted. Tombstone ciphertext remains indefinitely to prevent stale-device resurrection. Deleting an Auth account through an authorized administrator cascades its cloud rows; this app does not expose account deletion, and local browser vaults/backups remain until separately managed.
 
@@ -83,9 +142,9 @@ where n.nspname='public' and p.proname like 'tco_sync_%';
 ## Production setup and Windows commands
 
 1. Export and verify full JSON backups from each existing Account and Guest workspace. Keep these unencrypted files private. Do not clear browser data.
-2. In a disposable Supabase project, retain invitation-only configuration and apply both reviewed migrations in order. If `CREATE ROLE` is unavailable, resolve permissions with the project owner; do not substitute the table-owning postgres/service-role as RPC owner.
+2. In a disposable Supabase project, retain invitation-only configuration and apply all three reviewed migrations in the order above. If `CREATE ROLE` is unavailable, resolve permissions with the project owner; do not substitute the table-owning postgres/service-role as RPC owner.
 3. Run disposable SQL and REST tests below. Inspect Dashboard Security Advisor and grants/RLS. Do not publish until actual authenticated A/B isolation passes.
-4. Owner manually applies the new migration to the intended project after approval. Keep `tco_sync` out of exposed API schemas. Do not change existing profiles or Auth/email templates.
+4. Owner manually applies the required migration(s) after approval: an existing v0.8.0 installation needs only the additive v0.8.1 correction. Keep `tco_sync` out of exposed API schemas. Do not change existing profiles or Auth/email templates.
 5. Keep the same two Vite public variables and HTTPS origin. No new secret or wildcard CSP is needed; existing `connect-src` includes only the configured HTTPS Supabase origin. The unchanged Service Worker ignores cross-origin/API/POST responses and never caches tokens, plaintext, or sync data.
 6. In PowerShell at `C:\Projects\Turnaround-Coordinator-Logbook`: `npm.cmd ci`, `npm.cmd run check:release`. Owner reviews/commits/pushes/deploys through the existing Cloudflare workflow. This implementation session performs none of those Git or hosted actions.
 7. Sign in online, unlock the local Vault, open Account Settings, review the data-policy consent, enter/confirm the cloud vault passphrase, and explicitly enable. Confirm status/last acknowledgement and inspect encrypted-only rows server-side.
@@ -131,6 +190,6 @@ Use fictional records only, with separate Windows Edge/Chrome and physical iPhon
 - Do not drop/truncate cloud tables during rollback; that loses tombstones and enables stale resurrection. Stop clients and retain encrypted data for a reviewed recovery plan. Removing cloud records requires an explicit owner retention/deletion decision; disabling sync is not erasure.
 - Browser-local data is origin-specific. Keep the stable production origin. Future passkeys (v0.9) will authenticate identity, not automatically supply this encryption key. v1.0 still requires owner production approval and hosted security/device acceptance.
 
-## Verification record
+## v0.8.0 historical verification record
 
 Final local continuation: `npm.cmd run check:release` passed 482 tests / 44 files, lint, build, static artifact checks and formatting. `npm.cmd audit` and `npm.cmd audit --omit=dev` each reported zero vulnerabilities after the existing development-only Vitest 4.1.12 / Wrangler 4.153.0 updates. The Account sidebar/footer says encrypted account vault rather than implying cloud-enabled records exist only on-device. Exact release commands and review notes are recorded in `PROTOTYPE_STATUS.md`. Tests use real Web Crypto and simulated devices/transports; they do not establish hosted RLS, SMTP, Internet reliability or physical iPhone behavior. No local PostgreSQL/Supabase runtime was available for executing the migration/SQL fixtures. Live SQL, signed-token REST, owner Windows and physical iPhone acceptance remain mandatory.

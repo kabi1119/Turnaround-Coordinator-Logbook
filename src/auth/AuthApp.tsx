@@ -311,7 +311,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
             <div className="auth-brand">
               <img src="/airplane.svg?v=0.6.1" width="64" height="64" alt="" />
               <span>
-                TCO Logbook<small>v0.8.0 · {t('Device only', '僅限本機')}</small>
+                TCO Logbook<small>v0.8.1 · {t('Device only', '僅限本機')}</small>
               </span>
             </div>
             <div className="auth-languages">
