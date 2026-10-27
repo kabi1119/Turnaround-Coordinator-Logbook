@@ -23,6 +23,7 @@ export function Modal({
   wide = false,
   sheet = false,
   closing = false,
+  upperKeyboardFocus = false,
 }: {
   title: string;
   children: ReactNode;
@@ -30,6 +31,7 @@ export function Modal({
   wide?: boolean;
   sheet?: boolean;
   closing?: boolean;
+  upperKeyboardFocus?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -60,6 +62,7 @@ export function Modal({
   return (
     <dialog
       ref={ref}
+      data-upper-keyboard-focus={upperKeyboardFocus || undefined}
       aria-labelledby={titleId}
       inert={closing}
       className={`${wide ? 'wide' : ''} ${sheet ? 'duty-sheet' : ''} ${closing ? 'closing' : ''}`}

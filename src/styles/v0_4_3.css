@@ -20,6 +20,10 @@ dialog > .modal-body {
 dialog[data-keyboard-open='true'] .sticky-actions {
   position: static;
 }
+/* One additional 64px suggestion row, only in the Handling editor. */
+dialog[data-upper-keyboard-focus='true'] .airline-options {
+  max-height: min(424px, calc(45dvh + 64px));
+}
 @media (max-width: 767px), (max-width: 1024px) and (any-pointer: coarse) {
   dialog,
   dialog.wide,
@@ -54,6 +58,13 @@ dialog[data-keyboard-open='true'] .sticky-actions {
     top: auto;
     flex: 1 0 100%;
     max-height: min(240px, calc(var(--modal-viewport-height, 100dvh) * 0.3));
+  }
+  dialog[data-upper-keyboard-focus='true'] .airline-options {
+    max-height: min(
+      304px,
+      calc(var(--modal-viewport-height, 100dvh) * 0.3 + 64px),
+      max(64px, calc(var(--modal-viewport-height, 100dvh) - 180px))
+    );
   }
 }
 @media (max-height: 480px) and (any-pointer: coarse) {

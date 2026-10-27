@@ -17,7 +17,8 @@ export function useModalViewport(ref: RefObject<HTMLDialogElement | null>) {
       area = modalScrollArea(dialog);
     let frame = 0,
       settle: ReturnType<typeof setTimeout> | undefined,
-      manual = false;
+      manual = false,
+      upperPlaced = false;
     let lastWidth = viewport?.width || window.innerWidth;
     const requestFrame =
       window.requestAnimationFrame?.bind(window) ||
@@ -33,8 +34,15 @@ export function useModalViewport(ref: RefObject<HTMLDialogElement | null>) {
     function reveal() {
       frame = 0;
       const el = focused();
-      if (!manual && el && (isEditableField(el) || el.matches('[aria-invalid="true"]')))
-        revealModalField(el);
+      if (!manual && el && (isEditableField(el) || el.matches('[aria-invalid="true"]'))) {
+        const upper =
+          !upperPlaced &&
+          dialog.dataset.upperKeyboardFocus === 'true' &&
+          dialog.dataset.keyboardOpen === 'true' &&
+          isTextEntry(el);
+        revealModalField(el, upper);
+        if (upper) upperPlaced = true;
+      }
     }
     function schedule() {
       if (!frame) frame = requestFrame(reveal);
@@ -81,6 +89,7 @@ export function useModalViewport(ref: RefObject<HTMLDialogElement | null>) {
     }
     function focusChanged() {
       manual = false;
+      upperPlaced = false;
       geometry();
       const el = focused();
       if (el && isTextEntry(el) && !(el instanceof HTMLTextAreaElement)) {

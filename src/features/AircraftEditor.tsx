@@ -445,6 +445,7 @@ export default function AircraftEditor({
         wide
         sheet
         closing={closing}
+        upperKeyboardFocus
       >
         <p className="muted">
           {t('Fields marked with ', '標示 ')}

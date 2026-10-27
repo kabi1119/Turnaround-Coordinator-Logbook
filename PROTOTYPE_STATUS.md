@@ -1,4 +1,8 @@
-# TCO Logbook v0.7.0 Pre-release status
+# TCO Logbook v0.7.1 Pre-release status
+
+## v0.7.1 Handling keyboard positioning ? 2026-10-27 (Hong Kong)
+
+Handling-only opt-in places typed fields in the upper modal scroll area once the mobile keyboard settles. Manual scrolling, pinch zoom, cleanup and other modal defaults remain protected. Airline options gain one 64px row of space with a small-viewport cap. No schema, storage or authentication behavior changes. Targeted modal/version tests: 29 passed. Production build and targeted ESLint passed. Isolated Edge checks at 1440px/390px confirmed bounded suggestions, no horizontal overflow and modal-local keyboard positioning with a simulated VisualViewport (not a physical keyboard). Physical iPhone Safari/PWA keyboard behavior still needs owner verification.
 
 ## v0.7.0 Auth and workspace foundation — 2026-10-20 (Hong Kong)
 

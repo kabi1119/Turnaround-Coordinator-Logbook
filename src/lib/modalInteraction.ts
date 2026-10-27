@@ -42,7 +42,7 @@ export function textEntries(dialog: HTMLDialogElement) {
 }
 
 /** Label + hint/error when they fit; otherwise prioritize the label/control, then the control itself. */
-export function revealModalField(control: HTMLElement) {
+export function revealModalField(control: HTMLElement, preferUpper = false) {
   const dialog = control.closest('dialog');
   if (
     !dialog ||
@@ -86,6 +86,16 @@ export function revealModalField(control: HTMLElement) {
         : input.bottom - field.top <= room
           ? { top: field.top, bottom: input.bottom }
           : input;
+  // On keyboard focus, reserve the upper part of this scroll surface for the typed field.
+  // Keep its label in view and leave room below for suggestions; never scroll the page.
+  if (preferUpper && isTextEntry(control)) {
+    const labelHeight = Math.min(24, Math.max(0, input.top - field.top));
+    const target = top + clearance + labelHeight;
+    if (input.top > target + 1) {
+      area.scrollTop += input.top - target;
+      return;
+    }
+  }
   const delta =
     region.bottom > bottom - clearance
       ? region.bottom - bottom + clearance

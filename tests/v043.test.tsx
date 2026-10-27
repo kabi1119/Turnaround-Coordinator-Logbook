@@ -56,13 +56,15 @@ const rect = (top: number, bottom: number): DOMRect => ({
 function Form({
   close = () => {},
   submit = () => {},
+  upper = false,
 }: {
   close?: () => void;
   submit?: () => void;
+  upper?: boolean;
 }) {
   const [value, setValue] = useState('450A');
   return (
-    <Modal title="Keyboard test" sheet onClose={close}>
+    <Modal title="Keyboard test" sheet upperKeyboardFocus={upper} onClose={close}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -103,6 +105,54 @@ function geometry(viewport: Viewport) {
 const flush = () => act(() => vi.advanceTimersByTime(150));
 
 describe('v0.4.3 event-driven keyboard viewport and visibility', () => {
+  it('v0.7.1 places Handling text fields higher once after keyboard settling, without oscillating or overriding manual scroll', () => {
+    const viewport = environment()!;
+    render(<Form upper />);
+    const { area, input } = geometry(viewport);
+    (input as HTMLElement).focus();
+    flush();
+    expect(area.scrollTop).toBe(200); // No keyboard: retain ordinary visibility behavior.
+    viewport.height = 420;
+    viewport.offsetTop = 40;
+    viewport.dispatchEvent(new Event('resize'));
+    flush();
+    expect(input.getBoundingClientRect().top).toBe(144); // 100 body top + 20 clearance + 24 label.
+    const position = area.scrollTop;
+    for (let i = 0; i < 3; i++) {
+      viewport.dispatchEvent(new Event('scroll'));
+      flush();
+    }
+    expect(area.scrollTop).toBe(position);
+    area.scrollTop = 350;
+    fireEvent.touchMove(area);
+    viewport.dispatchEvent(new Event('resize'));
+    flush();
+    expect(area.scrollTop).toBe(350);
+    fireEvent.pointerDown(input);
+    flush();
+    expect(input.getBoundingClientRect().top).toBe(144);
+  });
+  it('v0.7.1 keeps upper-placement opt-in inert for desktop and pinch zoom', () => {
+    const viewport = environment()!;
+    render(<Form upper />);
+    const { area, input, dialog } = geometry(viewport);
+    vi.stubGlobal('innerWidth', 1440);
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({ matches: false })),
+    );
+    viewport.height = 420;
+    (input as HTMLElement).focus();
+    flush();
+    expect(dialog).toHaveAttribute('data-keyboard-open', 'false');
+    expect(input.getBoundingClientRect().top).toBeGreaterThan(144);
+    area.scrollTop = 200;
+    viewport.scale = 2;
+    viewport.dispatchEvent(new Event('resize'));
+    flush();
+    expect(area.scrollTop).toBe(200);
+  });
+
   it('Fits visual height and offset, revealing the field/label once after keyboard settling without moving the background', () => {
     const viewport = environment()!;
     render(<Form />);
@@ -439,6 +489,7 @@ describe('v0.4.3 native Next/Done and nested focus', () => {
     const view = render(
       <AircraftEditor db={db} commit={commit} onClose={() => {}} onSaved={() => {}} />,
     );
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-upper-keyboard-focus', 'true');
     expect(document.activeElement?.tagName).not.toBe('INPUT');
     const form = view.container.querySelector('form')!,
       area = modalScrollArea(screen.getByRole('dialog') as HTMLDialogElement);
