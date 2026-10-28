@@ -156,6 +156,12 @@ Standard references: [Web Crypto key derivation](https://developer.mozilla.org/e
 
 This protects records at rest and in transport to the database; it does not protect an unlocked app from malicious same-origin JavaScript, a compromised frontend host, browser extensions, malware, weak passphrases or an authorized user sharing decrypted data. A malicious database administrator can delete/withhold data; authenticated envelopes are not a proof of server availability or a complete anti-rollback transparency system. Existing devices reject revision rollback; a newly provisioned device has no external history anchor.
 
+## v0.8.3 Settings access and fresh optional fields
+
+Use Account → Account Settings or gear Settings → Account Settings; both open one workspace-scoped dialog. Guest has no account-only controls. Opening either path does not enable sync; consent/passphrase confirmation is unchanged.
+
+Only newly initialized Guest/Account preferences default to six enabled fields. Existing local vaults and cloud privacy/settings remain authoritative; defaults are not merged over saved false values. The initial privacy/settings row remains intentional even with zero aircraft. When a new device's defaults differ from saved cloud settings, synchronization pauses for the existing conflict review: compare both versions and explicitly choose Cloud to restore the saved preferences. The new device does not upload its defaults while that conflict is unresolved. Do not reset the cloud key or delete the settings row. No SQL migration is required for v0.8.3.
+
 ## Local compatibility and adoption
 
 - v0.7.0/v0.7.1 vault envelopes and database payloads remain readable. Merely opening the upgraded app does not rewrite them. The first successful opt-in persists an internal encrypted payload `{vaultFormat:2, db, sync}` under the same user-bound local key. The outer local AES-GCM envelope remains version 1. No original record IDs or operational schema change.

@@ -158,6 +158,47 @@ describe('offline encrypted synchronization', () => {
     expect(b.store.read().db.settings.language).toBe('zh-HK');
     expect(b.engine.snapshot().phase).toBe('synced');
   });
+  it('keeps one initial encrypted privacy record, and restores saved cloud preferences through explicit review instead of uploading fresh defaults', async () => {
+    const server = new Server();
+    const db = emptyAccountDatabase();
+    db.settings.privacy = {
+      registration: false,
+      flights: false,
+      bay: false,
+      gateTimes: true,
+      statuses: false,
+      disruptionNotes: false,
+    };
+    const a = await device(server, db);
+    await enable(a);
+    expect(server.rows.size).toBe(1);
+    expect(server.revision).toBe(1);
+    expect(a.engine.state()!.base[0].record).toEqual({
+      collection: 'privacy',
+      id: 'settings',
+      value: db.settings.privacy,
+    });
+    const originalRows = structuredClone([...server.rows]);
+    const b = await device(server);
+    expect(Object.values(b.store.read().db.settings.privacy).every(Boolean)).toBe(true);
+    await enable(b);
+    expect(b.engine.snapshot().phase).toBe('conflict');
+    expect(b.engine.state()!.conflicts).toEqual([JSON.stringify(['privacy', 'settings'])]);
+    expect(server.pushes).toBe(1);
+    expect([...server.rows]).toEqual(originalRows);
+    await chooseCloud(b);
+    expect(b.store.read().db.settings.privacy).toEqual(db.settings.privacy);
+    expect(b.store.read().db.aircraft).toEqual([]);
+    expect(b.engine.snapshot().phase).toBe('synced');
+    expect(b.engine.snapshot().pending).toBe(0);
+    expect(server.revision).toBe(1);
+    expect([...server.rows]).toEqual(originalRows);
+    b.engine.stop();
+    b.store.lock();
+    const reopened = await openVault(A, secret, false, b.storage);
+    expect(reopened.read().db.settings.privacy).toEqual(db.settings.privacy);
+    reopened.lock();
+  });
   it('preserves two distinct initial local datasets and requires review for same-ID differences', async () => {
     const server = new Server(),
       a = await device(server, dbWith('A')),

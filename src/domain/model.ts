@@ -146,6 +146,15 @@ export interface Filters {
   disruption?: string;
   query?: string;
 }
+/** Fresh workspaces only. Never merge these over stored or cloud-restored preferences. */
+export const defaultOptionalFields: Privacy = {
+  registration: true,
+  flights: true,
+  bay: true,
+  gateTimes: true,
+  statuses: true,
+  disruptionNotes: true,
+};
 export const restrictivePrivacy: Privacy = {
   registration: false,
   flights: false,

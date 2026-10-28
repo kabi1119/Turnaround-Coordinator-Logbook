@@ -9,6 +9,7 @@ import { CHOICE_KEY } from '../src/workspaces/store';
 import { openVault, vaultKey } from '../src/workspaces/vault';
 import { seedDatabase } from '../src/data/seed';
 import { STORAGE_KEY } from '../src/lib/storage';
+import { SyncEngine } from '../src/sync/engine';
 const A = '70000000-0000-4000-8000-000000000001',
   B = '70000000-0000-4000-8000-000000000002';
 const secret = 'a long unique local vault secret';
@@ -250,6 +251,83 @@ describe('auth/workspace entry with simulated provider responses (not live Supab
     expect(screen.getByRole('button', { name: 'Vault' })).toBeVisible();
     expect(p.auth.getSession).not.toHaveBeenCalled();
     expect(p.auth.getUser).not.toHaveBeenCalled();
+  });
+  it('opens one shared Account Settings dialog from touch/menu and gear, dismisses and never starts sync through navigation', async () => {
+    const oldWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 390 });
+    const vault = await openVault(A, secret, true);
+    vault.lock();
+    const p = provider();
+    p.restore();
+    const rpc = vi.fn();
+    Object.assign(p.client, { rpc });
+    const enable = vi.spyOn(SyncEngine.prototype, 'enable');
+    localStorage.setItem(CHOICE_KEY, 'account:' + A);
+    const raw = localStorage.getItem(vaultKey(A));
+    try {
+      render(<AuthApp provider={p.client} />);
+      await screen.findByRole('heading', { name: 'Unlock your local account vault' });
+      await unlock();
+      const account = screen.getByRole('button', { name: 'Account' });
+      fireEvent.click(account);
+      const item = screen.getByRole('menuitem', { name: 'Account Settings' });
+      // Safari touch can blur to no target before click. Keep the item mounted.
+      fireEvent.pointerDown(item, { pointerType: 'touch' });
+      fireEvent.blur(item, { relatedTarget: null });
+      expect(item).toBeVisible();
+      fireEvent.click(item);
+      let dialog = screen.getByRole('dialog', { name: 'Account Settings' });
+      expect(dialog.closest('header')).toBeNull();
+      expect(dialog).toHaveAttribute('data-sync-control', 'true');
+      expect(within(dialog).getByRole('region', { name: 'Cloud Sync' })).toBeVisible();
+      const content = dialog.querySelector('.modal-body')!.textContent;
+      expect(
+        within(dialog).getByRole('button', { name: 'Enable / unlock Cloud Sync' }),
+      ).toBeDisabled();
+      expect(screen.getAllByRole('dialog')).toHaveLength(1);
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(account).toHaveFocus();
+      fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+      const gearEntry = screen.getByRole('button', { name: 'Account Settings' });
+      gearEntry.focus();
+      fireEvent.click(gearEntry);
+      dialog = screen.getByRole('dialog', { name: 'Account Settings' });
+      expect(dialog.querySelector('.modal-body')!.textContent).toBe(content);
+      expect(screen.getAllByRole('dialog')).toHaveLength(1);
+      fireEvent(dialog, new Event('cancel', { bubbles: true, cancelable: true }));
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(gearEntry).toHaveFocus();
+      fireEvent.click(gearEntry);
+      expect(screen.getByRole('dialog', { name: 'Account Settings' })).toBeVisible();
+      fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Close' }));
+      // Known outside focus and outside touch still dismiss the menu.
+      fireEvent.click(account);
+      fireEvent.blur(screen.getByRole('menuitem', { name: 'Account Settings' }), {
+        relatedTarget: gearEntry,
+      });
+      expect(screen.queryByRole('menu')).toBeNull();
+      fireEvent.click(account);
+      fireEvent.pointerDown(gearEntry, { pointerType: 'touch' });
+      expect(screen.queryByRole('menu')).toBeNull();
+      expect(enable).not.toHaveBeenCalled();
+      expect(rpc).not.toHaveBeenCalled();
+      expect(localStorage.getItem(vaultKey(A))).toBe(raw);
+    } finally {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: oldWidth });
+    }
+  });
+  it('does not offer account controls in Guest Settings or start authentication when visiting it', async () => {
+    const p = provider();
+    localStorage.setItem(CHOICE_KEY, 'guest');
+    render(<AuthApp provider={p.client} />);
+    await screen.findByRole('button', { name: 'Sign in' });
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(screen.queryByRole('button', { name: 'Account Settings' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Cloud Sync' })).toBeNull();
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(p.auth.signInWithOtp).not.toHaveBeenCalled();
+    expect(p.from).not.toHaveBeenCalled();
   });
   it('consumes only supported invitation tokens and removes credentials from browser history', () => {
     const token = 'a'.repeat(64);

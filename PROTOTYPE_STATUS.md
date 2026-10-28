@@ -1,4 +1,14 @@
-# TCO Logbook v0.8.2 Pre-release status
+# TCO Logbook v0.8.3 Pre-release status
+
+## v0.8.3 Account Settings and fresh field defaults — 2026-10-28 (Hong Kong)
+
+Focused patch: null-target blur no longer unmounts a touch menu item before click. Account Settings uses one workspace-level native Modal outside the header/menu, shared by Account and gear Settings, and resets on workspace locking/switching. Existing modal scroll, VisualViewport, dismissal, focus restoration and safe-area handling are reused; no z-index escalation. Guest receives no account-only settings action and navigation does not initialize Cloud Sync.
+
+Account initialization previously copied restrictivePrivacy (all false), while the Guest loader separately enabled every toggle. Both now copy the shared six-enabled defaultOptionalFields only when creating fresh data. Existing stored false/mixed values, encrypted vault payloads, cloud settings, historical samples and restrictivePrivacy remain unchanged. No migration or operational validation change: enabled applicable flights/Bay retain their existing Confirm requirements, hidden fields are exempt, and incomplete Draft review/save remains available.
+
+Initial encrypted privacy/settings upload is retained. A fresh second device with different settings stops for existing conflict review; explicitly choosing Cloud restores saved values without pushing defaults or replacing keys. SQL/RPC, encryption formats, Service Worker and storage schemas are unchanged.
+
+Verification: npm.cmd run test passed 503 tests across 47 files; the final preference-fixture type correction was rechecked with 6/6 focused preference tests. npm.cmd run lint, npm.cmd run build (including tsc -b), npm.cmd run check:static and npm.cmd run format:check passed. No dependency changes; audit was not repeated. The existing >500 kB main-chunk advisory remains. Isolated local Edge used a synthetic memory-only Account and blocked nonlocal HTTP: Account/menu touch entry at 390x640, gear entry at 390x420 and desktop 1440x900 all had one reachable scrollable dialog, visible dismissal and no horizontal overflow. Native Enter/Escape, Close/reopen and zero navigation-triggered sync calls passed. This browser fixture had no real credentials/vaults/cloud transport. Physical iPhone Safari/standalone behavior remains owner acceptance; no hosted APIs/migrations/deployment are performed in this patch. Manual checks: open/dismiss/reopen Settings from both paths with keyboard open and on short screens; verify Guest separation, saved disabled controls, and reviewed cloud-settings restoration before continuing the Windows-to-iPhone test.
 
 ## v0.8.2 hosted SQL ownership compatibility — 2026-10-28 (Hong Kong)
 

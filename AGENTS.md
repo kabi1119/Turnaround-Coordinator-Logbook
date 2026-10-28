@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.8.2 Pre-release**, a local frontend personal-tool prototype, not production.
+This repo is **TCO Logbook v0.8.3 Pre-release**, a local frontend personal-tool prototype, not production.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.8.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.8.3 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -224,3 +224,9 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - The owner explicitly authorizes correcting v0.8.0/v0.8.1 migration sources in a new commit because a later migration cannot repair failed initial table creation. This supersedes the earlier source-immutability rule, without authorizing Git history rewriting or any hosted execution.
 - Use temporary postgres-issued executor membership with ADMIN FALSE, INHERIT FALSE, SET TRUE and narrowly scoped schema CREATE. Perform RPC ownership/ACL/replacement as the proper owner, switch back, revoke exactly the migration grantor and schema CREATE, and assert cleanup before commit. Preserve bootstrap ADMIN-only membership; block unknown existing grants instead of silently replacing them.
 - Verify actual migrations as a non-superuser postgres session, not only a bootstrap superuser. The optional in-memory PostgreSQL harness never accepts hosted connection settings. Keep RLS, claims identity, key/ciphertext formats, vault/sync engine, consent and Guest isolation unchanged. Document fresh, failed and successful-install paths separately.
+
+## v0.8.3 Account Settings and fresh field preferences
+
+- One Account Settings dialog is rendered at workspace level, outside the header/menu; Account and gear Settings share the same action and content. Ignore null-relatedTarget menu blur until actual outside pointer/focus dismissal; retain Escape, keyboard and native dialog viewport/safe-area handling. Guest has no account-only settings entry; navigation never consents to or enables sync.
+- Fresh Guest/Account workspaces copy defaultOptionalFields (all six enabled). Never merge defaults into saved preferences, restore data or sync baselines. Keep restrictivePrivacy and historical sample fingerprints unchanged. Preserve conditional Confirm requirements and incomplete reviewed Drafts.
+- Existing cloud privacy/settings still syncs as one encrypted record. Different initial device/cloud preferences require the existing explicit conflict review; choosing cloud restores saved preferences without uploading fresh defaults. No schema, RPC, crypto, worker or cloud-key changes. Local checks do not establish physical iPhone compatibility. Manual Git/deployment only.

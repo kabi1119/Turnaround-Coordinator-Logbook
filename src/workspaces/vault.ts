@@ -1,7 +1,7 @@
 ﻿import { validateSyncState } from '../sync/records';
 import type { SyncState } from '../sync/types';
 import type { Database } from '../domain/model';
-import { restrictivePrivacy } from '../domain/model';
+import { defaultOptionalFields } from '../domain/model';
 import { validDatabase } from '../lib/storage';
 import type { WorkspaceStore, WriteResult } from './store';
 const PREFIX = 'tco-account-vault-v1:';
@@ -55,7 +55,7 @@ export function emptyAccountDatabase(language: Database['settings']['language'] 
     aircraft: [],
     duties: [],
     journals: [],
-    settings: { language, privacy: { ...restrictivePrivacy } },
+    settings: { language, privacy: { ...defaultOptionalFields } },
   };
 }
 /** Secret and non-extractable CryptoKey live only in this unlocked instance, never in storage. */

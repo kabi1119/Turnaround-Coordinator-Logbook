@@ -45,6 +45,7 @@ import { dutyOptionText } from './domain/roster';
 import DutyHistory from './features/DutyHistory';
 import { useMotionClose } from './lib/useMotionClose';
 import { useRecordNavigation } from './lib/useRecordNavigation';
+import type { AccountSettingsAccess } from './auth/AccountSettings';
 
 type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
 type Overlay =
@@ -62,8 +63,14 @@ type Overlay =
 export default function App({
   workspace = guestStore,
   accountControl,
+  accountSettings,
   workspaceNotice = '',
-}: { workspace?: WorkspaceStore; accountControl?: ReactNode; workspaceNotice?: string } = {}) {
+}: {
+  workspace?: WorkspaceStore;
+  accountControl?: ReactNode;
+  accountSettings?: AccountSettingsAccess;
+  workspaceNotice?: string;
+} = {}) {
   const [loaded] = useState(() => workspace.read());
   const [db, setDb] = useState(loaded.db);
   return (
@@ -76,6 +83,7 @@ export default function App({
           snapshot={loaded.snapshot}
           workspace={workspace}
           accountControl={accountControl}
+          accountSettings={accountSettings}
           workspaceNotice={workspaceNotice}
         />
       </WorkspaceContext.Provider>
@@ -89,6 +97,7 @@ function Workspace({
   snapshot,
   workspace,
   accountControl,
+  accountSettings,
   workspaceNotice,
 }: {
   db: Database;
@@ -97,6 +106,7 @@ function Workspace({
   snapshot: string | null | undefined;
   workspace: WorkspaceStore;
   accountControl?: ReactNode;
+  accountSettings?: AccountSettingsAccess;
   workspaceNotice: string;
 }) {
   const t = useT(),
@@ -272,6 +282,7 @@ function Workspace({
           </button>
         </div>
       </header>
+      {accountSettings?.dialog}
       <main id="main-content">
         <OfflineSetup />
         {workspaceNotice && (
@@ -433,6 +444,7 @@ function Workspace({
             hidden={page !== 'settings'}
           >
             <Settings
+              onAccountSettings={accountSettings?.onOpen}
               db={db}
               commit={commit}
               resetCommit={(next) => commit(next, true)}
@@ -445,7 +457,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.8.2 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
+            v0.8.3 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
           </span>
         </footer>
       </main>
@@ -467,7 +479,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.8.2 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.8.3 {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

@@ -7,6 +7,7 @@ import OfflineSetup from '../pwa/OfflineSetup';
 import SignIn from './SignIn';
 import VaultGate from './VaultGate';
 import AccountControl from './AccountControl';
+import AccountSettings from './AccountSettings';
 import {
   authClient,
   AUTH_STORAGE_KEY,
@@ -32,6 +33,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
   const [stage, setStage] = useState<'loading' | 'welcome' | 'vault' | 'workspace'>('loading');
   const [store, setStore] = useState<WorkspaceStore | null>(null),
     [target, setTarget] = useState<Target | null>(null);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [login, setLogin] = useState(false),
     [notice, setNotice] = useState('');
   const [language, setLanguage] = useState<'en' | 'zh-HK'>(() =>
@@ -46,6 +48,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
   const activeMode = useRef<'verified' | 'offline' | 'guest' | null>(null);
   const t = (en: string, zh: string) => (language === 'zh-HK' ? zh : en);
   function lock() {
+    setAccountSettingsOpen(false);
     active.current?.lock();
     active.current = null;
     activeMode.current = null;
@@ -272,9 +275,23 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
               key={store.key}
               workspace={store}
               workspaceNotice={notice}
+              accountSettings={
+                target && store.kind === 'account'
+                  ? {
+                      onOpen: () => setAccountSettingsOpen(true),
+                      dialog: accountSettingsOpen && (
+                        <AccountSettings
+                          user={target.user}
+                          engine={syncEngine}
+                          onClose={() => setAccountSettingsOpen(false)}
+                        />
+                      ),
+                    }
+                  : undefined
+              }
               accountControl={
                 <AccountControl
-                  syncEngine={syncEngine}
+                  onSettings={() => setAccountSettingsOpen(true)}
                   user={target?.user || null}
                   offline={target?.offline || false}
                   onLeave={guest}
@@ -311,7 +328,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
             <div className="auth-brand">
               <img src="/airplane.svg?v=0.6.1" width="64" height="64" alt="" />
               <span>
-                TCO Logbook<small>v0.8.2 · {t('Device only', '僅限本機')}</small>
+                TCO Logbook<small>v0.8.3 · {t('Device only', '僅限本機')}</small>
               </span>
             </div>
             <div className="auth-languages">

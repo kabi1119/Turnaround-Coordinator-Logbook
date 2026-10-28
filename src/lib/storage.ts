@@ -1,5 +1,11 @@
 import type { Database } from '../domain/model';
-import { restrictivePrivacy, flightStatuses, handlingTypes, roles } from '../domain/model';
+import {
+  defaultOptionalFields,
+  restrictivePrivacy,
+  flightStatuses,
+  handlingTypes,
+  roles,
+} from '../domain/model';
 import { seedDatabase } from '../data/seed';
 export const STORAGE_KEY = 'tco-logbook-demo-v0.1';
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -116,8 +122,7 @@ export function readDatabase(): {
     const raw = (snapshot = localStorage.getItem(STORAGE_KEY));
     if (!raw) {
       const db = seedDatabase();
-      for (const key of Object.keys(db.settings.privacy) as (keyof typeof db.settings.privacy)[])
-        db.settings.privacy[key] = true;
+      db.settings.privacy = { ...defaultOptionalFields };
       return { db, error: '', snapshot };
     }
     const value = JSON.parse(raw);

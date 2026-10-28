@@ -29,7 +29,15 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.8.2 Pre-release** keeps offline local records and adds explicitly enabled, client-encrypted Account synchronization; Guest remains local-only. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.8.3 Pre-release** keeps offline local records and adds explicitly enabled, client-encrypted Account synchronization; Guest remains local-only. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
+
+## v0.8.3 Account Settings and optional fields
+
+Account → Account Settings and gear Settings → Account Settings open the same workspace-level dialog. The touch menu keeps pending activation alive when focus briefly has no destination. Guest has no account-only entry; opening Settings never enables Cloud Sync.
+
+Fresh Guest and Account workspaces enable all six optional-field controls. Existing saved preferences, encrypted vaults and restored cloud settings are unchanged. Flight/Bay confirmation requirements remain conditional on visibility, while incomplete records can still be saved as reviewed Drafts. On a second device, differing cloud/local privacy preferences use the existing conflict review: choose Cloud only after reviewing both versions; no automatic resolution or key reset occurs. An otherwise empty synced account can still contain one encrypted privacy/settings row.
+
+「帳戶 → 帳戶設定」及「齒輪設定 → 帳戶設定」共用同一視窗。新訪客／帳戶工作區預設啟用六項選填欄位控制，既有偏好不變；開啟設定不會啟用同步。第二裝置設定不同時，請覆核既有衝突再選擇雲端版本，勿重設金鑰。實體 iPhone Safari／主畫面 PWA 仍須驗收。
 
 ## v0.8.2 Supabase migration ownership
 
@@ -217,7 +225,7 @@ See [v0.3.0 acceptance](docs/V0_3_0_ACCEPTANCE.md). I have tested Edge viewport 
 - **Branding and layout:** I made the header brand more prominent and use the full name **Turnaround Coordinator Logbook** there. The rest of the interface uses **TCO Logbook**. I removed the upper showcase status strip and moved release, local-storage and Hong Kong metadata to the desktop sidebar footer (or a compact content footer on smaller screens).
 - **East Asia radar map:** An original local SVG outline of East Asia / the Western Pacific replaces the plain radar background. The aircraft and CSS sweep share an approximate Hong Kong-area anchor. This is decorative geography, not navigation, live radar or a GIS product. It uses no external map service, tiles, third-party map artwork or network requests. Reduced-motion support and pausing animations while dialogs are open remain in place.
 - **Compact fictional samples:** I reduced the initial sample set to **4 Confirmed aircraft assignments, 3 duties (2 Worked / 1 Planned) and 2 journals**. Six applicable flight legs cover Early, On Time, Delayed, Cancelled, Not Recorded and Other; the samples also cover all three roles and handling types, actual/scheduled/missing times, a custom bay, a disruption, linked and standalone journals, multiple aircraft per duty and an overnight duty. Derived counts are **4 Logged / 3 Handled / 2 Primary**. All identifiers are invented; I am not presenting employer operations or official rosters.
-- **Quieter interface:** I removed repetitive visible DEMO labels from new screens and sample records. A concise Settings disclosure and export notice still identify fictional samples and local-only limitations. Optional privacy fields remain off by default and should only be enabled for appropriately authorized fictional demonstrations.
+- **Quieter interface:** I removed repetitive visible DEMO labels from new screens and sample records. A concise Settings disclosure and export notice still identify fictional samples and local-only limitations. Fresh workspaces enable all six optional-field controls by default; existing preferences are preserved. Visibility does not grant permission to store workplace information.
 - **Simpler batch entry:** Batch Add Duties no longer asks users to acknowledge that shift hours are self-chosen. Valid time entry, conflict checks, explicit overlap override, review, final confirmation and Planned classification remain intact.
 - **Safe sample refresh:** Existing browser storage loads unchanged. Settings → **Refresh sample records** previews replacement of complete, unmodified historical fixtures with the smaller set. Custom records and settings remain. Edited samples, duplicate IDs and personal records linked to samples being removed block the whole transaction. No automatic refresh or wholesale database reset occurs. User-entered or edited legacy text stays as entered until explicitly reviewed; visual cleanup never rewrites personal text.
 - **Existing catalogue:** All 24 selectable airlines and local PNGs remain available. The four sample airlines are not a limit on selectable airlines or user records. Enabling logo display still does not establish redistribution rights.
@@ -389,7 +397,7 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 **My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, passkeys, durable operational cloud storage, record synchronization/conflicts, public aircraft lookup, encrypted cloud backups and production/iPhone PWA acceptance. v0.7.0 prepares account authentication, with hosted configuration/live validation still required.
 
-The current v0.8.2 remains a pre-release with device-local Guest data and opt-in encrypted Account synchronization. OCR/Excel roster imports, HR integrations and production operational services remain deferred.
+The current v0.8.3 remains a pre-release with device-local Guest data and opt-in encrypted Account synchronization. OCR/Excel roster imports, HR integrations and production operational services remain deferred.
 
 ## Language Precedence
 
@@ -428,7 +436,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.8.2 Pre-release** 保留離線本機紀錄，並加入須明確啟用的帳戶端加密雲端同步；訪客仍只存本機。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。目前的 **v0.8.3 Pre-release** 保留離線本機紀錄，並加入須明確啟用的帳戶端加密雲端同步；訪客仍只存本機。我加入結構化航機輸入、手機版面改進及明確操作的本機 JSON 備份／還原，同時保留既有紀錄及 LAN HTTP UUID 相容處理。
 
 ## v0.7.0 帳戶基礎與訪客工作區
 
@@ -528,7 +536,7 @@ Logo 現於載入後透過離屏 Canvas 量測實際可見內容，並保守處�
 - **品牌與版面：** 我將左上角品牌放大，並改用完整名稱 **Turnaround Coordinator Logbook**；其他介面仍使用 **TCO Logbook**。我移除上方的展示狀態列，將版本、本機儲存及香港時區資訊移至桌面側欄底部；較小螢幕則於內容頁尾顯示。
 - **東亞雷達地圖：** 我以原創的本機 SVG 東亞／西太平洋輪廓取代原本的純雷達背景，讓飛機圖示與 CSS 掃描動畫以香港附近為中心。地圖地理位置僅屬概略裝飾，並非導航、即時雷達或 GIS 產品；不使用外部地圖服務、圖磚、第三方地圖素材或網絡請求。減少動態效果支援，以及開啟對話框時暫停動畫的安排均保留。
 - **精簡虛構樣本：** 我將初始樣本精簡為 **4 筆 Confirmed Aircraft 任務、3 個 Duty（2 Worked／1 Planned）及 2 篇 Journal**。六個適用航段涵蓋 Early、On Time、Delayed、Cancelled、Not Recorded、Other，以及三種角色與處理類型、實際／表定／缺少時間、自訂停機位、突發事件、關聯／獨立日誌、同一更次多架航機和通宵更次。依資料計算的總數為 **4 Logged／3 Handled／2 Primary**。所有識別資料均為虛構，並非僱主營運資料或官方更表。
-- **更簡潔的介面：** 我移除新介面及樣本中重複的 DEMO 標記；Settings 的簡短說明及匯出報告通知仍清楚交代樣本虛構及僅限本機使用的限制。選填的私隱欄位預設關閉，只應用於獲適當授權的虛構示範。
+- **更簡潔的介面：** 我移除新介面及樣本中重複的 DEMO 標記；Settings 的簡短說明及匯出報告通知仍清楚交代樣本虛構及僅限本機使用的限制。新工作區預設啟用六項選填欄位控制，既有偏好維持不變；欄位可見並不代表獲准儲存工作資料。
 - **簡化批次更表：** Batch Add Duties 不再要求確認「更次時數由自己選擇」的核取方塊；有效時間、衝突檢查、明確的重疊確認、覆核、最終確認及 Planned 分類均保留。
 - **安全更新樣本：** 瀏覽器既有資料會原樣載入。Settings → **Refresh sample records** 會先預覽以精簡樣本取代完整且未經修改的歷史樣本。自訂紀錄及設定會保留；如樣本被編輯、ID 重複，或個人紀錄仍參照將被移除的樣本，整個更新會被阻止。不會自動更新或清空資料庫；使用者曾輸入或修改的舊文字會保留至經明確覆核為止，介面清理不會擅自改寫個人內容。
 - **保留航空公司目錄：** 24 間航空公司選項及本機 PNG 均繼續提供。四間樣本航空公司並非可選擇的航空公司或個人紀錄數量上限。啟用 Logo 顯示仍不等於取得再分發許可。
@@ -672,7 +680,7 @@ Guest 仍使用此來源的**未加密 localStorage**，Key 為 `tco-logbook-dem
 
 **我不會使用這個公開原型收集機密工作紀錄、員工／乘客資料、內部截圖或專有程序，也請使用者不要輸入此類資料。** 任何真實工作用途均須先取得適當授權；應用程式的私隱開關並不構成相關授權。
 
-選填欄位群組預設停用。**封存／隱藏只會保留但不顯示底層資料，不會實際刪除或加密。** 明確的本機欄位刪除功能是另一項獨立操作。先前已下載的副本不受 App 控制。
+新工作區的六項選填欄位群組預設啟用，既有停用偏好保留。**封存／隱藏只會保留但不顯示底層資料，不會實際刪除或加密。** 明確的本機欄位刪除功能是另一項獨立操作。先前已下載的副本不受 App 控制。
 
 私隱篩選及報告欄位白名單**不會自動清理 Journal 任意自由文字中的敏感內容**。我建議使用者在分享前逐篇覆核故事及匯出內容。JSON 包含選定的統計及故事；CSV 只包含數量統計；瀏覽器 PDF 是列印流程。以上均非安全的完整備份或經僱主核實的報告。三十日垃圾桶適用期限只是示範規則，並非自動清除或資料保留保證。
 
@@ -700,7 +708,7 @@ Guest 仍使用此來源的**未加密 localStorage**，Key 為 `tco-logbook-dem
 
 **我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、Passkey、操作資料雲端儲存與同步／衝突處理、公開航機查詢、加密雲端備份，以及正式版／實體 iPhone 驗收。v0.7.0 已準備帳戶登入基礎，但仍須設定及驗證線上服務。
 
-目前 v0.8.2 為訪客資料只存裝置、帳戶可明確啟用加密同步的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及正式操作雲端服務繼續延後。
+目前 v0.8.3 為訪客資料只存裝置、帳戶可明確啟用加密同步的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及正式操作雲端服務繼續延後。
 
 ## 語言版本效力
 

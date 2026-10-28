@@ -1,27 +1,23 @@
 ﻿import { useContext, useEffect, useRef, useState } from 'react';
 import { LogIn, UserRound, ChevronDown } from 'lucide-react';
 import { LanguageContext, useT } from '../i18n';
-import { Modal } from '../components/ui';
-import SyncControl from '../sync/SyncControl';
-import type { SyncEngine } from '../sync/engine';
 import type { AccountIdentity } from './client';
 export default function AccountControl({
   user,
-  syncEngine = null,
+  onSettings,
   offline,
   onSignIn,
   onLeave,
 }: {
   user: AccountIdentity | null;
-  syncEngine?: SyncEngine | null;
+  onSettings: () => void;
   offline: boolean;
   onSignIn: (language: 'en' | 'zh-HK') => void;
   onLeave: () => void;
 }) {
   const t = useT(),
     language = useContext(LanguageContext);
-  const [open, setOpen] = useState(false),
-    [settings, setSettings] = useState(false);
+  const [open, setOpen] = useState(false);
   const group = useRef<HTMLDivElement>(null),
     button = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -49,7 +45,10 @@ export default function AccountControl({
       className="account-control"
       ref={group}
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
+        // Touch Safari may blur to no focus target before dispatching the item's click.
+        // Outside pointerdown dismisses the menu; only known outside focus should
+        // unmount its buttons before a pending touch activation.
+        if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
       }}
       onKeyDown={(e) => {
         if (open && e.key === 'Escape') {
@@ -101,7 +100,7 @@ export default function AccountControl({
             role="menuitem"
             onClick={() => {
               close();
-              setSettings(true);
+              onSettings();
             }}
           >
             {t('Account Settings', '帳戶設定')}
@@ -124,22 +123,6 @@ export default function AccountControl({
             {t('Sign Out', '登出')}
           </button>
         </div>
-      )}
-      {settings && (
-        <Modal
-          syncControl
-          title={t('Account Settings', '帳戶設定')}
-          onClose={() => setSettings(false)}
-        >
-          <p>{user.email || t('Server session not verified', '未驗證伺服器登入狀態')}</p>
-          <SyncControl engine={syncEngine} />
-          <p>
-            {t(
-              'Sign out locks the vault without deleting it. Keep a verified JSON backup; losing the vault passphrase can make local records unrecoverable.',
-              '登出會鎖定資料庫而不刪除紀錄。請保留已核對的 JSON 備份；遺失密語可能令本機紀錄無法復原。',
-            )}
-          </p>
-        </Modal>
       )}
     </div>
   );
