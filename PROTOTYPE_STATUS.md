@@ -1,4 +1,10 @@
-# TCO Logbook v0.9.2 Pre-release status
+# TCO Logbook v0.9.2a Pre-release status
+
+## v0.9.2a - Simplified backup strategy
+
+Removed only the planned Encrypted Cloud Backup entry from Settings. Passkeys and Live Public Aircraft Lookup remain planned. Everyday automatic Cloud Sync is separate from independent, manually downloaded full JSON backups and validated, explicitly confirmed restore. JSON remains unencrypted and potentially sensitive; synchronized Account restore safeguards are unchanged. No storage, authentication, synchronization, Legacy Vault, Guest or SQL changes.
+
+Local release checks passed: 683 tests across 62 files, lint, TypeScript, Production build and Account Cloud artifact verification, static checks and formatting. Dependency audit found zero vulnerabilities. English and Traditional Chinese Settings assertions cover removal and retained Coming Soon items. Physical iPhone testing is not claimed.
 
 ## v0.9.2 — 2026-10-30 HKT
 

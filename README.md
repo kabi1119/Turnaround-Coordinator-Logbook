@@ -29,7 +29,11 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.2 Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.2a Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
+
+## v0.9.2a - Simplified backup strategy
+
+Automatic Cloud Sync handles everyday cross-device synchronization. Full Local Backup (JSON) provides independent, manually downloaded recovery files; Import / Restore validates the file and requires explicit confirmation, including synchronized Account safeguards. JSON backups are unencrypted and may contain sensitive information. A separate Encrypted Cloud Backup service is no longer planned. Passkey Authentication and Live Public Aircraft Lookup remain planned.
 
 ## v0.9.2 — Reliable Cloud Account builds and compact Home
 
@@ -417,9 +421,9 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 ## Development Roadmap
 
-**My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, passkeys, durable operational cloud storage, record synchronization/conflicts, public aircraft lookup, encrypted cloud backups and production/iPhone PWA acceptance. v0.7.0 prepares account authentication, with hosted configuration/live validation still required.
+**My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, passkeys, durable operational cloud storage, record synchronization/conflicts, public aircraft lookup and production/iPhone PWA acceptance. v0.7.0 prepares account authentication, with hosted configuration/live validation still required.
 
-The current v0.9.2 remains a pre-release with device-local Guest data and explicitly consented, server-readable Cloud Account storage (NOT E2EE). OCR/Excel roster imports, HR integrations and official operational services remain deferred.
+The current v0.9.2a remains a pre-release with device-local Guest data and explicitly consented, server-readable Cloud Account storage (NOT E2EE). OCR/Excel roster imports, HR integrations and official operational services remain deferred.
 
 ## Language Precedence
 
@@ -458,7 +462,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.2 Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.2a Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
 
 ## v0.7.0 帳戶基礎與訪客工作區
 
@@ -728,9 +732,9 @@ Guest 仍使用此來源的**未加密 localStorage**，Key 為 `tco-logbook-dem
 
 ## 開發路線圖
 
-**我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、Passkey、操作資料雲端儲存與同步／衝突處理、公開航機查詢、加密雲端備份，以及正式版／實體 iPhone 驗收。v0.7.0 已準備帳戶登入基礎，但仍須設定及驗證線上服務。
+**我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、Passkey、公開航機查詢，以及正式版／實體 iPhone 驗收。不再計劃獨立的加密雲端備份服務；自動雲端同步處理日常跨裝置同步，完整本機 JSON 備份提供獨立復原檔案，匯入／還原須驗證及明確確認。JSON 備份未加密，可能包含敏感資料；同步帳戶的還原保護保持不變。
 
-目前 v0.9.2 為訪客資料只存裝置、雲端帳戶須明確同意伺服器可讀儲存（並非 E2EE）的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及官方操作服務繼續延後。
+目前 v0.9.2a 為訪客資料只存裝置、雲端帳戶須明確同意伺服器可讀儲存（並非 E2EE）的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及官方操作服務繼續延後。
 
 ## 語言版本效力
 

@@ -1,3 +1,12 @@
+# Current backup strategy - v0.9.2a
+
+- Automatic Cloud Sync provides everyday cross-device synchronization; it does not replace an independent backup.
+- Full Local Backup (JSON) creates a manually downloaded recovery file. Files are unencrypted and may contain sensitive information. Store them privately.
+- Import / Restore requires validation, review and explicit confirmation. Existing synchronized Account safeguards remain mandatory.
+- A separate Encrypted Cloud Backup service is no longer planned. Existing backup formats, files and Legacy Vault recovery remain unchanged.
+
+The original local backup format below remains compatible.
+
 # v0.3.0 full JSON backup and restore
 
 Local only; no upload, authentication, remote sync or encryption. Full files contain sensitive/hidden fields. Keep them private. Privacy-reviewed JSON/CSV and printed PDF remain separate reports, not restorable databases.

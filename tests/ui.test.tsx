@@ -246,7 +246,13 @@ describe('App navigation, persistence and privacy', () => {
     expect(screen.getByRole('button', { name: /New Career Journal/ })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Close' }));
     await user.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(screen.queryByText('Encrypted cloud backup')).not.toBeInTheDocument();
+    expect(screen.getByText('Passkey authentication')).toBeInTheDocument();
+    expect(screen.getByText('Live public aircraft lookup')).toBeInTheDocument();
     await user.selectOptions(screen.getByLabelText('Language'), 'zh-HK');
+    expect(screen.queryByText('加密雲端備份')).not.toBeInTheDocument();
+    expect(screen.getByText('通行密鑰身份驗證')).toBeInTheDocument();
+    expect(screen.getByText('即時公開航機查詢')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '設定。' })).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).settings.language).toBe('zh-HK');
     expect(within(nav).getByRole('button', { name: '紀錄簿' })).toBeInTheDocument();

@@ -289,7 +289,6 @@ export default function Settings({
         <SectionTitle title={t('Future Protection — Coming Soon', '未來保護功能 — 即將推出')} />
         {[
           t('Passkey authentication', '通行密鑰身份驗證'),
-          t('Encrypted cloud backup', '加密雲端備份'),
           t('Live public aircraft lookup', '即時公開航機查詢'),
         ].map((s) => (
           <div className="future-row" key={s}>

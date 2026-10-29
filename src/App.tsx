@@ -451,7 +451,7 @@ function Workspace({
         )}
         <footer className="page-footer">
           <span className="footer-brand">
-            TCO Logbook <small>v0.9.2 {t('Pre-release', '預發佈')}</small>
+            TCO Logbook <small>v0.9.2a {t('Pre-release', '預發佈')}</small>
           </span>
           <span className="footer-timezone">
             <MapPin size={16} aria-hidden="true" />
@@ -482,7 +482,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.9.2 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.9.2a {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
