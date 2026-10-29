@@ -29,6 +29,8 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
+https://app.tcologbook.workers.dev/
+
 I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.2a Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
 
 ## v0.9.2a - Simplified backup strategy
@@ -461,6 +463,8 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 # TCO Logbook
 
 **個人航空營運紀錄及職涯發展助手。**
+
+https://app.tcologbook.workers.dev/
 
 我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.2a Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
 
