@@ -13,10 +13,28 @@ function stable(v: unknown): string {
       .join(',')}}`;
   return JSON.stringify(v) ?? 'undefined';
 }
-const current = seedDatabase();
-const previous = [legacySeedDatabase(), legacySeedDatabase(legacyDemoAirlines), v014SeedDatabase()];
+let fixtures: { current: Database; previous: Database[] } | undefined;
+function sampleFixtures() {
+  return (fixtures ??= {
+    current: seedDatabase(),
+    previous: [legacySeedDatabase(), legacySeedDatabase(legacyDemoAirlines), v014SeedDatabase()],
+  });
+}
 const keys = ['aircraft', 'duties', 'journals'] as const;
+/** Exact frozen fixture content only; IDs or user-entered text alone do not establish provenance. */
+export function hasKnownSamples(db: Database): boolean {
+  if (!keys.some((key) => db[key].length)) return false;
+  const { current, previous } = sampleFixtures();
+  return keys.some((key) =>
+    db[key].some((row) =>
+      [current, ...previous].some((fixture) =>
+        fixture[key].some((known) => known.id === row.id && stable(known) === stable(row)),
+      ),
+    ),
+  );
+}
 export function sampleRefreshPlan(db: Database) {
+  const { current, previous } = sampleFixtures();
   const blocked: string[] = [];
   const remove = { aircraft: [] as string[], duties: [] as string[], journals: [] as string[] };
   const add = {

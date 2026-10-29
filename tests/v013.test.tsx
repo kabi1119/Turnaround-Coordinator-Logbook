@@ -184,6 +184,7 @@ describe('Modal isolation, scroll stability and artwork bounds', () => {
       </Profiler>
     ));
     try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seedDatabase()));
       const view = render(<App />);
       fireEvent.click(document.querySelector('.aircraft-card')!);
       const dialog = screen.getByRole('dialog', { name: 'Handling Record' });

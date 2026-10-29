@@ -6,7 +6,8 @@ import App from '../src/App';
 import AircraftEditor from '../src/features/AircraftEditor';
 // Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
 import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
-import { emptyAircraft } from '../src/domain/model';
+import { emptyAircraft, defaultOptionalFields } from '../src/domain/model';
+import { seedDatabase as currentSeedDatabase } from '../src/data/seed';
 import type { Database } from '../src/domain/model';
 import { STORAGE_KEY, writeDatabase } from '../src/lib/storage';
 function setupEditor(db = seedDatabase(), existing?: Database['aircraft'][number]) {
@@ -260,16 +261,19 @@ describe('App navigation, persistence and privacy', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     attestHandlingReview();
     await user.click(screen.getByRole('button', { name: 'Confirm & Save' }));
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(5);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).aircraft).toHaveLength(1);
     expect(screen.getByRole('status', { name: 'Save result' })).toHaveTextContent(
       'Saved on this device',
     );
     view.unmount();
     render(<App />);
-    expect(screen.getAllByText('05')).not.toHaveLength(0);
+    expect(document.querySelectorAll('.aircraft-card')).toHaveLength(1);
   });
   it('Privacy disable previews impact and archives by default; reset/seed require explicit confirm', async () => {
     const user = userEvent.setup();
+    const db = currentSeedDatabase();
+    db.settings.privacy = { ...defaultOptionalFields };
+    writeDatabase(db);
     render(<App />);
     await user.click(screen.getByRole('button', { name: 'Settings' }));
     await user.click(screen.getByRole('switch', { name: 'Registration' }));

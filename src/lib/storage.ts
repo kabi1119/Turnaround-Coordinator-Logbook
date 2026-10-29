@@ -6,8 +6,17 @@ import {
   handlingTypes,
   roles,
 } from '../domain/model';
-import { seedDatabase } from '../data/seed';
 export const STORAGE_KEY = 'tco-logbook-demo-v0.1';
+/** Fresh Guest data only; never merge defaults into saved preferences or reseed on load. */
+export function emptyGuestDatabase(language: Database['settings']['language'] = 'en'): Database {
+  return {
+    version: 1,
+    aircraft: [],
+    duties: [],
+    journals: [],
+    settings: { language, privacy: { ...defaultOptionalFields } },
+  };
+}
 const object = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === 'object');
 const strings = (value: Record<string, unknown>, keys: string[]) =>
@@ -120,20 +129,18 @@ export function readDatabase(): {
   let snapshot: string | null | undefined;
   try {
     const raw = (snapshot = localStorage.getItem(STORAGE_KEY));
-    if (!raw) {
-      const db = seedDatabase();
-      db.settings.privacy = { ...defaultOptionalFields };
-      return { db, error: '', snapshot };
+    if (raw === null) {
+      return { db: emptyGuestDatabase(), error: '', snapshot };
     }
     const value = JSON.parse(raw);
     if (!validDatabase(value)) throw new Error('Unsupported local data');
     return { db: value, error: '', snapshot };
   } catch {
     return {
-      db: seedDatabase(),
+      db: emptyGuestDatabase(),
       snapshot,
       error:
-        'Saved data could not be read. Temporary fictional samples are shown; the stored copy has not been overwritten. Use Settings to manage local data.',
+        'Saved data could not be read. No saved records are being displayed; the stored copy has not been overwritten. Use Settings to recover or explicitly manage local data.',
     };
   }
 }

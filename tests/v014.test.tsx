@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { v014SeedDatabase as seedDatabase } from '../src/data/v014Seed';
 import { legacySeedDatabase } from '../src/data/legacySeed';
+import { seedDatabase as currentSeedDatabase } from '../src/data/seed';
 import { legacyDemoAirlines } from '../src/data/demoRefresh';
 import { applyDemoDataset, demoDatasetPlan, isCurrentDemo } from '../src/data/demoDatasetRefresh';
 import { airlineCatalogue, findCatalogueAirline } from '../src/data/airlineCatalogue';
@@ -323,6 +324,7 @@ describe('v0.1.4 previous Duty navigation', () => {
     ]);
   });
   it('Home opens the existing calendar; central Add provides Duties without redundant Home actions', () => {
+    writeDatabase(currentSeedDatabase());
     render(<App />);
     expect(screen.queryByRole('button', { name: 'Add Duty' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Batch Add Duties' })).toBeNull();

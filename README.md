@@ -29,9 +29,17 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.0 Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.1 Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
 
-## v0.9.0 release
+## v0.9.1 — Empty Guest logbook by default
+
+Fresh Guest Mode starts with no Aircraft, Duties, Journals or Trash. Nothing is seeded or written automatically. Existing saved Guest records, edited samples, settings and IDs remain unchanged; a saved empty database stays empty. Missing storage, unreadable/unsupported storage and valid empty storage remain distinct. Unreadable original bytes are preserved and normal writes stay blocked until explicit recovery or reset.
+
+Guest Settings retains reviewed Load/Refresh sample records and confirmed Clear local records, preserving language/privacy preferences. Sample-loading actions are withheld from Account workspaces to prevent sample injection into automatic synchronization. Home says “Includes fictional sample records” only when an exact known fixture is present; mixed personal/sample data is not described as entirely fictional. Edited samples cannot always be recognized and are never automatically removed. Cloud Account initialization, sync, migration, Legacy recovery and database schema are unchanged. Physical-device and near-limit acceptance remain deferred.
+
+訪客模式首次使用預設為空白；已存紀錄、已編輯樣本與偏好不會自動刪除或替換。讀不到的原始資料會保留並顯示復原錯誤。樣本僅可由訪客在設定中明確載入；主頁只在辨認到已知樣本時提示「包含虛構樣本紀錄」，不會把所有個人紀錄稱為虛構。
+
+## v0.9.0 release foundation
 
 The owner authorized the v0.9.0 production-hosted pre-release on 2026-10-29 HKT after confirming 10/10 disposable hosted isolation tests, successful installation of the three v0.9.0 Production migrations, identical hashes of retained encrypted records and an independent database backup. The production Vite build enables `VITE_ACCOUNT_CLOUD_V2=preview` using the Production project; ordinary development remains off unless explicitly configured. Account consent and reviewed migration are still required. Guest recovery, separate mixed-queue review, live History restoration and manual archival preserve existing safeguards. Physical-device and near-limit acceptance are explicitly deferred to v0.9.1+; archived History import and exceptional forward-recovery cases remain limitations. See [architecture](docs/V0_9_0_ARCHITECTURE.md) and [release configuration, verification and rollback](docs/V0_9_0_ROLLOUT.md). This remains an independent personal-tool pre-release, not an official aviation operational system.
 
@@ -401,7 +409,7 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 **My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, passkeys, durable operational cloud storage, record synchronization/conflicts, public aircraft lookup, encrypted cloud backups and production/iPhone PWA acceptance. v0.7.0 prepares account authentication, with hosted configuration/live validation still required.
 
-The current v0.9.0 remains a pre-release with device-local Guest data and explicitly consented, server-readable Cloud Account storage (NOT E2EE). OCR/Excel roster imports, HR integrations and official operational services remain deferred.
+The current v0.9.1 remains a pre-release with device-local Guest data and explicitly consented, server-readable Cloud Account storage (NOT E2EE). OCR/Excel roster imports, HR integrations and official operational services remain deferred.
 
 ## Language Precedence
 
@@ -440,7 +448,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.0 Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.1 Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
 
 ## v0.7.0 帳戶基礎與訪客工作區
 
@@ -712,7 +720,7 @@ Guest 仍使用此來源的**未加密 localStorage**，Key 為 `tco-logbook-dem
 
 **我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、Passkey、操作資料雲端儲存與同步／衝突處理、公開航機查詢、加密雲端備份，以及正式版／實體 iPhone 驗收。v0.7.0 已準備帳戶登入基礎，但仍須設定及驗證線上服務。
 
-目前 v0.9.0 為訪客資料只存裝置、雲端帳戶須明確同意伺服器可讀儲存（並非 E2EE）的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及官方操作服務繼續延後。
+目前 v0.9.1 為訪客資料只存裝置、雲端帳戶須明確同意伺服器可讀儲存（並非 E2EE）的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及官方操作服務繼續延後。
 
 ## 語言版本效力
 

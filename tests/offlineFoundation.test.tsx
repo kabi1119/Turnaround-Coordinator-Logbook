@@ -57,7 +57,7 @@ describe('offline local-data safety', () => {
     expect(persistDatabase(incoming.data, original).ok).toBe(true);
     expect(loadDatabase().db).toEqual(db);
   });
-  it('refuses to export temporary samples as a backup of corrupted browser data', async () => {
+  it('refuses to export a fallback view as a backup of corrupted browser data', async () => {
     localStorage.setItem(STORAGE_KEY, '{broken');
     render(<BackupManager db={loadDatabase().db} restore={() => false} />);
     fireEvent.click(screen.getByText('Export Full Backup (JSON)'));

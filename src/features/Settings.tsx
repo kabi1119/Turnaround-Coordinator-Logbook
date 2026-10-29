@@ -16,6 +16,8 @@ import { seedDatabase } from '../data/seed';
 import { useLabel, useT } from '../i18n';
 import DemoAirlineRefresh from './DemoAirlineRefresh';
 import BackupManager from './BackupManager';
+import { emptyGuestDatabase } from '../lib/storage';
+import { useWorkspaceStore } from '../workspaces/context';
 const privacyLabels: Record<PrivacyKey, [string, string]> = {
   registration: ['Registration', '機身註冊'],
   flights: ['Flight Number(s)', '航班編號'],
@@ -62,6 +64,7 @@ export default function Settings({
   cloudAccount?: boolean;
 }) {
   const t = useT();
+  const guestSamples = useWorkspaceStore().kind === 'guest';
   const [refreshDemo, setRefreshDemo] = useState(false);
   const [privacy, setPrivacy] = useState<PrivacyKey | null>(null),
     [action, setAction] = useState<'archive' | 'delete'>('archive'),
@@ -71,12 +74,8 @@ export default function Settings({
   const trashDuties = db.duties.filter((d) => d.status === 'Trashed'),
     trashAircraft = db.aircraft.filter((a) => a.status === 'Trashed');
   function resetData() {
-    const next = seedDatabase();
-    if (reset === 'empty') {
-      next.aircraft = [];
-      next.duties = [];
-      next.journals = [];
-    }
+    if (reset === 'seed' && !guestSamples) return;
+    const next = reset === 'empty' ? emptyGuestDatabase() : seedDatabase();
     next.settings = db.settings;
     afterSave(resetCommit(next), (ok) => {
       if (ok) setReset(null);
@@ -108,7 +107,7 @@ export default function Settings({
                     '帳戶紀錄在本機加密。雲端同步須在帳戶設定明確啟用；請另存 JSON 備份。欄位控制並不代表僱主許可。',
                   )
                 : t(
-                    'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. Included sample records are fictional. Privacy controls are not security guarantees or employer permission.',
+                    'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. Manually loaded sample records are fictional. Privacy controls are not security guarantees or employer permission.',
                     '資料只存此裝置，沒有雲端同步。瀏覽器資料可能被清除或遺失；內附樣本紀錄全屬虛構。私隱控制並非安全保證或公司許可。',
                   )}
           </p>
@@ -182,8 +181,8 @@ export default function Settings({
         <SectionTitle
           title={t('Optional field controls', '選填欄位控制')}
           subtitle={t(
-            'Enabled for fresh installations to explore fictional samples. Saved preferences are preserved. This is not permission to store workplace information.',
-            '新安裝預設啟用以測試虛構樣本；既有偏好維持不變。這並非儲存工作資料的許可。',
+            'Enabled for fresh installations. Saved preferences are preserved. This is not permission to store workplace information.',
+            '新安裝預設啟用；既有偏好維持不變。這並非儲存工作資料的許可。',
           )}
         />
         {(Object.keys(privacyLabels) as PrivacyKey[]).map((k) => (
@@ -218,9 +217,11 @@ export default function Settings({
       </section>
       <section className="panel">
         <SectionTitle title={t('Sample records', '樣本紀錄')} />
-        <button onClick={() => setRefreshDemo(true)}>
-          {t('Refresh sample records', '更新樣本紀錄')}
-        </button>
+        {guestSamples && (
+          <button onClick={() => setRefreshDemo(true)}>
+            {t('Refresh sample records', '更新樣本紀錄')}
+          </button>
+        )}
         <p className="muted">
           {t(
             'Preview only unchanged legacy synthetic samples; preserve user-created and edited records. This does not reset storage.',
@@ -232,10 +233,12 @@ export default function Settings({
             <RotateCcw size={17} />
             {t('Clear local records', '清空本機紀錄')}
           </button>
-          <button onClick={() => setReset('seed')}>
-            <DatabaseIcon size={17} />
-            {t('Load sample records', '載入樣本紀錄')}
-          </button>
+          {guestSamples && (
+            <button onClick={() => setReset('seed')}>
+              <DatabaseIcon size={17} />
+              {t('Load sample records', '載入樣本紀錄')}
+            </button>
+          )}
         </div>
         <p className="muted">
           {t(
@@ -369,7 +372,7 @@ export default function Settings({
           </p>
         </Confirm>
       )}
-      {refreshDemo && (
+      {refreshDemo && guestSamples && (
         <DemoAirlineRefresh db={db} commit={commit} onClose={() => setRefreshDemo(false)} />
       )}
       {restore && (

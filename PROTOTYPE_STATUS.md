@@ -1,4 +1,14 @@
-# TCO Logbook v0.9.0 Pre-release status
+# TCO Logbook v0.9.1 Pre-release status
+
+## v0.9.1 Guest initialization patch — 2026-10-30 HKT
+
+Fresh Guest storage now returns an empty schema-1 database with six enabled optional fields and no initialization write. Existing saved records/settings are read unchanged. Empty-string, malformed and unsupported data retain their exact stored bytes and expose the existing recovery error/write guard; they are not treated as missing storage. Saved empty databases remain empty on reload. No storage-key migration, automatic sample deletion or Production data cleanup is introduced.
+
+Explicit Guest sample loading/refresh and reviewed Clear remain available; Clear preserves language/privacy and removes all local record collections including Trash. Account sample-injection controls are withheld, without changing Account initialization, authentication, automatic sync, migration/Legacy Vaults, History/Archive, encryption or SQL. Known fixture content produces an accurate “Includes fictional sample records” Home indicator; personal records and edited fixtures are never rewritten or inferred fictional from IDs alone. The Hong Kong timezone stays visible.
+
+Production Account Cloud configuration is retained. This patch does not complete deferred physical-device, near-limit or archived-History acceptance. No database migration or hosted synthetic test is needed.
+
+Local patch verification: 10 new focused Guest regression cases pass, including exact saved-byte preservation and explicit sample/clear confirmations. The normal release gate passed 671 tests / 60 files, lint, TypeScript/Vite build, static checks and formatting. Existing logo, clock, calendar and save tests now set up explicit sample fixtures only where needed. The existing non-blocking bundle-size advisory remains. Production release verification must still check the deployed v0.9.1 artifact and fresh Guest empty state; no physical iPhone pass is claimed.
 
 ## Owner-authorized release ? 2026-10-29 HKT
 

@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import type { Aircraft, Database } from './domain/model';
+import { hasKnownSamples } from './data/sampleRefresh';
 import { canRestore, normalizeRegistration, stats, trashDuty } from './domain/selectors';
 import { LanguageContext, useLabel, useT } from './i18n';
 import type { ReactNode } from 'react';
@@ -375,7 +376,9 @@ function Workspace({
                     <MapPin size={16} />
                     Asia/Hong_Kong
                   </span>
-                  <span>{t('All examples are fictional.', '所有例子均屬虛構。')}</span>
+                  {hasKnownSamples(db) && (
+                    <span>{t('Includes fictional sample records.', '包含虛構樣本紀錄。')}</span>
+                  )}
                 </div>
               </section>
               <div className="home-secondary">
@@ -460,7 +463,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.9.0 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
+            v0.9.1 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
           </span>
         </footer>
       </main>
@@ -482,7 +485,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.9.0 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.9.1 {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>
