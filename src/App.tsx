@@ -113,7 +113,9 @@ function Workspace({
     l = useLabel();
   const storageDescription =
     workspace.kind === 'account'
-      ? t('Encrypted account vault', '加密帳戶資料庫')
+      ? workspace.storageModel === 'cloud-v2'
+        ? t('Cloud Account · Local cache', '雲端帳戶 · 本機快取')
+        : t('Encrypted account vault', '加密帳戶資料庫')
       : t('Stored on this device only', '僅儲存於此裝置');
   const [calendarOpen, setCalendarOpen] = useState(false);
   const {
@@ -444,6 +446,7 @@ function Workspace({
             hidden={page !== 'settings'}
           >
             <Settings
+              cloudAccount={workspace.storageModel === 'cloud-v2'}
               onAccountSettings={accountSettings?.onOpen}
               db={db}
               commit={commit}

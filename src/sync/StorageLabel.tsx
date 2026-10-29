@@ -1,14 +1,22 @@
 ﻿import { useContext, useSyncExternalStore } from 'react';
 import { SyncContext } from './context';
+import { AccountCloudContext } from '../cloud/context';
+import type { AccountStatus } from '../cloud/engine';
+import type { SyncStatus } from './engine';
 import { useWorkspaceStore } from '../workspaces/context';
 import { useT } from '../i18n';
 const noop = () => () => {};
 const absent = () => null;
 export function StorageLabel() {
-  const engine = useContext(SyncContext),
+  const cloud = useContext(AccountCloudContext);
+  const legacy = useContext(SyncContext);
+  const engine = cloud || legacy,
     store = useWorkspaceStore(),
     t = useT();
-  const status = useSyncExternalStore(engine?.subscribe || noop, engine?.snapshot || absent);
+  const status = useSyncExternalStore<AccountStatus | SyncStatus | null>(
+    engine?.subscribe || noop,
+    engine?.snapshot || absent,
+  );
   if (!status || status.phase === 'disabled')
     return (
       <>

@@ -10,6 +10,7 @@ export default function FlightNumberField({
   label,
   error,
   name,
+  required = true,
 }: {
   airline: string;
   value: string;
@@ -17,6 +18,7 @@ export default function FlightNumberField({
   label: string;
   error?: string;
   name: string;
+  required?: boolean;
 }) {
   const id = useId(),
     t = useT(),
@@ -44,7 +46,7 @@ export default function FlightNumberField({
           inputMode="text"
           enterKeyHint="next"
           spellCheck={false}
-          aria-required="true"
+          aria-required={required}
           aria-invalid={Boolean(error)}
           aria-describedby={`${id}-hint${error ? ` ${id}-error` : ''}`}
         />

@@ -4,6 +4,7 @@ import { Plus, Trash2, ShieldCheck } from 'lucide-react';
 import type { Aircraft, Database, Disruption, Leg } from '../domain/model';
 import {
   disruptionCategories,
+  defaultOptionalFields,
   emptyAircraft,
   flightStatuses,
   hkToday,
@@ -52,6 +53,7 @@ export interface EditorProps {
   onClose: () => void;
   commit: Commit;
   onSaved: () => void;
+  migrationReview?: boolean;
 }
 export default function AircraftEditor({
   db,
@@ -60,10 +62,12 @@ export default function AircraftEditor({
   onClose: leave,
   commit,
   onSaved,
+  migrationReview = false,
 }: EditorProps) {
   const t = useT(),
     l = useLabel(),
-    p = db.settings.privacy;
+    validationPrivacy = db.settings.privacy,
+    p = migrationReview ? defaultOptionalFields : validationPrivacy;
   const calendarNow = useCalendarNow(),
     today = hkToday(new Date(calendarNow));
   const { closing, close: onClose } = useMotionClose(leave);
@@ -93,7 +97,7 @@ export default function AircraftEditor({
   const [attempted, setAttempted] = useState(false),
     [performed, setPerformed] = useState(false);
   const [pendingType, setPendingType] = useState<Aircraft['handling'] | null>(null);
-  const issues = attempted ? confirmedHandlingIssues(a, p, today) : [];
+  const issues = attempted ? confirmedHandlingIssues(a, validationPrivacy, today) : [];
   const fieldNames: Record<HandlingField, string> = {
     date: t('Handling Date', '處理日期'),
     airline: t('Airline', '航空公司'),
@@ -189,7 +193,7 @@ export default function AircraftEditor({
       return;
     }
     if (mode !== 'draft') {
-      const invalid = confirmedHandlingIssues(a, p);
+      const invalid = confirmedHandlingIssues(a, validationPrivacy);
       if (invalid.length) {
         const control = form.current?.elements.namedItem(invalid[0].field) as HTMLElement | null;
         if (control) focusModalField(control);
@@ -208,7 +212,10 @@ export default function AircraftEditor({
       setError(t('Choose a valid Hong Kong date.', '請選擇有效的香港日期。'));
       return;
     }
-    if (review !== 'draft' && (confirmedHandlingIssues(a, p).length || !performed)) {
+    if (
+      review !== 'draft' &&
+      (confirmedHandlingIssues(a, validationPrivacy).length || !performed)
+    ) {
       setError(
         t(
           'Return to Edit to resolve the fields, and explicitly confirm that handling occurred.',
@@ -240,7 +247,11 @@ export default function AircraftEditor({
     const record: Aircraft = {
       ...a,
       dutyId: a.dutyId,
-      registration: p.registration ? a.registration.trim() : base.registration,
+      registration: p.registration
+        ? migrationReview && a.registration === base.registration
+          ? base.registration
+          : a.registration.trim()
+        : base.registration,
       bay: p.bay ? (existing && a.bay === existing.bay ? existing.bay : a.bay.trim()) : base.bay,
       arrival: !hasArrival(a)
         ? existing?.handling === a.handling
@@ -248,7 +259,11 @@ export default function AircraftEditor({
           : newLeg()
         : {
             ...a.arrival,
-            flight: p.flights ? flightEntry(a.airline, a.arrival.flight) : base.arrival.flight,
+            flight: p.flights
+              ? migrationReview && a.arrival.flight === base.arrival.flight
+                ? base.arrival.flight
+                : flightEntry(a.airline, a.arrival.flight)
+              : base.arrival.flight,
             status: p.statuses ? a.arrival.status : base.arrival.status,
             origin: p.statuses ? a.arrival.origin : base.arrival.origin,
             scheduled: p.gateTimes ? a.arrival.scheduled : base.arrival.scheduled,
@@ -260,7 +275,11 @@ export default function AircraftEditor({
           : newLeg()
         : {
             ...a.departure,
-            flight: p.flights ? flightEntry(a.airline, a.departure.flight) : base.departure.flight,
+            flight: p.flights
+              ? migrationReview && a.departure.flight === base.departure.flight
+                ? base.departure.flight
+                : flightEntry(a.airline, a.departure.flight)
+              : base.departure.flight,
             status: p.statuses ? a.departure.status : base.departure.status,
             origin: p.statuses ? a.departure.origin : base.departure.origin,
             scheduled: p.gateTimes ? a.departure.scheduled : base.departure.scheduled,
@@ -514,7 +533,11 @@ export default function AircraftEditor({
                   name="arrival"
                   airline={a.airline}
                   error={fieldError('arrival')}
-                  label={t('Arrival Flight Number *', '抵港航班編號 *')}
+                  required={validationPrivacy.flights}
+                  label={
+                    t('Arrival Flight Number', '抵港航班編號') +
+                    (validationPrivacy.flights ? ' *' : '')
+                  }
                   value={a.arrival.flight}
                   onChange={(flight) => patch({ arrival: { ...a.arrival, flight } })}
                 />
@@ -524,7 +547,11 @@ export default function AircraftEditor({
                   name="departure"
                   airline={a.airline}
                   error={fieldError('departure')}
-                  label={t('Departure Flight Number *', '離港航班編號 *')}
+                  required={validationPrivacy.flights}
+                  label={
+                    t('Departure Flight Number', '離港航班編號') +
+                    (validationPrivacy.flights ? ' *' : '')
+                  }
                   value={a.departure.flight}
                   onChange={(flight) => patch({ departure: { ...a.departure, flight } })}
                 />
@@ -577,7 +604,7 @@ export default function AircraftEditor({
           {p.bay && (
             <Field
               name="bay"
-              label={t('Parking Bay *', '停機位 *')}
+              label={t('Parking Bay', '停機位') + (validationPrivacy.bay ? ' *' : '')}
               error={fieldError('bay')}
               value={a.bay}
               onChange={(e) => patch({ bay: e.target.value })}

@@ -6,6 +6,7 @@ export type Commit = (db: Database) => boolean | Promise<boolean>;
 export interface WorkspaceStore {
   key: string;
   kind: 'guest' | 'account';
+  storageModel?: 'cloud-v2';
   read: () => LoadedWorkspace;
   snapshot: () => string | null;
   current: (db: Database) => boolean;

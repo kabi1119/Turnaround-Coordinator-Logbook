@@ -7,11 +7,13 @@ import { useT } from '../i18n';
 export default function VaultGate({
   user,
   offline,
+  recovery = false,
   onOpen,
   onGuest,
 }: {
   user: AccountIdentity;
   offline: boolean;
+  recovery?: boolean;
   onOpen: (store: WorkspaceStore) => void | Promise<void>;
   onGuest: () => void;
 }) {
@@ -36,6 +38,19 @@ export default function VaultGate({
     readable = false;
   }
   const create = !exists;
+  if (recovery && create)
+    return (
+      <section className="vault-gate">
+        <h1>{t('Original vault not on this device', '此裝置沒有原有資料庫')}</h1>
+        <p role="alert">
+          {t(
+            'No replacement vault was created. Original cloud ciphertext remains intact. Use the existing v0.8.3 encrypted recovery workflow on a trusted device, or postpone this preview until legacy migration is complete.',
+            '未建立替代資料庫，原有雲端密文仍保留。請在可信任裝置使用既有 v0.8.3 加密復原流程，或暫緩此預覽，等待舊版轉換流程完成。',
+          )}
+        </p>
+        <button onClick={onGuest}>{t('Continue as Guest', '以訪客身分繼續')}</button>
+      </section>
+    );
   return (
     <div className="vault-gate">
       <h1 tabIndex={-1}>
@@ -51,12 +66,22 @@ export default function VaultGate({
             )
           : user.email}
       </p>
-      <p>
-        {t(
-          'Your local account vault is encrypted with its passphrase. After unlocking, encrypted Cloud Sync can be explicitly enabled in Account Settings. Guest records are not imported.',
-          '本機帳戶資料庫以密語加密。解鎖後可在帳戶設定明確啟用加密雲端同步；不會匯入訪客紀錄。',
-        )}
-      </p>
+      {recovery && (
+        <p className="notice amber">
+          {t(
+            'Read-only legacy recovery: review and export only. Editing and cloud uploads are disabled; the original encrypted vault bytes remain unchanged.',
+            '唯讀舊版復原：只供檢視及匯出。編輯與雲端上傳已停用，原有加密資料庫位元組保持不變。',
+          )}
+        </p>
+      )}
+      {!recovery && (
+        <p>
+          {t(
+            'Your local account vault is encrypted with its passphrase. After unlocking, encrypted Cloud Sync can be explicitly enabled in Account Settings. Guest records are not imported.',
+            '本機帳戶資料庫以密語加密。解鎖後可在帳戶設定明確啟用加密雲端同步；不會匯入訪客紀錄。',
+          )}
+        </p>
+      )}
       <p className="notice amber">
         {t(
           'Signing in does not create a cloud copy. A lost vault/cloud passphrase cannot be reset to decrypt records. Keep a verified JSON backup; exported JSON is not encrypted.',

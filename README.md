@@ -31,6 +31,10 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. The current **v0.8.3 Pre-release** keeps offline local records and adds explicitly enabled, client-encrypted Account synchronization; Guest remains local-only. I have added structured aircraft entry, mobile refinements and explicit local JSON backup/restore, preserving existing records and LAN HTTP UUID compatibility.
 
+## v0.9.0 development status
+
+Work in progress: the package and default production path remain v0.8.3. An opt-in development preview (`VITE_ACCOUNT_CLOUD_V2=preview`) connects the new Cloud Account, reviewed Guest transfer, ordinary conflict review and live record-history restoration UI. Guest submission recovery distinguishes unsent queues from unknown outcomes, verifies owner-scoped receipts and restarts complete review after staleness or archive expiry. Older mixed queues now preserve exact source bytes and use a separate per-record Account-edit reconciliation after the original operation outcome is resolved. Divergent Legacy Vault conversion is still incomplete. New Account records are server-readable and its device cache is plaintext; this is **not end-to-end encryption**. Keep the preview flag off for production, do not apply new migrations to Production, and do not publish this as v0.9.0. See [architecture](docs/V0_9_0_ARCHITECTURE.md) and [remaining work, disposable setup and rollback](docs/V0_9_0_ROLLOUT.md).
+
 ## v0.8.3 Account Settings and optional fields
 
 Account → Account Settings and gear Settings → Account Settings open the same workspace-level dialog. The touch menu keeps pending activation alive when focus briefly has no destination. Guest has no account-only entry; opening Settings never enables Cloud Sync.

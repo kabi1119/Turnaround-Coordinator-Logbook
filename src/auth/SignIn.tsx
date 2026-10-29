@@ -1,16 +1,19 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { Field } from '../components/ui';
+import GuestDataWarning from './GuestDataWarning';
 import { useT } from '../i18n';
 import { authenticationReady, resumeAuthRequests } from './client';
 export default function SignIn({
   client,
   onVerified,
   onGuest,
+  cloudAccountMode = false,
 }: {
   client: SupabaseClient | null;
   onVerified: (email: string) => Promise<void>;
   onGuest: () => void;
+  cloudAccountMode?: boolean;
 }) {
   const t = useT();
   const [email, setEmail] = useState(''),
@@ -90,10 +93,15 @@ export default function SignIn({
     <div className="sign-in-form">
       <h2>{t('Sign in to your account', '登入你的帳戶')}</h2>
       <p>
-        {t(
-          'Sign in to access your encrypted Account Workspace. Cloud Sync is optional and requires separate consent.',
-          '登入以使用加密帳戶工作區。雲端同步屬自選功能，需要另行同意。',
-        )}
+        {cloudAccountMode
+          ? t(
+              'Sign in to your cloud-backed Account. New accounts review the storage model once; encrypted legacy data is never silently converted. Guest data stays separate.',
+              '登入雲端帳戶。新帳戶須先覆核儲存模式；舊版加密資料不會自動轉換，訪客資料保持獨立。',
+            )
+          : t(
+              'Sign in to access your encrypted Account Workspace. Cloud Sync is optional and requires separate consent.',
+              '登入以使用加密帳戶工作區。雲端同步屬自選功能，需要另行同意。',
+            )}
       </p>
       {!client && (
         <p className="notice amber" role="status">
@@ -197,7 +205,7 @@ export default function SignIn({
         >
           {t('Continue as Guest', '以訪客身分繼續')}
         </button>
-        <p>{t('Keep your records on this device only.', '紀錄只儲存在此裝置。')}</p>
+        <GuestDataWarning />
       </div>
     </div>
   );

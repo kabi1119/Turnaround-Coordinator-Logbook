@@ -8,6 +8,12 @@ import SignIn from './SignIn';
 import VaultGate from './VaultGate';
 import AccountControl from './AccountControl';
 import AccountSettings from './AccountSettings';
+import GuestDataWarning from './GuestDataWarning';
+import AccountEntry from '../cloud/AccountEntry';
+import { cloudAccountsEnabled } from '../cloud/config';
+import { AccountCloudContext } from '../cloud/context';
+import { accountCacheKey } from '../cloud/cache';
+import type { AccountEngine } from '../cloud/engine';
 import {
   authClient,
   AUTH_STORAGE_KEY,
@@ -26,14 +32,30 @@ import { SyncContext } from '../sync/context';
 import { SyncEngine } from '../sync/engine';
 import { transport } from '../sync/transport';
 import { hasVault } from '../workspaces/vault';
+import { readOnlyVault } from '../migration/recovery';
+import GuestMergeWizard from '../migration/GuestMergeWizard';
+import { readDatabase, STORAGE_KEY } from '../lib/storage';
 
-type Target = { user: AccountIdentity; offline: boolean };
-export default function AuthApp({ provider }: { provider?: SupabaseClient | null }) {
+type Target = { user: AccountIdentity; offline: boolean; turn: number };
+export default function AuthApp({
+  provider,
+  cloudMode,
+}: {
+  provider?: SupabaseClient | null;
+  cloudMode?: boolean;
+}) {
+  const [newMode] = useState(() => cloudMode ?? cloudAccountsEnabled(import.meta.env));
+  const [cloudEngine, setCloudEngine] = useState<AccountEngine | null>(null);
+  useEffect(() => cloudEngine?.attach(), [cloudEngine]);
+  const [legacyRecovery, setLegacyRecovery] = useState(false);
   const [client] = useState(() => (provider === undefined ? authClient() : provider));
-  const [stage, setStage] = useState<'loading' | 'welcome' | 'vault' | 'workspace'>('loading');
+  const [stage, setStage] = useState<'loading' | 'welcome' | 'vault' | 'cloud' | 'workspace'>(
+    'loading',
+  );
   const [store, setStore] = useState<WorkspaceStore | null>(null),
     [target, setTarget] = useState<Target | null>(null);
   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+  const [guestMergeOpen, setGuestMergeOpen] = useState(false);
   const [login, setLogin] = useState(false),
     [notice, setNotice] = useState('');
   const [language, setLanguage] = useState<'en' | 'zh-HK'>(() =>
@@ -45,15 +67,19 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
   const active = useRef<WorkspaceStore | null>(null),
     generation = useRef(0),
     mounted = useRef(true);
+  const pendingIdentity = useRef<string | null>(null);
   const activeMode = useRef<'verified' | 'offline' | 'guest' | null>(null);
   const t = (en: string, zh: string) => (language === 'zh-HK' ? zh : en);
   function lock() {
+    pendingIdentity.current = null;
     setAccountSettingsOpen(false);
+    setGuestMergeOpen(false);
     active.current?.lock();
     active.current = null;
     activeMode.current = null;
     setStore(null);
     setSyncEngine(null);
+    setCloudEngine(null);
   }
   function guest() {
     generation.current++;
@@ -92,7 +118,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     lock();
     setLogin(false);
     setExpires(0);
-    setTarget({ user: { id: userId, email: '' }, offline: true });
+    setTarget({ user: { id: userId, email: '' }, offline: true, turn: generation.current });
     setStage('vault');
   }
   async function authenticate(email?: string) {
@@ -116,8 +142,10 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     setLogin(false);
     setNotice('');
     setExpires(data.session.expires_at * 1000);
-    setTarget({ user, offline: false });
-    setStage('vault');
+    pendingIdentity.current = user.id;
+    setTarget({ user, offline: false, turn });
+    setLegacyRecovery(false);
+    setStage(newMode ? 'cloud' : 'vault');
     try {
       localStorage.setItem(CHOICE_KEY, `account:${user.id}`);
       localStorage.setItem(LAST_ACCOUNT_KEY, user.id);
@@ -191,15 +219,19 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     };
     void boot();
     const subscription = client?.auth.onAuthStateChange((event, session) => {
-      if (!active.current || active.current.kind !== 'account') return;
+      const expectedId =
+        active.current?.kind === 'account'
+          ? active.current.key.split(':').at(-1)
+          : pendingIdentity.current;
+      if (!expectedId) return;
       if (
         (event === 'SIGNED_OUT' && activeMode.current !== 'offline') ||
-        (event === 'SIGNED_IN' && session?.user.id !== active.current.key.split(':').at(-1))
+        (event === 'SIGNED_IN' && session?.user.id !== expectedId)
       ) {
         invalidate();
         return;
       }
-      if (event === 'TOKEN_REFRESHED' && activeMode.current === 'verified') {
+      if (event === 'TOKEN_REFRESHED' && activeMode.current === 'verified' && active.current) {
         const current = active.current;
         // Keep provider calls outside the auth notification callback.
         setTimeout(() => {
@@ -207,7 +239,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
           void verifiedIdentity(client!).then(
             (user) => {
               if (active.current !== current) return;
-              if (current.key !== `tco-account-vault-v1:${user.id}` || !session?.expires_at) {
+              if (current.key.split(':').at(-1) !== user.id || !session?.expires_at) {
                 invalidate();
                 return;
               }
@@ -241,7 +273,8 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client]);
   useEffect(() => {
-    if (stage !== 'workspace' || !target || target.offline || !expires) return;
+    if (!['workspace', 'cloud', 'vault'].includes(stage) || !target || target.offline || !expires)
+      return;
     const check = () => {
       if (Date.now() >= expires) invalidate();
     };
@@ -259,6 +292,15 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
   useEffect(() => {
     if (stage !== 'workspace') document.querySelector<HTMLElement>('.auth-card h1')?.focus();
   }, [stage]);
+  let cachedId = '';
+  try {
+    const choice = localStorage.getItem(CHOICE_KEY);
+    const id = localStorage.getItem(LAST_ACCOUNT_KEY);
+    if (newMode && id && choice === 'account:' + id && localStorage.getItem(accountCacheKey(id)))
+      cachedId = id;
+  } catch {
+    /* Corrupt/unavailable caches never reset. */
+  }
   let savedId = '';
   try {
     const id = localStorage.getItem(LAST_ACCOUNT_KEY);
@@ -271,37 +313,68 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
       {stage === 'workspace' && store ? (
         <>
           <SyncContext.Provider value={syncEngine}>
-            <App
-              key={store.key}
-              workspace={store}
-              workspaceNotice={notice}
-              accountSettings={
-                target && store.kind === 'account'
-                  ? {
-                      onOpen: () => setAccountSettingsOpen(true),
-                      dialog: accountSettingsOpen && (
-                        <AccountSettings
-                          user={target.user}
-                          engine={syncEngine}
-                          onClose={() => setAccountSettingsOpen(false)}
-                        />
-                      ),
-                    }
-                  : undefined
-              }
-              accountControl={
-                <AccountControl
-                  onSettings={() => setAccountSettingsOpen(true)}
-                  user={target?.user || null}
-                  offline={target?.offline || false}
-                  onLeave={guest}
-                  onSignIn={(lang) => {
-                    setLanguage(lang);
-                    setLogin(true);
-                  }}
-                />
-              }
-            />
+            <AccountCloudContext.Provider value={cloudEngine}>
+              <App
+                key={store.key}
+                workspace={store}
+                workspaceNotice={notice}
+                accountSettings={
+                  target && store.kind === 'account'
+                    ? {
+                        onOpen: () => setAccountSettingsOpen(true),
+                        dialog: accountSettingsOpen && (
+                          <AccountSettings
+                            user={target.user}
+                            engine={syncEngine}
+                            cloudEngine={cloudEngine}
+                            onMerge={
+                              cloudEngine
+                                ? () => {
+                                    setAccountSettingsOpen(false);
+                                    setGuestMergeOpen(true);
+                                  }
+                                : undefined
+                            }
+                            onLegacy={
+                              cloudEngine && target && hasVault(target.user.id)
+                                ? () => {
+                                    generation.current++;
+                                    lock();
+                                    setLegacyRecovery(true);
+                                    setStage('vault');
+                                    setNotice(
+                                      t(
+                                        'Legacy recovery view. Cloud uploads are paused; original encrypted data is retained.',
+                                        '舊版復原檢視：雲端上傳已暫停，原有加密資料保留。',
+                                      ),
+                                    );
+                                  }
+                                : undefined
+                            }
+                            onClose={() => setAccountSettingsOpen(false)}
+                          />
+                        ),
+                      }
+                    : undefined
+                }
+                accountControl={
+                  <AccountControl
+                    onSettings={() => setAccountSettingsOpen(true)}
+                    user={target?.user || null}
+                    offline={target?.offline || false}
+                    cloudAccount={Boolean(cloudEngine)}
+                    onLeave={guest}
+                    onSignIn={(lang) => {
+                      setLanguage(lang);
+                      setLogin(true);
+                    }}
+                  />
+                }
+              />
+              {cloudEngine && guestMergeOpen && (
+                <GuestMergeWizard engine={cloudEngine} onClose={() => setGuestMergeOpen(false)} />
+              )}
+            </AccountCloudContext.Provider>
           </SyncContext.Provider>
           {login && (
             <Modal
@@ -313,7 +386,12 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
                 setLogin(false);
               }}
             >
-              <SignIn client={client} onVerified={authenticate} onGuest={guest} />
+              <SignIn
+                client={client}
+                onVerified={authenticate}
+                onGuest={guest}
+                cloudAccountMode={newMode}
+              />
               {savedId && (
                 <button onClick={() => localUnlock(savedId)}>
                   {t('Unlock saved local vault', '解鎖已儲存的本機資料庫')}
@@ -345,13 +423,54 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
                 {notice}
               </p>
             )}
-            {stage === 'vault' && target ? (
+            {stage === 'cloud' && target && client ? (
+              <AccountEntry
+                key={target.user.id + ':' + target.turn}
+                user={target.user}
+                client={client}
+                offline={target.offline}
+                active={() => mounted.current && generation.current === target.turn}
+                onInvalid={invalidate}
+                onGuest={guest}
+                onLegacy={() => {
+                  setLegacyRecovery(true);
+                  setStage('vault');
+                }}
+                onOpen={(next, engine) => {
+                  active.current = next;
+                  activeMode.current = target.offline ? 'offline' : 'verified';
+                  setStore(next);
+                  setCloudEngine(engine);
+                  try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                      const guestData = readDatabase();
+                      if (
+                        !guestData.error &&
+                        guestData.snapshot === raw &&
+                        (guestData.db.aircraft.length ||
+                          guestData.db.duties.length ||
+                          guestData.db.journals.length) &&
+                        !engine.state().merge
+                      )
+                        setGuestMergeOpen(true);
+                    }
+                  } catch {
+                    /* Damaged Guest data is retained without transfer. */
+                  }
+                  setLanguage(next.read().db.settings.language);
+                  setStage('workspace');
+                }}
+              />
+            ) : stage === 'vault' && target ? (
               <VaultGate
                 key={target.user.id}
                 user={target.user}
                 offline={target.offline}
+                recovery={legacyRecovery}
                 onGuest={guest}
-                onOpen={async (next) => {
+                onOpen={async (opened) => {
+                  const next = legacyRecovery ? readOnlyVault(opened, target.user.id) : opened;
                   const turn = generation.current;
                   try {
                     if (!target.offline) {
@@ -373,7 +492,7 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
                       next.lock();
                       return;
                     }
-                    if (client && !target.offline)
+                    if (client && !target.offline && !legacyRecovery)
                       setSyncEngine(
                         new SyncEngine(
                           next,
@@ -403,12 +522,44 @@ export default function AuthApp({ provider }: { provider?: SupabaseClient | null
               <>
                 <p role="status">{t('Opening your workspace…', '正在開啟工作區…')}</p>
                 <button onClick={guest}>{t('Continue as Guest', '以訪客身分繼續')}</button>
+                <GuestDataWarning />
               </>
             ) : (
               <>
                 <h1 tabIndex={-1}>{t('Welcome to TCO Logbook', '歡迎使用 TCO Logbook')}</h1>
                 <p>{t('Your personal aircraft turnaround logbook.', '你的個人航機周轉紀錄簿。')}</p>
-                <SignIn client={client} onVerified={authenticate} onGuest={guest} />
+                <SignIn
+                  client={client}
+                  onVerified={authenticate}
+                  onGuest={guest}
+                  cloudAccountMode={newMode}
+                />
+                {cachedId && client && (
+                  <div className="offline-vault-option">
+                    <button
+                      onClick={() => {
+                        generation.current++;
+                        lock();
+                        resumeAuthRequests();
+                        setTarget({
+                          user: { id: cachedId, email: '' },
+                          offline: true,
+                          turn: generation.current,
+                        });
+                        setExpires(0);
+                        setStage('cloud');
+                        setNotice(
+                          t(
+                            'Offline account cache · Server session not verified. Reauthentication may be required before uploads.',
+                            '離線帳戶快取 · 未驗證伺服器登入；上傳前可能須重新登入。',
+                          ),
+                        );
+                      }}
+                    >
+                      {t('Continue saved Account offline', '離線開啟已存帳戶')}
+                    </button>
+                  </div>
+                )}
                 {savedId && (
                   <div className="offline-vault-option">
                     <button onClick={() => localUnlock(savedId)}>

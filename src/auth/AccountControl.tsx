@@ -6,12 +6,14 @@ export default function AccountControl({
   user,
   onSettings,
   offline,
+  cloudAccount = false,
   onSignIn,
   onLeave,
 }: {
   user: AccountIdentity | null;
   onSettings: () => void;
   offline: boolean;
+  cloudAccount?: boolean;
   onSignIn: (language: 'en' | 'zh-HK') => void;
   onLeave: () => void;
 }) {
@@ -77,14 +79,16 @@ export default function AccountControl({
         onClick={() => setOpen(!open)}
       >
         <UserRound size={18} />
-        <span>{offline ? t('Vault', '資料庫') : t('Account', '帳戶')}</span>
+        <span>{offline && !cloudAccount ? t('Vault', '資料庫') : t('Account', '帳戶')}</span>
         <ChevronDown size={13} />
       </button>
       {open && (
         <div className="account-menu" role="menu" aria-label={t('Account menu', '帳戶選單')}>
           <p>
             {offline
-              ? t('Local vault unlocked · Session not verified', '本機資料庫已解鎖 · 未驗證登入')
+              ? cloudAccount
+                ? t('Offline account · Session not verified', '離線帳戶 · 未驗證登入')
+                : t('Local vault unlocked · Session not verified', '本機資料庫已解鎖 · 未驗證登入')
               : t('Signed in as', '已登入為')}
             <strong className="auth-email">
               {user.email || t('Offline account vault', '離線帳戶資料庫')}

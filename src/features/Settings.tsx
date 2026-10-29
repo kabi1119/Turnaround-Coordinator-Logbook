@@ -50,6 +50,7 @@ export default function Settings({
   onBack,
   onAircraftRestore,
   onAccountSettings,
+  cloudAccount = false,
 }: {
   db: Database;
   commit: Commit;
@@ -58,6 +59,7 @@ export default function Settings({
   onBack: () => void;
   onAircraftRestore: (id: string) => void;
   onAccountSettings?: () => void;
+  cloudAccount?: boolean;
 }) {
   const t = useT();
   const [refreshDemo, setRefreshDemo] = useState(false);
@@ -95,15 +97,20 @@ export default function Settings({
         <div>
           <strong>{t('TCO Logbook · Pre-release', 'TCO Logbook · 預發佈')}</strong>
           <p>
-            {onAccountSettings
+            {cloudAccount
               ? t(
-                  'Account records are encrypted locally. Cloud Sync is optional and must be explicitly enabled in Account Settings. Keep an independent JSON backup. Field controls do not grant employer permission.',
-                  '帳戶紀錄在本機加密。雲端同步須在帳戶設定明確啟用；請另存 JSON 備份。欄位控制並不代表僱主許可。',
+                  'Cloud Account records are server-readable; this browser keeps a plaintext offline cache. Check synchronization status in Account Settings and keep independent backups.',
+                  '雲端帳戶紀錄可由伺服器讀取，瀏覽器保留明文離線快取。請在帳戶設定檢查同步狀態並另存獨立備份。',
                 )
-              : t(
-                  'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. Included sample records are fictional. Privacy controls are not security guarantees or employer permission.',
-                  '資料只存此裝置，沒有雲端同步。瀏覽器資料可能被清除或遺失；內附樣本紀錄全屬虛構。私隱控制並非安全保證或公司許可。',
-                )}
+              : onAccountSettings
+                ? t(
+                    'Account records are encrypted locally. Cloud Sync is optional and must be explicitly enabled in Account Settings. Keep an independent JSON backup. Field controls do not grant employer permission.',
+                    '帳戶紀錄在本機加密。雲端同步須在帳戶設定明確啟用；請另存 JSON 備份。欄位控制並不代表僱主許可。',
+                  )
+                : t(
+                    'Stored on this device only · Not cloud synced. Browser data can be cleared or lost. Included sample records are fictional. Privacy controls are not security guarantees or employer permission.',
+                    '資料只存此裝置，沒有雲端同步。瀏覽器資料可能被清除或遺失；內附樣本紀錄全屬虛構。私隱控制並非安全保證或公司許可。',
+                  )}
           </p>
         </div>
       </div>

@@ -1,0 +1,176 @@
+.cloud-controls {
+  min-width: 0;
+}
+.cloud-controls > section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.cloud-controls p,
+.cloud-controls legend,
+.cloud-controls details {
+  overflow-wrap: anywhere;
+}
+.cloud-controls input[type='file'] {
+  max-width: 100%;
+  font-size: 16px;
+}
+.cloud-controls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  min-height: 44px;
+  line-height: 1.5;
+}
+.cloud-controls label:has(input[type='file']) {
+  display: grid;
+}
+.cloud-controls input[type='radio'] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  padding: 0;
+  flex: 0 0 18px;
+  accent-color: var(--teal);
+}
+.cloud-controls button {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.cloud-history select {
+  min-width: 0;
+  max-width: 100%;
+}
+.cloud-history details {
+  max-height: min(48vh, 420px);
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.guest-merge-review {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.guest-merge-review > fieldset,
+.guest-merge-review > section,
+.guest-merge-manual {
+  min-width: 0;
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.guest-merge-review legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+.guest-merge-review label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  min-height: 44px;
+}
+.guest-merge-review select {
+  min-width: 0;
+  max-width: 100%;
+}
+.guest-merge-review button {
+  min-height: 44px;
+  max-width: 100%;
+  white-space: normal;
+}
+.guest-merge-review .actions,
+.guest-merge-bulk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.guest-merge-review details {
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.guest-merge-review summary {
+  cursor: pointer;
+}
+.guest-merge-difference {
+  margin: 8px 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+.mixed-recovery {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.mixed-recovery fieldset {
+  min-width: 0;
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+}
+.mixed-recovery label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  min-height: 44px;
+}
+.mixed-recovery label:has(select),
+.mixed-recovery label:has(input[type='file']) {
+  display: grid;
+}
+.mixed-recovery select,
+.mixed-recovery input[type='file'] {
+  max-width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+.mixed-recovery button {
+  min-height: 44px;
+  white-space: normal;
+  max-width: 100%;
+}
+.mixed-recovery .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mixed-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.mixed-values pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 240px;
+  overflow: auto;
+  font: inherit;
+  font-size: 13px;
+}
+.legacy-conversion label:has(input[type='password']) {
+  display: grid;
+}
+.legacy-conversion input[type='password'] {
+  width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+.legacy-conversion pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 240px;
+  overflow: auto;
+}
+@media (max-width: 600px) {
+  .mixed-values {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

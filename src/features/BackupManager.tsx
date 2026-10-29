@@ -215,10 +215,15 @@ export default function BackupManager({ db, restore }: { db: Database; restore: 
                 'Backup download requested. Save the JSON file in Files or Downloads and check that it is present. No cloud copy was created.',
                 '已要求下載備份。請將 JSON 檔案儲存至「檔案」或下載項目，並確認檔案存在；未建立雲端副本。',
               )
-            : t(
-                'Backup restore completed locally. Current records and settings now match the backup; other devices are unchanged.',
-                '備份還原已在本機完成。目前紀錄及設定已與備份一致，其他裝置不受影響。',
-              )}
+            : workspace.storageModel === 'cloud-v2'
+              ? t(
+                  'Backup restored locally. The corresponding cloud changes and deletions are queued; check Account synchronization for server acknowledgement. Other devices may receive these changes.',
+                  '已在本機還原備份。相應雲端變更及刪除已排程；請在帳戶同步檢查伺服器確認，其他裝置可能接收這些變更。',
+                )
+              : t(
+                  'Backup restore completed locally. Current records and settings now match the backup; other devices are unchanged.',
+                  '備份還原已在本機完成。目前紀錄及設定已與備份一致，其他裝置不受影響。',
+                )}
         </p>
       )}
       {mode && (
@@ -267,6 +272,14 @@ export default function BackupManager({ db, restore }: { db: Database; restore: 
                 accept=".json,application/json"
                 onChange={(e) => read(e.target.files?.[0])}
               />
+              {workspace.storageModel === 'cloud-v2' && (
+                <p className="notice amber">
+                  {t(
+                    'This is an automatically synchronized Account Workspace. Restoring a replacement here also queues the corresponding cloud replacements and deletions for other devices. Export your current records first; Guest and legacy encrypted vaults remain separate.',
+                    '此帳戶工作區會自動同步。在此還原取代資料，亦會排程雲端取代及刪除，影響其他裝置。請先匯出現有紀錄；訪客與舊版加密資料庫仍保持獨立。',
+                  )}
+                </p>
+              )}
               {preview && (
                 <>
                   <p>
@@ -320,10 +333,15 @@ export default function BackupManager({ db, restore }: { db: Database; restore: 
                       checked={confirmed}
                       onChange={(e) => setConfirmed(e.target.checked)}
                     />
-                    {t(
-                      'I reviewed the replacement and confirm restoring this backup on this device.',
-                      '我已覆核取代內容，確認在此裝置還原此備份。',
-                    )}
+                    {workspace.storageModel === 'cloud-v2'
+                      ? t(
+                          'I reviewed and approve this Account replacement, including its synchronized cloud changes and deletions.',
+                          '我已覆核並批准此帳戶取代，包括同步至雲端的變更及刪除。',
+                        )
+                      : t(
+                          'I reviewed the replacement and confirm restoring this backup on this device.',
+                          '我已覆核取代內容，確認在此裝置還原此備份。',
+                        )}
                   </label>
                   <button className="primary" disabled={!confirmed} onClick={apply}>
                     {t('Confirm & Restore Backup', '確認並還原備份')}

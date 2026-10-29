@@ -58,7 +58,7 @@ export function validateSyncDatabase(db: Database) {
     throw new SyncError('capacity');
   validateBackupDatabase(db);
 }
-export function pending(db: Database, state: SyncState): RecordData[] {
+export function pending(db: Database, state: Pick<SyncState, 'base'>): RecordData[] {
   const local = new Map(records(db).map((r) => [recordKey(r), r]));
   const base = new Map(state.base.map((b) => [recordKey(b.record), b.record]));
   return [...new Set([...local.keys(), ...base.keys()])].flatMap((key) => {
@@ -68,7 +68,12 @@ export function pending(db: Database, state: SyncState): RecordData[] {
     return [after || { ...before!, value: null }];
   });
 }
-export function reconcile(db: Database, state: SyncState, changes: BaseRecord[], cursor: number) {
+export function reconcile<S extends Pick<SyncState, 'base' | 'cursor' | 'conflicts'>>(
+  db: Database,
+  state: S,
+  changes: BaseRecord[],
+  cursor: number,
+) {
   const local = new Map(records(db).map((r) => [recordKey(r), r]));
   const previous = new Map(state.base.map((b) => [recordKey(b.record), b]));
   const base = new Map(previous),
@@ -106,9 +111,9 @@ export function reconcile(db: Database, state: SyncState, changes: BaseRecord[],
     state: { ...state, cursor, base: [...base.values()], conflicts: [...conflicts] },
   };
 }
-export function resolve(
+export function resolve<S extends Pick<SyncState, 'base' | 'cursor' | 'conflicts'>>(
   db: Database,
-  state: SyncState,
+  state: S,
   choices: Record<string, 'local' | 'cloud'>,
 ) {
   const rows = new Map(records(db).map((r) => [recordKey(r), r]));

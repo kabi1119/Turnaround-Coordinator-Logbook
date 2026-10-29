@@ -1,0 +1,191 @@
+# v0.9.0 intermediate implementation — NO PRODUCTION GO
+
+The package/default production path remains v0.8.3. New Cloud Account entry and the reviewed Guest transfer UI are connected behind `VITE_ACCOUNT_CLOUD_V2=preview`, which is OFF by default. Do not deploy this as completed v0.9.0 or apply the new migration to Production.
+
+## Implemented
+
+Inline bilingual Guest warning; per-user plaintext account cache and guarded new-account onboarding; durable retry and captured-token request binding; offline/account-switch fencing; conflict/tombstone protection; deterministic flight/group matching; reviewed Guest transfer UI with individual candidates, selected eligible bulk choices, real Aircraft/Duty/Journal editor staging, two confirmations plus high-risk approval, ID/link remapping, recovery copies and receipt checks. Unsubmitted Guest reviews can be cancelled after plan-file readback. Live History can be inspected and restored as a new revision after field comparison, recovery-file readback and approval; invalid links or stale server state block restoration. Manual History Archiving uses downloaded-file readback and explicit approval; old-device replay-floor review and capacity safeguards are implemented. An additive SQL proposal, guarded disposable REST runner and local PostgreSQL verifier are available. Legacy local Vault recovery is read-only and uses defensive copies.
+
+## Mixed-queue recovery
+
+Mixed queues are now connected to a separate Account-edit review in Account Settings and the Guest wizard. Original Guest and recorded Account UUIDs are verified independently; all original cache bytes, later dirty values and decisions remain preserved. Rejected/expired Guest work still needs full Guest duplicate approval; subsequent edits need their own per-record decisions, verified recovery-file readback and confirmation. Cache envelope version 2 blocks older preview code from ignoring this recovery state. This local implementation does not replace the hosted and physical-device gates below.
+
+## Outstanding release blockers
+
+- Legacy conversion is now connected to the preview Account entry with individual source reconciliation, existing manual editors, actual backup-file readback, consent, durable exact-request retry and independent destination verification. This resolves the supported-format local implementation blocker; disposable hosted authorization, conversion and two-device acceptance remain required. See Architecture for fail-closed recovery limits.
+- Archived History file import/restoration remains unavailable. The live History UI supports bounded account-scoped reads and new revision-guarded restoration after comparison and verified backup; ordinary account conflicts and expired-device review remain separate.
+- Hosted signed-token REST/RLS acceptance, actual two-device behavior and physical iPhone Safari/PWA acceptance. Local simulation does not establish these.
+
+No v0.9.0 version bump or final release commit message until all requirements are complete.
+
+## Security and preservation
+
+New records would be server readable, NOT end-to-end encrypted. The separate new browser cache is plaintext: per-user keys and adapter locking are isolation machinery, not cryptographic confidentiality. Same-origin code, extensions, browser-profile access and compromised devices can read it. Explicit model-change consent is required before legacy plaintext upload. A key served by the provider would not hide data from that provider.
+
+Guest originals and legacy vault/key/ciphertext remain unchanged. Current sign-in retains v0.8.3 behavior. Independent verified JSON backups remain essential. The app logs no records/credentials; provider SQL logs/backups/retention still require review.
+
+SQL bounds: 5,000 current record/tombstone rows / 8 MiB; history 20,000 rows / 32 MiB; operation receipts 20,000; History reads latest 100 per record. Local operational validation is 5 MiB; the new plaintext cache envelope guard is 16 MiB, subject to lower browser quotas. Capacity failures roll back atomically. **Manual archival only:** download and reread the exact export, approve explicitly, then archive prior history/receipts while preserving current records, tombstones and the initial receipt. Replay-floor expiry requires an offline device to re-review; no automatic pruning. Auth-user deletion cascades through both schemas; never delete a user to troubleshoot. These are application bounds, not Supabase Free Tier guarantees.
+
+## Comparison and approval rules
+
+Canonical comparison requires a two-character prefix containing a letter, nonzero number and optional one-letter suffix: CX00402A compares as CX402A. Source strings never change. Prefix-only, pure-number and malformed flights are not confident identities.
+
+Operational dates, applicable legs and populated fields qualify matches. Adjacent dates require a shared HKT leg instant. Candidate connected components expose many-to-many cases. Bulk Cloud/Local is allowed only for isolated exact/likely matches. Manual marking is unresolved until edited/separate-record review is complete.
+
+Manual results declare Guest, Account or staged-editor reference space so colliding IDs cannot redirect links. The staged editor opens the existing Aircraft/Duty/Journal form against a collision-safe provisional graph; nothing is written to Guest or uploaded merely by editing. Final confirmation checks current Guest bytes, destination fingerprint, user/workspace and revision. Nonempty replacements, partial/ambiguous groups, privacy changes or >=10 replacements require extra approval. A stale Guest merge is never silently rebased. Local queue save/UI dismissal is not Migration Complete.
+
+## Disposable local PostgreSQL verification
+
+The optional runtime is outside app dependencies. The verifier accepts a module path, never a DB URL/token:
+
+```powershell
+$sqlTestRuntime = Join-Path $env:TEMP 'tco-sql-v090'
+npm.cmd install --prefix $sqlTestRuntime --no-save --package-lock=false --ignore-scripts @electric-sql/pglite@0.5.12
+$env:TCO_PGLITE_MODULE = Join-Path $sqlTestRuntime 'node_modules\@electric-sql\pglite\dist\index.js'
+node scripts/check-account-migrations.mjs
+Remove-Item Env:TCO_PGLITE_MODULE
+```
+
+Actual SQL runs in new in-memory databases as simulated hosted non-superuser postgres. It checks temporary privilege cleanup, forced RLS, anonymous/direct-table rejection, A/B isolation, CAS, idempotence, recovery versions, tombstones, invalid-graph rollback and old-client fencing. This is not hosted JWT/PostgREST or physical-device testing.
+
+## Exact disposable hosted setup
+
+After review, create a NEW disposable Supabase Test Project, retain invitation-only signup, and apply manually ONCE:
+
+1. supabase/migrations/202610200001_profiles.sql
+2. supabase/migrations/202610270001_encrypted_sync.sql
+3. supabase/migrations/202610280001_sync_authorization.sql
+4. supabase/migrations/202610280002_cloud_accounts.sql
+5. supabase/migrations/202610290001_guest_merge_recovery.sql
+6. supabase/migrations/202610290002_mixed_queue_recovery.sql
+
+For an existing disposable v0.8.3 database, apply steps 4–6 after verified backups and old key/ciphertext/revision snapshots. For the earlier staged v0.9.0 schema, apply steps 5 and 6; if Guest recovery step 5 is already installed, apply only step 6. Step 6 adds only the purpose-bound Account-edit outcome RPC, retaining the existing records, receipts, keys and RLS. Steps 5 and 6 are repeatable and locally tested against populated data. Never replay step 4 table creation. No Production or hosted Test Project SQL has been executed by the agent.
+
+Read-only checks:
+
+```sql
+select p.oid::regprocedure,p.prosecdef,pg_get_userbyid(p.proowner),p.proconfig
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname='public' and p.proname like 'tco_account_%';
+select c.relname,c.relrowsecurity,c.relforcerowsecurity,pg_get_userbyid(c.relowner)
+from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where n.nspname='tco_cloud' and c.relkind='r';
+select has_schema_privilege('authenticated','tco_cloud','USAGE') as must_be_false,
+       has_schema_privilege('tco_sync_executor','public','CREATE') as must_be_false,
+       has_function_privilege('anon','public.tco_account_pull(bigint)','EXECUTE') as must_be_false;
+select pg_get_userbyid(m.roleid),pg_get_userbyid(m.member),m.admin_option,m.inherit_option,m.set_option,pg_get_userbyid(m.grantor)
+from pg_auth_members m where m.roleid='tco_sync_executor'::regrole or m.member='tco_sync_executor'::regrole;
+```
+
+Four tables must have ENABLE+FORCE RLS with independent owners; nine public Account RPCs (pull, initialize, push, verify conversion, History, prepare archive, archive, Guest outcome, Account-edit outcome) must use the restricted executor, empty search_path and authenticated-only browser EXECUTE. No temporary schema CREATE or SET/INHERIT grant may remain. Applying the migrations must not change old ciphertext/keys.
+
+Installation expectations: steps 1, 2 and 4 create tables/schema/roles and must run once, not as a rerunnable reset script. Step 3 replaces authorization functions against the expected existing v0.8.x schema; steps 5 and 6 are repeatable corrections only against their checked predecessor schema. On an error, stop and inspect the transaction and migration ledger before continuing. Never ignore an error, drop objects to force a rerun, or run the whole sequence against an already populated project.
+
+Check every Account RPC ACL after installation (read-only):
+
+```sql
+select p.oid::regprocedure,pg_get_userbyid(p.proowner) as owner,p.prosecdef,p.proconfig,
+       has_function_privilege('authenticated',p.oid,'EXECUTE') as authenticated_must_be_true,
+       has_function_privilege('anon',p.oid,'EXECUTE') as anon_must_be_false,
+       has_function_privilege('service_role',p.oid,'EXECUTE') as service_role_must_be_false,
+       exists(select 1 from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
+              where a.grantee=0 and a.privilege_type='EXECUTE') as public_must_be_false
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname='public' and p.proname like 'tco_account_%';
+```
+
+## Required hosted REST checks — not performed
+
+The prepared disposable REST runner includes Guest and Account-edit receipt isolation, exact retry, cross-purpose and changed-payload rejection, and retirement/delayed-write checks. It is not executed automatically. `merge_outcome` and `edit_outcome` accept the exact original `p_expected`, `p_operation`, `p_records` and an explicit `p_retire` boolean. A `missing` response does not prove rejection; `committed` prevents duplicate import; `retired` fences the original without altering current records; `expired` requires full re-review and does not prove whether an archived operation committed. Test both race orderings on hosted PostgREST with short-lived invited test-user tokens before acceptance.
+
+Use two invited, empty Test Project accounts A/B and short-lived OTP user JWTs outside source/logs. Never service_role, real records or Production.
+
+- POST /rest/v1/rpc/tco_account_pull with {"p_cursor":0}: onboarding state is authoritative; a legacy settings-only account is established.
+- POST /rest/v1/rpc/tco_account_initialize with stable p_operation UUID, p_consent=true, p_records (one six-boolean privacy/settings row for a new account), p_legacy_revision=null. False consent fails. Legacy requires its exact reviewed revision.
+- POST /rest/v1/rpc/tco_account_push with p_expected, stable p_operation, reviewed p_records and p_purpose="edit" or "guest-merge". Same-body retry must not add revisions; changed-body reuse must fail.
+- Test A/B record/history isolation, missing/expired/modified/foreign JWTs, anonymous Auth and private-schema access denial.
+- Verify stale CAS, deletion conflicts, invalid graph rollback, recovery copies and old-client write rejection after conversion. Compare original hashes and verify legacy recovery pulls.
+- Record only assertions/status/counts, never plaintext/tokens. `scripts/check-account-isolation.mjs` is a guarded, synthetic new-mode REST runner for an explicitly identified disposable test project. It has **not** been run against hosted Supabase. It cannot prove a project is disposable by itself; the operator must verify the project identity and absence of real data.
+
+### Exact owner-operated REST commands
+
+Use a new PowerShell terminal in this repository. In the Supabase dashboard, independently verify the disposable project reference and its HTTPS API URL, then manually invite **two new synthetic users** with no legacy keys or new Account workspace. Keep invitation-only signup. Obtain fresh, short-lived **access tokens** for these Test Project users through Email OTP; refresh tokens, secret/service-role keys and Production tokens are forbidden. Do not paste credentials into this document, source files, chat, command arguments or terminal transcripts. Use the same Test Project's publishable (or legacy anon) API key.
+
+The Production reference below is a required **deny-list identifier only**, not a credential or request destination. The runner refuses a missing/equal reference, privileged/wrong-user/expired token claims, and nonempty or inconsistent initial snapshots. It then verifies both identities with the selected project's Auth server before any write; local JWT decoding alone is not authentication. Software cannot prove your project-selection assertion.
+
+The following block is for the owner to run **after SQL review/install**, not part of this preparation pass. It makes synthetic writes in the selected disposable project and intentionally leaves them there. Run without `Start-Transcript`, debug credential output, or shell environment dumps:
+
+```powershell
+Set-Location -LiteralPath 'C:\Projects\Turnaround-Coordinator-Logbook'
+function Read-TcoTestSecret([string]$Prompt) {
+  $secure = Read-Host $Prompt -AsSecureString
+  $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+  try { [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr) }
+  finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr); $secure.Dispose() }
+}
+try {
+  $env:TCO_ACCOUNT_PRODUCTION_PROJECT_REF = Read-Host 'Production project ref (deny-list only)'
+  $env:TCO_ACCOUNT_TEST_PROJECT_REF = Read-Host 'Independently verified disposable project ref'
+  $env:TCO_ACCOUNT_TEST_URL = Read-Host 'Disposable API URL, exactly https://<test-ref>.supabase.co/'
+  $env:TCO_ACCOUNT_DISPOSABLE = Read-Host 'Type yes after checking this project contains only synthetic test data'
+  $env:TCO_ACCOUNT_TEST_CONFIRM = Read-Host 'Type DISPOSABLE:<test-ref> to authorize this test run'
+  $env:TCO_ACCOUNT_TEST_A_ID = Read-Host 'New synthetic user A UUID'
+  $env:TCO_ACCOUNT_TEST_B_ID = Read-Host 'New synthetic user B UUID'
+  $env:TCO_ACCOUNT_TEST_KEY = Read-TcoTestSecret 'Test Project publishable/anon API key'
+  $env:TCO_ACCOUNT_TEST_A_TOKEN = Read-TcoTestSecret 'Test user A short-lived access JWT'
+  $env:TCO_ACCOUNT_TEST_B_TOKEN = Read-TcoTestSecret 'Test user B short-lived access JWT'
+  node scripts/check-account-isolation.mjs
+  if ($LASTEXITCODE -ne 0) { throw 'Test stopped. Preserve the Test Project and inspect; do not reset or rerun the same users.' }
+} finally {
+  foreach ($name in @('TCO_ACCOUNT_PRODUCTION_PROJECT_REF','TCO_ACCOUNT_TEST_PROJECT_REF','TCO_ACCOUNT_TEST_URL','TCO_ACCOUNT_DISPOSABLE','TCO_ACCOUNT_TEST_CONFIRM','TCO_ACCOUNT_TEST_A_ID','TCO_ACCOUNT_TEST_B_ID','TCO_ACCOUNT_TEST_KEY','TCO_ACCOUNT_TEST_A_TOKEN','TCO_ACCOUNT_TEST_B_TOKEN')) {
+    [Environment]::SetEnvironmentVariable($name,$null,'Process')
+  }
+  Remove-Item Function:Read-TcoTestSecret
+}
+```
+
+Expected result: **10 PASS scenario groups**, followed by `Passed 10 hosted disposable RPC scenarios` and the no-cleanup notice. This is an expected result, **not an executed hosted pass**. Initial state/identity failure sends no mutation; a later assertion failure may leave earlier synthetic writes, so preserve the project for investigation. A second run requires another pair of new empty synthetic users; do not reset/delete the first pair.
+
+This runner covers new Account authorization, CAS, exact retry, history/tombstones and both receipt purposes. It deliberately tests false archive confirmation only; it does **not** certify Legacy conversion, a successful manual archive/replay-floor transition, concurrency race orderings or physical devices. Use separate synthetic Legacy users and the UI acceptance steps below. For manual archive acceptance, download/reread the archive, explicitly approve, verify current records/tombstones/initial receipt remain, same-floor retired requests remain fenced, and older requests require replay-floor re-review.
+
+For the owner-operated UI session, use a separate browser profile and terminal with only Test Project configuration (never the Production site). Set these process variables for the local preview server; do not change `.env.example` or publish this build:
+
+```powershell
+$env:VITE_ACCOUNT_CLOUD_V2 = 'preview'
+$env:VITE_SUPABASE_URL = Read-Host 'Verified disposable API URL'
+$env:VITE_SUPABASE_PUBLISHABLE_KEY = Read-Host 'Disposable publishable API key (public client key only)'
+try { npm.cmd run dev -- --port 5178 --strictPort }
+finally {
+  Remove-Item Env:VITE_ACCOUNT_CLOUD_V2,Env:VITE_SUPABASE_URL,Env:VITE_SUPABASE_PUBLISHABLE_KEY -ErrorAction SilentlyContinue
+}
+```
+
+Ordinary HTTP LAN access cannot establish secure-context/Web Crypto/PWA acceptance. Physical iPhone acceptance requires an owner-approved isolated HTTPS preview configured only for this disposable project; it has not been deployed in this pass. Leave Production and the repository's default flag unchanged.
+
+## Rollout/rollback
+
+The missing-migration UI fails closed, and real entry integration is gated by an OFF-by-default preview build flag. Converted accounts reject old-client cloud writes. Frontend rollback does not remove that fence. Keep both schemas and original local Vaults; recover with reviewed exports and forward fixes. Never disable fences or drop new data to make old clients succeed. The flag remains OFF for Production pending hosted authorization and physical-device acceptance.
+
+## Prospective Windows → iPhone acceptance
+
+After completing missing work:
+
+1. New invited sign-in acknowledges storage once, enters automatic sync without a routine passphrase.
+2. Decline/cancel Guest transfer; verify unchanged Guest bytes and offline use.
+3. Review five duplicates with suffixes, overlaps, many-to-many and Drafts; test single/bulk/manual/separate decisions and two/additional approvals.
+4. Interrupt before upload, after server commit and before verification; resume without duplicates/false completion.
+5. Concurrent Windows/iPhone edits invalidate stale merge decisions, preserving both versions.
+6. In the disposable preview build, choose Review and convert Legacy Vault. Test local-only, cloud-only, identical, divergent and privacy-only accounts; supply separate passphrases where needed. Review each difference, stage an actual Manual Edit, download/reread the complete backup, accept the server-readable/plaintext-cache disclosure and confirm. Interrupt the request and resume with the same operation UUID. Verify destination links, disabled settings, original ciphertext/key hashes and old-device cloud-write fencing. Test stale revisions, invalid references and wrong-account recovery files; all must stop safely. Do not erase browser storage to simulate recovery without first retaining the approved plaintext recovery plan and independent backup. Before approval a reload requires re-unlock/re-review; after approval it restores the saved request. Restore exported plans explicitly, never by bypassing consent or the receipt guard.
+7. Repeat separately in iPhone Safari and installed PWA with keyboard, short heights, safe areas and offline restart. No real-device pass has been performed.
+
+## Working-tree manifest and actual verification
+
+Current work spans `src/auth`, `src/cloud`, `src/migration`, selected editor components, the additive SQL migration, deployment guard scripts, tests and this documentation. Use `git status --short` for the exact current file list. The package remains 0.8.3; no release commit, push or deployment is authorized.
+
+Current local verification (Legacy conversion, 2026-10-29 HKT): focused Legacy/source/Account-entry checks passed 33 tests / 3 files; TypeScript and targeted lint passed. The single final npm.cmd run check:release passed 660 tests / 59 files, lint, TypeScript/Vite build, static gate and formatting. The build retains a non-fatal bundle-size warning. Disposable embedded PostgreSQL passed 30 scenario groups, including manifest coverage, exact legacy revision, original ciphertext/key preservation, conversion activation, old-client fencing, account isolation and the previously completed receipt/archive safeguards. No SQL migration changed in this pass; the existing six-file order above still applies.
+
+New tests exercise local-only/cloud-only/identical/divergent and privacy-only sources, separate passphrases, per-record/manual reconciliation through the actual Handling editor, retained conflict alternatives, tombstones, unchanged linked IDs, incorrect consent/readback, corrupt ciphertext, invalid references, durable interruption/lost acknowledgements, activation retry, changed revisions and account fencing. React integration verifies source inspection, actual File readback and final destination activation without legacy writes. The new Legacy screen reuses responsive review styles; no new browser-layout or physical-device pass is claimed. Earlier 1440x900/390x640 Edge screenshots apply to Mixed-Queue Recovery only and were not repeated. Ignored checkpoint fixtures remain available for reproduction and are not bundled. The guarded hosted REST runner remains unexecuted.
+
+Both Mixed-Queue and supported-format Legacy conversion P0 implementation blockers are locally resolved. Owner review and disposable hosted testing may begin with the preview flag in an isolated build, including both pre-submit/retry stages and Safari/PWA recovery. Production remains NO-GO pending the hosted, physical-device and other outstanding scope gates above. Default flag and package remain false / 0.8.3.
+
+Hosted-readiness preparation: no SQL/application implementation changed and the full release gate was not repeated. The runner now requires an explicit Production deny-list reference, rejects privileged/foreign/expired user-token claims before requests, and checks complete empty initial snapshots before mutations. Its five mocked guard tests and targeted lint passed. Isolated synthetic Edge verified the new Legacy review at 1440x900 and 390x640: readable comparison, no horizontal overflow, expected responsive columns, real editor entry/discard dismissal, actual saved-file readback, consent plus final confirmation, scroll reachability and verified conversion preserving Guest and original encrypted bytes. New Legacy screenshots were inspected. The existing Guest/Mixed Manual Edit flow also passed at both widths without recapturing prior screenshots. History UI was unchanged and was not repeated. No hosted SQL/API, real-device pass, deployment or Production access occurred.
