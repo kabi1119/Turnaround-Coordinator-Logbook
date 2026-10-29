@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.9.1 Pre-release**, an independent personal-tool PWA with owner-authorized production hosting, not an official aviation operational system.
+This repo is **TCO Logbook v0.9.2 Pre-release**, an independent personal-tool PWA with owner-authorized production hosting, not an official aviation operational system.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.9.1 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.9.2 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
 - Release commit titles start with the version: vX.Y.Z[a] - Descriptive English Title. No feat:/fix: title prefix. Include a detailed English body covering delivered changes, compatibility and actual verification.
@@ -232,6 +232,8 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 - Existing cloud privacy/settings still syncs as one encrypted record. Different initial device/cloud preferences require the existing explicit conflict review; choosing cloud restores saved preferences without uploading fresh defaults. No schema, RPC, crypto, worker or cloud-key changes. Local checks do not establish physical iPhone compatibility. Manual Git/deployment only.
 
 ## v0.9.0 release boundaries
+
+- v0.9.2 Production builds use scripts/production-account.mjs: automatically enable Cloud Account when the optional development flag is absent, reject explicit disablement and wrong project/key fingerprints, and verify release.json plus actual JS/CSP after building. Do not bypass this gate or commit actual keys. Existing PWA updates require saving work, closing every old window and reopening; never clear records or force activation over edits. Home rows are content-sized; Reflection belongs below Recent on the desktop right, with flexible gaps aligning natural left/right cards.
 
 - Release is v0.9.0. The owner authorized commit, safe main integration and Cloudflare deployment after confirming hosted 10/10 tests, Production migrations, retained ciphertext hashes and an independent backup. Do not rerun migrations or hosted synthetic tests against Production. Production Vite builds explicitly enable `VITE_ACCOUNT_CLOUD_V2=preview` with the Production URL and publishable key in ignored environment configuration; ordinary development remains OFF. Read docs/V0_9_0_ARCHITECTURE.md and docs/V0_9_0_ROLLOUT.md.
 - Proposed new data is server readable and the new cache is plaintext. Never call it E2EE or silently convert legacy data. Preserve all legacy encryption, keys, source bytes, Guest separation and opt-in until the complete consented transition is implemented.

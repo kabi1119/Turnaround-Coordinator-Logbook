@@ -32,7 +32,6 @@ import AircraftEditor from './features/AircraftEditor';
 import DutyEditor from './features/DutyEditor';
 import Logbook, { type LogbookView } from './features/Logbook';
 import HomeInsights from './features/HomeInsights';
-import { useRecentRowHeights } from './lib/useRecentRowHeights';
 import Statistics from './features/Statistics';
 import { JournalEditor, JournalPage } from './features/Journal';
 import Settings, { ReportPreview } from './features/Settings';
@@ -132,7 +131,6 @@ function Workspace({
       kind: 'aircraftTrash' | 'dutyTrash' | 'aircraftRestore';
       id: string;
     } | null>(null);
-  const homeLayout = useRecentRowHeights(page === 'home', db);
   const [logbookView, setLogbookView] = useState<LogbookView>({ mode: 'timeline', filters: {} });
   const [visited, setVisited] = useState<Page[]>(['home']);
   const positions = useRef<Partial<Record<Page, number>>>({});
@@ -333,69 +331,60 @@ function Workspace({
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
               onCalendar={() => setCalendarOpen(true)}
             />
-            <div
-              className="home-operations"
-              ref={homeLayout}
-              data-four-records={active.length >= 4}
-            >
-              <HomeInsights
-                records={db.aircraft}
-                onStats={() => navigate('statistics')}
-                onUnfinished={() => openLogbook(true)}
-              />
-              <section className="home-recent">
-                <SectionTitle
-                  title={t('Recent Aircraft', '最近航機紀錄')}
-                  action={
-                    <button className="text-button" onClick={() => openLogbook()}>
-                      {t('View aircraft history', '查看航機歷史')}
-                      <ArrowRight size={16} />
-                    </button>
-                  }
+            <div className="home-operations">
+              <div className="home-left">
+                <HomeInsights
+                  records={db.aircraft}
+                  onStats={() => navigate('statistics')}
+                  onUnfinished={() => openLogbook(true)}
                 />
-                <div className="panel records-panel surface-dark">
-                  {active.slice(0, 4).map((a) => (
-                    <AircraftCard
-                      key={a.id}
-                      a={a}
-                      privacy={db.settings.privacy}
-                      onClick={() => openAircraft(a)}
-                    />
-                  ))}
-                  {!active.length && (
-                    <Empty
-                      text={t(
-                        'Your first assignment starts here.',
-                        '從這裡開始記錄第一項處理工作。',
-                      )}
-                    />
-                  )}
-                </div>
-                <div className="home-footnote">
-                  <span>
-                    <MapPin size={16} />
-                    Asia/Hong_Kong
-                  </span>
-                  {hasKnownSamples(db) && (
-                    <span>{t('Includes fictional sample records.', '包含虛構樣本紀錄。')}</span>
-                  )}
-                </div>
-              </section>
-              <div className="home-secondary">
-                <section className="journal-teaser surface-dark">
-                  <span className="eyebrow">BEYOND THE NUMBERS</span>
-                  <h2>{t('What did today\nteach you?', '今天學到了\n甚麼？')}</h2>
-                  <p>
-                    {t(
-                      'Keep the lessons that make you a better coordinator.',
-                      '留下每一份有助成長的經驗。',
+              </div>
+              <div className="home-right">
+                <section className="home-recent">
+                  <SectionTitle
+                    title={t('Recent Aircraft', '最近航機紀錄')}
+                    action={
+                      <button className="text-button" onClick={() => openLogbook()}>
+                        {t('View aircraft history', '查看航機歷史')}
+                        <ArrowRight size={16} />
+                      </button>
+                    }
+                  />
+                  <div className="panel records-panel surface-dark">
+                    {active.slice(0, 4).map((a) => (
+                      <AircraftCard
+                        key={a.id}
+                        a={a}
+                        privacy={db.settings.privacy}
+                        onClick={() => openAircraft(a)}
+                      />
+                    ))}
+                    {!active.length && (
+                      <Empty
+                        text={t(
+                          'Your first assignment starts here.',
+                          '從這裡開始記錄第一項處理工作。',
+                        )}
+                      />
                     )}
-                  </p>
-                  <button className="text-button" onClick={() => setOverlay({ type: 'journal' })}>
-                    {t('Write a reflection', '寫下反思')}
-                    <ArrowUpRight size={17} />
-                  </button>
+                  </div>
                 </section>
+                <div className="home-secondary">
+                  <section className="journal-teaser surface-dark">
+                    <span className="eyebrow">BEYOND THE NUMBERS</span>
+                    <h2>{t('What did today teach you?', '今天學到了甚麼？')}</h2>
+                    <p>
+                      {t(
+                        'Keep the lessons that make you a better coordinator.',
+                        '留下每一份有助成長的經驗。',
+                      )}
+                    </p>
+                    <button className="text-button" onClick={() => setOverlay({ type: 'journal' })}>
+                      {t('Write a reflection', '寫下反思')}
+                      <ArrowUpRight size={17} />
+                    </button>
+                  </section>
+                </div>
               </div>
             </div>
           </section>
@@ -461,10 +450,18 @@ function Workspace({
           </section>
         )}
         <footer className="page-footer">
-          TCO Logbook{' '}
-          <span className="mobile-release">
-            v0.9.1 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
+          <span className="footer-brand">
+            TCO Logbook <small>v0.9.2 {t('Pre-release', '預發佈')}</small>
           </span>
+          <span className="footer-timezone">
+            <MapPin size={16} aria-hidden="true" />
+            Asia/Hong_Kong
+          </span>
+          {page === 'home' && hasKnownSamples(db) && (
+            <span className="footer-samples">
+              {t('Includes fictional sample records.', '包含虛構樣本紀錄。')}
+            </span>
+          )}
         </footer>
       </main>
       <nav className="app-navigation" aria-label={t('Main navigation', '主導覽')}>
@@ -485,7 +482,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.9.1 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.9.2 {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

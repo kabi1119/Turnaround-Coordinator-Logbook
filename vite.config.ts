@@ -5,11 +5,15 @@ import { authConfig } from './src/auth/config';
 import { writeAuthHeaders, explicitAuthEndpoint } from './scripts/auth-headers.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
 import { buildOffline } from './scripts/build-offline.mjs';
-export default defineConfig(({ mode }) => {
-  const auth = authConfig(loadEnv(mode, process.cwd(), 'VITE_'));
+import { productionConfig } from './scripts/production-account.mjs';
+export default defineConfig(({ mode, command }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const production = command === 'build' && mode === 'production' ? productionConfig(env) : null;
+  const auth = authConfig(env);
   return {
     server: { watch: { ignored: ['**/.checkpoints/**', '**/.wrangler/**'] } },
     define: {
+      ...(production ? { 'import.meta.env.VITE_ACCOUNT_CLOUD_V2': JSON.stringify('preview') } : {}),
       __LOCAL_AIRLINE_FILES__: JSON.stringify(
         readdirSync(new URL('./public/assets/airlines/', import.meta.url)).filter((name) =>
           /^[A-Z0-9]{2}\.png$/.test(name),
@@ -18,6 +22,21 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
+      {
+        name: 'verified-production-release',
+        apply: 'build',
+        generateBundle() {
+          if (production)
+            this.emitFile({
+              type: 'asset',
+              fileName: 'release.json',
+              source: JSON.stringify({
+                version: JSON.parse(readFileSync('package.json', 'utf8')).version,
+                ...production,
+              }),
+            });
+        },
+      },
       { name: 'explicit-supabase-endpoint', apply: 'build', transform: explicitAuthEndpoint },
       {
         name: 'offline-shell',

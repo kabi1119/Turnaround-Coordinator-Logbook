@@ -29,7 +29,17 @@ All sample records and operational scenarios I publish are fictional. They do no
 
 **A personal aviation operations logbook and career development companion.**
 
-I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.1 Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
+I built TCO Logbook as an aviation-oriented web application for organizing, reviewing, and reflecting on aircraft handling assignments, duty shifts, recorded flight activity, and professional experiences. **v0.9.2 Pre-release** adds Cloud Accounts, reviewed Guest migration and consented Legacy Vault conversion while retaining offline records, independent backups and local-only Guest workspaces. **Cloud Account storage is server-readable, NOT end-to-end encrypted; its offline cache is plaintext.** Original Legacy encrypted Vaults and keys remain available for recovery.
+
+## v0.9.2 — Reliable Cloud Account builds and compact Home
+
+Production inspection found a later v0.9.1 bundle (`index-O4DrE5-p.js`) without the Cloud Account flag, despite the earlier verified manual artifact having it enabled. That build selects the legacy passphrase/manual-sync path; an installed PWA may also keep the prior shell until its safe update is accepted. The exact remote build trigger was not independently established. New/converted Cloud Account routing and automatic synchronization already existed and remain protected; unconverted encrypted Legacy sources still require explicit, reviewed conversion.
+
+Every normal production build now applies the checked-in policy in `scripts/production-account.mjs`: Cloud Account is enabled when the optional development flag is absent; explicit disablement, a wrong/missing Production URL, privileged key or mismatched publishable-key SHA-256 blocks the build. The expected fingerprint is public metadata, not a credential. Key rotation requires updating the reviewed fingerprint and the build environment. `npm run build` independently checks the generated `release.json`, actual bundle, project, key fingerprint and CSP before it succeeds. Cloudflare Git builds must supply the Production URL and matching publishable key; remove stale `VITE_ACCOUNT_CLOUD_V2=false` rather than bypassing the gate. No actual keys are committed.
+
+Home uses natural-height Recent Aircraft rows, balanced desktop padding, independent left/right stacks and flexible gaps for bottom alignment. Reflection follows Recent Aircraft, while Statistics and Unfinished retain their natural sizes. The footer places TCO Logbook left and Asia/Hong_Kong right, retaining accurate sample disclosure. English/Traditional Chinese layouts support 0–4 records without forced equal heights. Existing PWAs check for updates immediately and retain safe activation: follow Update ready guidance, save/backup pending work, close **all** TCO Logbook tabs and Home Screen windows, then reopen online. Do not uninstall or clear storage to update.
+
+**Account Cloud remains server-readable, NOT E2EE.** Fresh accounts give the existing one-time storage consent; converted accounts open without a routine Vault Passphrase or manual Sync enable switch. The saved encrypted-Vault shortcut is explicitly read-only Legacy recovery. Guest remains local-only until a reviewed transfer. No schema, RPC, record identity, conflict, archival or conversion safeguards are changed. Physical iPhone/near-limit acceptance remains deferred.
 
 ## v0.9.1 — Empty Guest logbook by default
 
@@ -409,7 +419,7 @@ Third-party packages, trademarks, logos and other assets remain subject to their
 
 **My future roadmap, subject to separate decisions and approval:** organizational policy, providers/costs, passkeys, durable operational cloud storage, record synchronization/conflicts, public aircraft lookup, encrypted cloud backups and production/iPhone PWA acceptance. v0.7.0 prepares account authentication, with hosted configuration/live validation still required.
 
-The current v0.9.1 remains a pre-release with device-local Guest data and explicitly consented, server-readable Cloud Account storage (NOT E2EE). OCR/Excel roster imports, HR integrations and official operational services remain deferred.
+The current v0.9.2 remains a pre-release with device-local Guest data and explicitly consented, server-readable Cloud Account storage (NOT E2EE). OCR/Excel roster imports, HR integrations and official operational services remain deferred.
 
 ## Language Precedence
 
@@ -448,7 +458,7 @@ TCO Logbook 並非任何航空公司、機場或地勤服務機構的官方營�
 
 **個人航空營運紀錄及職涯發展助手。**
 
-我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.1 Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
+我獨立開發 TCO Logbook 這個航空主題網頁應用程式，用來整理、查閱及反思航機地勤處理任務、工作更次、已記錄的航班活動及職涯經驗。**v0.9.2 Pre-release** 加入雲端帳戶、經覆核的訪客匯入及須同意的舊版資料庫轉換，保留離線紀錄、獨立備份與僅存本機的訪客工作區。**新雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；離線快取為明文。**原有舊版加密資料庫及金鑰仍保留作復原用途。擁有者已確認 hosted 隔離測試、正式 migration、密文雜湊及獨立備份，並接受將實體裝置及接近容量上限的驗收延至 v0.9.1+。
 
 ## v0.7.0 帳戶基礎與訪客工作區
 
@@ -720,7 +730,7 @@ Guest 仍使用此來源的**未加密 localStorage**，Key 為 `tco-logbook-dem
 
 **我的未來開發計劃，須另行決定及批准：** 公司政策、供應商／成本、Passkey、操作資料雲端儲存與同步／衝突處理、公開航機查詢、加密雲端備份，以及正式版／實體 iPhone 驗收。v0.7.0 已準備帳戶登入基礎，但仍須設定及驗證線上服務。
 
-目前 v0.9.1 為訪客資料只存裝置、雲端帳戶須明確同意伺服器可讀儲存（並非 E2EE）的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及官方操作服務繼續延後。
+目前 v0.9.2 為訪客資料只存裝置、雲端帳戶須明確同意伺服器可讀儲存（並非 E2EE）的預發佈版；OCR／Excel 更表匯入、人力資源系統整合及官方操作服務繼續延後。
 
 ## 語言版本效力
 

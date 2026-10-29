@@ -16,8 +16,14 @@ it('keeps A above the shared operational grid with one summary, Recent Aircraft 
   const stats = within(home as HTMLElement).getByRole('region', { name: 'Handling summary' });
   const recent = home.querySelector('.home-recent')!;
   expect([...operations.children]).toEqual([
+    home.querySelector('.home-left'),
+    home.querySelector('.home-right'),
+  ]);
+  expect([...home.querySelector('.home-left')!.children]).toEqual([
     home.querySelector('.home-statistics'),
     home.querySelector('.home-unfinished'),
+  ]);
+  expect([...home.querySelector('.home-right')!.children]).toEqual([
     recent,
     home.querySelector('.home-secondary'),
   ]);

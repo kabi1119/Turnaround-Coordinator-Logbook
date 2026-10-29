@@ -23,6 +23,8 @@ export default function OfflineSetup() {
       .register('/sw.js', { scope: '/', updateViaCache: 'none' })
       .then((registration) => {
         if (!alive) return;
+        // Fetch update metadata now; keep the existing safe, user-reviewed activation policy.
+        if (typeof registration.update === 'function') void registration.update().catch(fail);
         const refreshWaiting = () => {
           if (alive) setWaiting(registration.active ? registration.waiting : null);
         };

@@ -1,17 +1,8 @@
 .home-operations {
-  grid-template-areas: 'statistics' 'recent' 'reflection';
-}
-.home-statistics {
-  grid-area: statistics;
+  grid-template-areas: 'left' 'right';
 }
 .home-statistics > .home-metrics {
   margin: 0;
-}
-.home-recent {
-  grid-area: recent;
-}
-.home-secondary {
-  grid-area: reflection;
 }
 /* Match the existing View all touch target, including the title without an action. */
 .home-statistics > .section-title,
@@ -26,7 +17,7 @@
 }
 @media (min-width: 1200px) {
   .home-operations {
-    grid-template-areas: 'statistics recent' 'reflection recent';
-    grid-template-rows: min-content 1fr;
+    grid-template-areas: 'left right';
+    grid-template-rows: auto;
   }
 }

@@ -118,6 +118,14 @@ export default function AuthApp({
     lock();
     setLogin(false);
     setExpires(0);
+    setLegacyRecovery(newMode);
+    if (newMode)
+      setNotice(
+        t(
+          'Read-only Legacy recovery. Sign in online for reviewed Cloud Account conversion; original encrypted data is retained.',
+          '舊版唯讀復原。請連線登入以覆核雲端帳戶轉換；原有加密資料保留。',
+        ),
+      );
     setTarget({ user: { id: userId, email: '' }, offline: true, turn: generation.current });
     setStage('vault');
   }
@@ -394,7 +402,9 @@ export default function AuthApp({
               />
               {savedId && (
                 <button onClick={() => localUnlock(savedId)}>
-                  {t('Unlock saved local vault', '解鎖已儲存的本機資料庫')}
+                  {newMode
+                    ? t('Recover encrypted Legacy Vault (read-only)', '復原舊版加密資料庫（唯讀）')
+                    : t('Unlock saved local vault', '解鎖已儲存的本機資料庫')}
                 </button>
               )}
             </Modal>
@@ -406,7 +416,7 @@ export default function AuthApp({
             <div className="auth-brand">
               <img src="/airplane.svg?v=0.6.1" width="64" height="64" alt="" />
               <span>
-                TCO Logbook<small>v0.9.1 · {t('Device only', '僅限本機')}</small>
+                TCO Logbook<small>v0.9.2 · {t('Device only', '僅限本機')}</small>
               </span>
             </div>
             <div className="auth-languages">
@@ -563,7 +573,12 @@ export default function AuthApp({
                 {savedId && (
                   <div className="offline-vault-option">
                     <button onClick={() => localUnlock(savedId)}>
-                      {t('Unlock saved local vault', '解鎖已儲存的本機資料庫')}
+                      {newMode
+                        ? t(
+                            'Recover encrypted Legacy Vault (read-only)',
+                            '復原舊版加密資料庫（唯讀）',
+                          )
+                        : t('Unlock saved local vault', '解鎖已儲存的本機資料庫')}
                     </button>
                     <p>
                       {t(

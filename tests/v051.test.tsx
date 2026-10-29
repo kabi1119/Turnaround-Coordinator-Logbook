@@ -22,6 +22,7 @@ function setupWorker(waiting = false) {
     active: worker('activated'),
     waiting: waiting ? candidate : null,
     installing: null as ReturnType<typeof worker> | null,
+    update: vi.fn(async () => {}),
   });
   const register = vi.fn().mockResolvedValue(registration);
   Object.defineProperty(navigator, 'serviceWorker', {
@@ -32,6 +33,12 @@ function setupWorker(waiting = false) {
 }
 
 describe('v0.5.1 unobtrusive PWA feedback', () => {
+  it('checks the published shell immediately without activating a waiting update or clearing data', async () => {
+    const { registration, candidate } = setupWorker(true);
+    render(<OfflineSetup />);
+    await waitFor(() => expect(registration.update).toHaveBeenCalledOnce());
+    expect(candidate.postMessage).not.toHaveBeenCalled();
+  });
   it('follows browser connectivity/resume events without probing a server and cleans up listeners', () => {
     const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
     const fetch = vi.spyOn(globalThis, 'fetch');

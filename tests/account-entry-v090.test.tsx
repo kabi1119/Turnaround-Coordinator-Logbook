@@ -201,6 +201,21 @@ describe('OFF-by-default actual Account entry integration', () => {
     expect(screen.queryByRole('button', { name: 'Create Cloud Account Workspace' })).toBeNull();
     expect(p.rpc.mock.calls.map(([n]) => n)).toEqual(['tco_account_pull']);
   });
+  it('opens a converted account without asking for a passphrase even when an original encrypted vault remains', async () => {
+    const p = provider(true),
+      original = 'preserved encrypted Legacy recovery bytes';
+    localStorage.setItem('tco-account-vault-v1:' + A, original);
+    localStorage.setItem(CHOICE_KEY, 'account:' + A);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    expect(screen.queryByLabelText(/passphrase/i)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Account' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Account Settings' }));
+    expect(await screen.findByText('Account synchronization')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Enable Cloud Sync' })).toBeNull();
+    expect(p.rpc.mock.calls.some(([n]) => n === 'tco_account_initialize')).toBe(false);
+    expect(localStorage.getItem('tco-account-vault-v1:' + A)).toBe(original);
+  });
   it('opens the integrated Legacy conversion review without consenting or uploading on navigation', async () => {
     const p = provider();
     p.legacy();

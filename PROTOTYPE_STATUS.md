@@ -1,4 +1,14 @@
-# TCO Logbook v0.9.1 Pre-release status
+# TCO Logbook v0.9.2 Pre-release status
+
+## v0.9.2 — 2026-10-30 HKT
+
+Observed Production v0.9.1 JavaScript had no enabled Account Cloud flag and differed from the earlier manually verified artifact, explaining a legacy login path. The exact later build trigger is unverified. Version-controlled Production configuration now enables Cloud Account by policy (not an easily forgotten flag), requires the exact Production URL and matching reviewed publishable-key fingerprint, and verifies release.json, compiled JS and CSP after building. Bad or missing credentials and explicit mode disablement fail closed. Only ignored build environment files hold actual keys. Key rotation must update the reviewed public fingerprint.
+
+Normal new/converted Account entry, automatic sync, offline pending state and server-acknowledgement rules are preserved. Saved legacy unlock is clearly marked read-only recovery; encrypted sources still need reviewed conversion. PWA registration checks updates immediately while retaining existing safe activation and unsaved-work protections. No account/data schema, RPC or operational record changes.
+
+Home replaces forced four-row expansion and ResizeObserver sizing with natural cards, balanced padding, left Statistics/Unfinished and right Recent/Reflection stacks. Flexible spacing aligns the desktop bottom edges without stretching left cards. Narrow layouts keep reading order. Timezone and conditional sample disclosure live in the footer. Thirty isolated Edge layouts (0–4 records, 1440/1024/390px, English/Traditional Chinese) passed overflow, natural row geometry, desktop bottom/footer alignment and source-preservation checks. Physical iPhone behavior is not claimed.
+
+Release checks passed 683 tests / 62 files, lint, TypeScript/Vite build, static and format checks, the new actual Production artifact verifier, and Wrangler deployment dry-run. The public release manifest verifies Account Cloud, version, Production URL/key fingerprint and CSP. No Supabase schema, RPC, operational records or synthetic Production tests were changed/executed. A non-blocking bundle-size advisory remains. Deployment and a fresh live-browser smoke test still require confirmation in the release report.
 
 ## v0.9.1 Guest initialization patch — 2026-10-30 HKT
 
