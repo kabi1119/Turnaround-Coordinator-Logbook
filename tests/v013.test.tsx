@@ -176,6 +176,7 @@ describe('Conservative, reviewed demo-airline refresh', () => {
 describe('Modal isolation, scroll stability and artwork bounds', () => {
   it('Actual Home detail stays stable through live header clock updates', () => {
     vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-20T12:00:00+08:00'));
     const ActualDetails = AircraftDetails,
       rendered = vi.fn();
     vi.spyOn(DetailModule, 'default').mockImplementation((props) => (

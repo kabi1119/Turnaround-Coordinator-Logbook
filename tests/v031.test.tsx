@@ -176,7 +176,9 @@ describe('v0.3.1 final bilingual handling terminology', () => {
       localStorage.setItem(STORAGE_KEY, original);
       const { container } = render(<App />);
       fireEvent.click(screen.getByRole('button', { name: action }));
-      fireEvent.click(screen.getByRole('button', { name: new RegExp('^' + fresh) }));
+      fireEvent.click(
+        within(screen.getByRole('dialog')).getByRole('button', { name: new RegExp('^' + fresh) }),
+      );
       expect(screen.getByRole('dialog', { name: fresh })).toBeInTheDocument();
       chooseRequiredHandling(language);
       fireEvent.change(

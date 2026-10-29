@@ -1,9 +1,12 @@
 import { render, screen, within } from '@testing-library/react';
-import { it, expect } from 'vitest';
+import { it, expect, vi, afterEach } from 'vitest';
 import App from '../src/App';
 import { seedDatabase } from '../src/data/seed';
 import { STORAGE_KEY } from '../src/lib/storage';
+afterEach(() => vi.useRealTimers());
 it('keeps natural Home stacks in reading order and moves timezone/sample disclosure into the footer', () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-10-20T12:00:00+08:00'));
   const raw = JSON.stringify(seedDatabase());
   localStorage.setItem(STORAGE_KEY, raw);
   const { container } = render(<App />);

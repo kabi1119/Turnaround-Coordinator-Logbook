@@ -1,4 +1,14 @@
-# TCO Logbook v0.9.2a Pre-release status
+# TCO Logbook v0.9.3 Pre-release status
+
+## v0.9.3 — Adaptive Recent Aircraft and bilingual README
+
+Home Recent Aircraft is a non-mutating display projection of today and the previous six Hong Kong calendar dates, inclusive. It retains existing non-Trashed status visibility, excludes invalid/future dates, orders by Handling Date, updated timestamp and stable record ID, and shows at most four records. Midnight, visibility, focus and pageshow refresh eligibility. Full Logbook, statistics, linked records, backups and cloud behavior are unchanged.
+
+The persistent empty panel distinguishes a new logbook from older history and opens the existing AircraftEditor directly. Zero to three results use a 24px desktop gap before Reflection; four use flexible spacing to align natural-height cards without expanding rows. Mobile reading order and alternating row colors remain intact.
+
+The bilingual README replaces repeated historical sections with equivalent current feature, storage, privacy, backup and limitation summaries. The owner's production URL and prior commit are retained. Full independent-project, trademark/provenance, source-available rights and English-precedence notices remain in both languages. No database migrations or operational-data changes are included.
+
+Verification: 689 tests / 63 files, TypeScript, lint, Production build with Account Cloud artifact validation, static and format checks passed; dependency audit found zero vulnerabilities. Thirty-six isolated synthetic Edge layouts cover 1440/1024/390px, both languages and 0–5 available records (maximum four displayed), unchanged storage, 24px visible sparse-list gaps and four-record bottom alignment. Mouse, keyboard and emulated touch open the existing editor. README relative links and equivalent section coverage were checked. Physical iPhone testing is not claimed; the existing non-blocking bundle-size advisory remains.
 
 ## v0.9.2a - Simplified backup strategy
 

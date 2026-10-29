@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { AircraftCard } from '../src/components/ui';
 import AircraftDetails from '../src/features/AircraftDetails';
-import { emptyAircraft } from '../src/domain/model';
+import { emptyAircraft, hkToday } from '../src/domain/model';
 import type { Privacy } from '../src/domain/model';
 // Preserve the historical fixture for v0.1.0–v0.1.3 compatibility regression assertions.
 import { legacySeedDatabase as seedDatabase } from '../src/data/legacySeed';
@@ -136,6 +136,7 @@ describe('v0.1.2 aircraft card gate times', () => {
   });
   it('Home opens the complete existing detail view, follows links and preserves storage until an edit is confirmed', () => {
     const db = seedDatabase();
+    db.aircraft[0].date = hkToday();
     db.settings.privacy = privacy;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
     render(<App />);

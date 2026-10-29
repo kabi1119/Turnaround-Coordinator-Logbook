@@ -45,6 +45,8 @@ import { dutyOptionText } from './domain/roster';
 import DutyHistory from './features/DutyHistory';
 import { useMotionClose } from './lib/useMotionClose';
 import { useRecordNavigation } from './lib/useRecordNavigation';
+import { useHomeDay } from './lib/useHomeDay';
+import { recentAircraft } from './domain/recentAircraft';
 import type { AccountSettingsAccess } from './auth/AccountSettings';
 
 type Page = 'home' | 'logbook' | 'statistics' | 'journal' | 'settings';
@@ -118,6 +120,8 @@ function Workspace({
         : t('Encrypted account vault', '加密帳戶資料庫')
       : t('Stored on this device only', '僅儲存於此裝置');
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const homeDay = useHomeDay();
+  const recent = recentAircraft(db.aircraft, homeDay);
   const {
     current: overlay,
     previous,
@@ -331,7 +335,7 @@ function Workspace({
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
               onCalendar={() => setCalendarOpen(true)}
             />
-            <div className="home-operations">
+            <div className={`home-operations${recent.length === 4 ? ' home-operations-four' : ''}`}>
               <div className="home-left">
                 <HomeInsights
                   records={db.aircraft}
@@ -339,7 +343,7 @@ function Workspace({
                   onUnfinished={() => openLogbook(true)}
                 />
               </div>
-              <div className="home-right">
+              <div className={`home-right${recent.length === 4 ? ' home-right-four' : ''}`}>
                 <section className="home-recent">
                   <SectionTitle
                     title={t('Recent Aircraft', '最近航機紀錄')}
@@ -351,7 +355,7 @@ function Workspace({
                     }
                   />
                   <div className="panel records-panel surface-dark">
-                    {active.slice(0, 4).map((a) => (
+                    {recent.map((a) => (
                       <AircraftCard
                         key={a.id}
                         a={a}
@@ -359,13 +363,40 @@ function Workspace({
                         onClick={() => openAircraft(a)}
                       />
                     ))}
-                    {!active.length && (
-                      <Empty
-                        text={t(
-                          'Your first assignment starts here.',
-                          '從這裡開始記錄第一項處理工作。',
-                        )}
-                      />
+                    {!recent.length && (
+                      <div className="home-recent-empty">
+                        <Empty
+                          text={
+                            active.length
+                              ? t(
+                                  'No aircraft records in the last 7 days.',
+                                  '最近七天沒有航機處理紀錄。',
+                                )
+                              : t(
+                                  'Your first assignment starts here.',
+                                  '你的第一項航機處理任務，由此開始。',
+                                )
+                          }
+                        />
+                        <p>
+                          {active.length
+                            ? t(
+                                'Your previous records are still available in the Logbook.',
+                                '過往紀錄仍可在 Logbook 查閱。',
+                              )
+                            : t(
+                                'Add your first handling record to begin your logbook.',
+                                '新增第一筆航機處理紀錄，開始建立你的 Logbook。',
+                              )}
+                        </p>
+                        <button
+                          className="text-button"
+                          onClick={() => setOverlay({ type: 'aircraft' })}
+                        >
+                          {t('Add a Handling Record', '新增航機處理紀錄')}
+                          <ArrowUpRight size={17} />
+                        </button>
+                      </div>
                     )}
                   </div>
                 </section>
@@ -451,7 +482,7 @@ function Workspace({
         )}
         <footer className="page-footer">
           <span className="footer-brand">
-            TCO Logbook <small>v0.9.2a {t('Pre-release', '預發佈')}</small>
+            TCO Logbook <small>v0.9.3 {t('Pre-release', '預發佈')}</small>
           </span>
           <span className="footer-timezone">
             <MapPin size={16} aria-hidden="true" />
@@ -482,7 +513,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.9.2a {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.9.3 {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

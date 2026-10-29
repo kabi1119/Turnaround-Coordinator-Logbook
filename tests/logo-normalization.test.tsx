@@ -9,6 +9,7 @@ import Statistics from '../src/features/Statistics';
 import App from '../src/App';
 import { seedDatabase } from '../src/data/seed';
 import { STORAGE_KEY } from '../src/lib/storage';
+import { hkToday } from '../src/domain/model';
 
 function pixels(width: number, height: number, opaque = false) {
   const data = new Uint8ClampedArray(width * height * 4);
@@ -176,6 +177,7 @@ describe('shared logo normalization in application contexts', () => {
       paint(data, 100, 10, 40, 80, 20);
       mockCanvas(data, 100, 100);
       if (context === 'home') {
+        db.aircraft.find((a) => a.airline === 'Qatar Airways')!.date = hkToday();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
         render(<App />);
       }

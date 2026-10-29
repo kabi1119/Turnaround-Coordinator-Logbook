@@ -70,6 +70,25 @@
 .home-secondary .journal-teaser {
   padding: 20px 22px;
 }
+.home-recent-empty {
+  padding: 22px;
+  text-align: center;
+}
+.home-recent > .records-panel {
+  margin-bottom: 0;
+}
+.home-recent-empty .empty {
+  padding: 0;
+}
+.home-recent-empty > p {
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.home-recent-empty > button {
+  margin: 0 auto;
+  min-height: 44px;
+}
 .page-footer {
   align-items: center;
   flex-wrap: wrap;
@@ -100,8 +119,8 @@
   .home-operations {
     align-items: stretch;
   }
-  .home-left > .home-unfinished,
-  .home-right > .home-secondary {
+  .home-operations-four .home-left > .home-unfinished,
+  .home-right-four > .home-secondary {
     margin-top: auto;
   }
   .home-recent .aircraft-card {
