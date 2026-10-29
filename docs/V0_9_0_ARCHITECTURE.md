@@ -1,6 +1,6 @@
 # v0.9.0 architecture and compatibility work
 
-Status: implementation in progress; v0.8.3 remains the production/recovery baseline. The new account path is connected only behind `VITE_ACCOUNT_CLOUD_V2=preview`, OFF by default. No production migration, API call or deployment is authorized. A successful local test does not approve production conversion.
+Release status (2026-10-29 HKT): owner-authorized v0.9.0 production-hosted pre-release. The owner confirms 10/10 disposable hosted isolation tests, all three new Production migrations installed, identical SHA-256 hashes for existing encrypted records and an independent Production backup. These are owner-provided acceptance results, not database operations repeated by the release agent. Production builds explicitly set `VITE_ACCOUNT_CLOUD_V2=preview`; unconfigured/development builds remain off. Account Cloud is server-readable, NOT E2EE, with a plaintext device cache. Consent and source/receipt/revision safeguards remain mandatory. Noncritical physical-device and near-limit acceptance are deferred to v0.9.1+ by explicit owner approval.
 
 ## Audited baseline (2026-10-28, Hong Kong)
 
@@ -127,6 +127,6 @@ Current capacity boundaries: the operational database validator allows 5 MiB, th
 
 Phases: (1) audit/design; (2) isolated new account persistence/SQL/authorization; (3) pure duplicate/planning engine; (4) review UI and two confirmations; (5) legacy migration, authentication integration, recovery and full release gate.
 
-No production go until all phases, disposable hosted signed-token isolation tests, old/new-client fencing, interruption recovery, Windows → iPhone Safari → PWA and origin-specific offline acceptance pass. Keep package/UI at 0.8.3 until implementation is internally consistent. Do not output the final v0.9.0 release commit message for an incomplete intermediate tree.
+The owner has approved production-hosted v0.9.0 after the reported hosted isolation and migration/hash/backup gates. Package/UI are 0.9.0. Physical iPhone Safari/PWA and near-limit acceptance remain unverified and are explicitly deferred; no physical-device pass is claimed. Archived History import and the exceptional forward-recovery limits above remain documented. The release must still pass automated checks and verify its actual production artifact; critical account-isolation or data-loss failures remain stop conditions.
 
 Official design references: [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [restricted database functions](https://supabase.com/docs/guides/database/functions), [PostgreSQL locking](https://www.postgresql.org/docs/17/explicit-locking.html). These describe mechanisms, not evidence that this application has passed hosted testing.

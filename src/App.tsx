@@ -460,7 +460,7 @@ function Workspace({
         <footer className="page-footer">
           TCO Logbook{' '}
           <span className="mobile-release">
-            v0.8.3 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
+            v0.9.0 {t('Pre-release', '預發佈')} · {storageDescription} · Hong Kong · UTC+08
           </span>
         </footer>
       </main>
@@ -482,7 +482,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.8.3 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.9.0 {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

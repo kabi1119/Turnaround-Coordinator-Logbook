@@ -1,6 +1,12 @@
-# v0.9.0 intermediate implementation — NO PRODUCTION GO
+# v0.9.0 production-hosted pre-release
 
-The package/default production path remains v0.8.3. New Cloud Account entry and the reviewed Guest transfer UI are connected behind `VITE_ACCOUNT_CLOUD_V2=preview`, which is OFF by default. Do not deploy this as completed v0.9.0 or apply the new migration to Production.
+The owner authorized v0.9.0 release on 2026-10-29 HKT, confirming 10/10 disposable hosted isolation tests, successful installation of all three new Production migrations, unchanged SHA-256 hashes of retained encrypted records and an independent Production database backup. These results are owner-attested; the release agent does not repeat migrations or write synthetic records to Production. Physical-device and near-limit acceptance are explicitly deferred to v0.9.1+.
+
+Production target: `https://app.tcologbook.workers.dev/`, Cloudflare account `cb3e9b12efd37945a6c1497fe9d9fbd3`, Worker `app`. Previous active Worker version inspected before release: `b5f2df96-c6e6-45da-8f7b-67547c8dedd4`. Account Cloud is **server-readable, NOT E2EE**; its local cache and consented recovery plans are plaintext. Account consent and reviewed Legacy/Guest migration remain required.
+
+Release build configuration lives in ignored `.env.production.local`: `VITE_ACCOUNT_CLOUD_V2=preview`, `VITE_SUPABASE_URL=https://ajcaauaxrtrcktdbocaf.supabase.co`, and the matching publishable key obtained from that project's key metadata. No private/service-role key is permitted or committed. Ordinary development remains off when not explicitly enabled. Native Cloudflare Git builds must use these same Production build variables; local ignored files are not transferred to Cloudflare. Wrangler uploads the already verified local `dist` artifact. A build with an unexpected project or disabled Account Cloud must not be deployed.
+
+Release gate completed locally: `npm.cmd run check:release` passed 661 tests / 59 files, lint, TypeScript/Vite build, static checks and formatting. The generated JavaScript independently passed checks for v0.9.0, the enabled Account Cloud flag, the exact Production URL and matching publishable key; its only configured Supabase project is ajcaauaxrtrcktdbocaf. Generated CSP allows only that Supabase HTTPS origin in addition to self. The bundle-size advisory remains non-blocking. Cloudflare OAuth and access to the existing app Worker were verified before release; successful deployment and live verification must be confirmed separately in the release report.
 
 ## Implemented
 
@@ -10,13 +16,13 @@ Inline bilingual Guest warning; per-user plaintext account cache and guarded new
 
 Mixed queues are now connected to a separate Account-edit review in Account Settings and the Guest wizard. Original Guest and recorded Account UUIDs are verified independently; all original cache bytes, later dirty values and decisions remain preserved. Rejected/expired Guest work still needs full Guest duplicate approval; subsequent edits need their own per-record decisions, verified recovery-file readback and confirmation. Cache envelope version 2 blocks older preview code from ignoring this recovery state. This local implementation does not replace the hosted and physical-device gates below.
 
-## Outstanding release blockers
+## Remaining limitations and deferred acceptance
 
-- Legacy conversion is now connected to the preview Account entry with individual source reconciliation, existing manual editors, actual backup-file readback, consent, durable exact-request retry and independent destination verification. This resolves the supported-format local implementation blocker; disposable hosted authorization, conversion and two-device acceptance remain required. See Architecture for fail-closed recovery limits.
+- Legacy conversion is connected with individual source reconciliation, existing manual editors, actual backup-file readback, consent, durable exact-request retry and independent destination verification. Exceptional recovery limits remain documented in Architecture. Do not bypass them to convert an unsupported source.
 - Archived History file import/restoration remains unavailable. The live History UI supports bounded account-scoped reads and new revision-guarded restoration after comparison and verified backup; ordinary account conflicts and expired-device review remain separate.
-- Hosted signed-token REST/RLS acceptance, actual two-device behavior and physical iPhone Safari/PWA acceptance. Local simulation does not establish these.
+- Owner-reported hosted signed-token isolation: 10/10 passed. Physical iPhone Safari/PWA, full real-device two-device smoke tests and near-limit archival acceptance remain deferred to v0.9.1+; local browser emulation does not establish those passes.
 
-No v0.9.0 version bump or final release commit message until all requirements are complete.
+Package/UI are 0.9.0. The owner authorizes release after the normal automated checks and verified deployment; any critical authentication, isolation or data-loss failure still stops release.
 
 ## Security and preservation
 
@@ -94,7 +100,7 @@ from pg_proc p join pg_namespace n on n.oid=p.pronamespace
 where n.nspname='public' and p.proname like 'tco_account_%';
 ```
 
-## Required hosted REST checks — not performed
+## Hosted REST procedure — owner reports 10/10 passed
 
 The prepared disposable REST runner includes Guest and Account-edit receipt isolation, exact retry, cross-purpose and changed-payload rejection, and retirement/delayed-write checks. It is not executed automatically. `merge_outcome` and `edit_outcome` accept the exact original `p_expected`, `p_operation`, `p_records` and an explicit `p_retire` boolean. A `missing` response does not prove rejection; `committed` prevents duplicate import; `retired` fences the original without altering current records; `expired` requires full re-review and does not prove whether an archived operation committed. Test both race orderings on hosted PostgREST with short-lived invited test-user tokens before acceptance.
 
@@ -164,7 +170,7 @@ Ordinary HTTP LAN access cannot establish secure-context/Web Crypto/PWA acceptan
 
 ## Rollout/rollback
 
-The missing-migration UI fails closed, and real entry integration is gated by an OFF-by-default preview build flag. Converted accounts reject old-client cloud writes. Frontend rollback does not remove that fence. Keep both schemas and original local Vaults; recover with reviewed exports and forward fixes. Never disable fences or drop new data to make old clients succeed. The flag remains OFF for Production pending hosted authorization and physical-device acceptance.
+The missing-migration UI fails closed. Production explicitly enables the build flag; changing a frontend flag cannot undo conversion. Converted accounts reject old-client cloud writes. Frontend rollback does not remove that fence. Keep both schemas and original local Vaults; recover with reviewed exports and forward fixes. Never disable fences, reset accounts or drop new data to make old clients succeed. The previous Worker version is recorded above for an owner-reviewed frontend rollback; this is not database rollback, and migrated users must retain recovery access. Do not deploy the old app blindly over already converted accounts.
 
 ## Prospective Windows → iPhone acceptance
 
@@ -186,6 +192,6 @@ Current local verification (Legacy conversion, 2026-10-29 HKT): focused Legacy/s
 
 New tests exercise local-only/cloud-only/identical/divergent and privacy-only sources, separate passphrases, per-record/manual reconciliation through the actual Handling editor, retained conflict alternatives, tombstones, unchanged linked IDs, incorrect consent/readback, corrupt ciphertext, invalid references, durable interruption/lost acknowledgements, activation retry, changed revisions and account fencing. React integration verifies source inspection, actual File readback and final destination activation without legacy writes. The new Legacy screen reuses responsive review styles; no new browser-layout or physical-device pass is claimed. Earlier 1440x900/390x640 Edge screenshots apply to Mixed-Queue Recovery only and were not repeated. Ignored checkpoint fixtures remain available for reproduction and are not bundled. The guarded hosted REST runner remains unexecuted.
 
-Both Mixed-Queue and supported-format Legacy conversion P0 implementation blockers are locally resolved. Owner review and disposable hosted testing may begin with the preview flag in an isolated build, including both pre-submit/retry stages and Safari/PWA recovery. Production remains NO-GO pending the hosted, physical-device and other outstanding scope gates above. Default flag and package remain false / 0.8.3.
+Historical implementation-pass verdict: both Mixed-Queue and supported-format Legacy conversion P0 blockers were locally resolved while Production remained NO-GO and package/defaults stayed 0.8.3 / false. This verdict is superseded by the owner-confirmed hosted/migration/backup gates and explicit v0.9.0 release approval at the beginning of this document. Deferred physical-device/near-limit checks remain unclaimed.
 
 Hosted-readiness preparation: no SQL/application implementation changed and the full release gate was not repeated. The runner now requires an explicit Production deny-list reference, rejects privileged/foreign/expired user-token claims before requests, and checks complete empty initial snapshots before mutations. Its five mocked guard tests and targeted lint passed. Isolated synthetic Edge verified the new Legacy review at 1440x900 and 390x640: readable comparison, no horizontal overflow, expected responsive columns, real editor entry/discard dismissal, actual saved-file readback, consent plus final confirmation, scroll reachability and verified conversion preserving Guest and original encrypted bytes. New Legacy screenshots were inspected. The existing Guest/Mixed Manual Edit flow also passed at both widths without recapturing prior screenshots. History UI was unchanged and was not repeated. No hosted SQL/API, real-device pass, deployment or Production access occurred.
