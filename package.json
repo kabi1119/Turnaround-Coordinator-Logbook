@@ -1,6 +1,6 @@
 {
   "name": "tco-logbook-prototype",
-  "version": "0.9.3a",
+  "version": "0.9.4",
   "private": true,
   "type": "module",
   "scripts": {

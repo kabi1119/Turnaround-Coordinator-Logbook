@@ -7,6 +7,11 @@ export const LAST_ACCOUNT_KEY = 'tco-last-account-v1';
 let authGeneration = 0,
   authAllowed = true;
 let revokingSession: string | null = null;
+let signInGeneration = 0;
+/** Cancel credential-issuing UI requests without touching remembered sessions or token rotation. */
+export function cancelPendingSignIn() {
+  signInGeneration++;
+}
 export function cancelAuthRequests() {
   authGeneration++;
   authAllowed = false;
@@ -18,7 +23,8 @@ export function cancelAuthRequests() {
   }
 }
 export function resumeAuthRequests() {
-  authGeneration++;
+  // An already allowed SDK refresh must survive ordinary restoration/Guest return.
+  if (!authAllowed) authGeneration++;
   authAllowed = true;
   revokingSession = null;
 }
@@ -47,6 +53,9 @@ const sessionStorage = {
   removeItem: (key: string) => localStorage.removeItem(key),
 };
 async function authFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const path = new URL(String(input instanceof Request ? input.url : input)).pathname;
+  const signingIn = /\/(verify|otp)$/.test(path);
+  const signInTurn = signInGeneration;
   if (
     !authAllowed &&
     !new URL(String(input instanceof Request ? input.url : input)).pathname.endsWith('/logout')
@@ -65,7 +74,7 @@ async function authFetch(input: RequestInfo | URL, init?: RequestInit) {
     const response = await fetch(input, { ...init, signal: controller.signal });
     // Buffer before returning: cancelled credential responses must never reach SDK persistence.
     const body = await response.arrayBuffer();
-    if (turn !== authGeneration)
+    if (turn !== authGeneration || (signingIn && signInTurn !== signInGeneration))
       return new Response(JSON.stringify({ message: 'Authentication cancelled' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },

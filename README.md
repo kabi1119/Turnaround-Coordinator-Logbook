@@ -8,7 +8,7 @@
 
 ### Live Application
 
-**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.3a Pre-release. Available as a browser application and installable PWA; Account access is invitation-only.
+**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.4 Pre-release. Available as a browser application and installable PWA; Account access is invitation-only.
 
 ### About the Project
 
@@ -36,6 +36,8 @@ I develop TCO Logbook as an independent, non-commercial personal project for lea
 
 Signing in never automatically uploads Guest records. Pending edits, conflicts and migration recovery require the appropriate safeguards; network connectivity alone does not mean records are synchronized.
 
+Email OTP establishes a remembered Supabase session on the same browser/profile. Subsequent launches restore it and verify account ownership before opening the Cloud Account; token refresh resumes synchronization without a Vault Passphrase. **Switch to Guest** locks and isolates the Account while retaining its remembered session. **Sign Out** ends this browser's session and requires a fresh OTP next time. Temporary verification failures retain local work with an Offline / Pending Sync state. Browser storage policies, revoked/irrecoverable sessions and separate browser/PWA storage contexts can still require signing in again. The original passphrase is needed only for explicitly selected Legacy Vault decryption/recovery, never normal Cloud Account use.
+
 ### Data Storage, Privacy & Backup
 
 **Cloud Account storage is server-readable and is NOT end-to-end encrypted. Its offline cache is plaintext.** Legacy encrypted Vaults remain separately recoverable; decrypting and converting them requires the original passphrase, informed security-model consent and review. Their original ciphertext and recovery protections are retained.
@@ -56,7 +58,7 @@ For development and hosting instructions, see [deployment documentation](docs/CL
 
 ### Project Status & Limitations
 
-This is a deployed **v0.9.3a pre-release**, not an official operational service. I continue to evaluate physical-device behavior, recovery and near-capacity scenarios; automated/browser tests do not prove every iPhone or hosted-service condition. Independent backups remain essential. Passkey Authentication and Live Public Aircraft Lookup remain planned and unavailable. No official operational, safety, employer-policy compliance or uninterrupted-availability guarantee is made.
+This is a deployed **v0.9.4 pre-release**, not an official operational service. I continue to evaluate physical-device behavior, recovery and near-capacity scenarios; automated/browser tests do not prove every iPhone or hosted-service condition. Independent backups remain essential. Passkey Authentication and Live Public Aircraft Lookup remain planned and unavailable. No official operational, safety, employer-policy compliance or uninterrupted-availability guarantee is made.
 
 ### Independent Project Disclaimer
 
@@ -92,7 +94,7 @@ This README is provided in English and Traditional Chinese (Hong Kong) for acces
 
 ### 正式網站
 
-**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.3a 預發佈版。支援瀏覽器及安裝為 PWA；帳戶只限受邀人士使用。
+**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.4 預發佈版。支援瀏覽器及安裝為 PWA；帳戶只限受邀人士使用。
 
 ### 關於這個項目
 
@@ -120,6 +122,8 @@ This README is provided in English and Traditional Chinese (Hong Kong) for acces
 
 登入不會自動上傳訪客紀錄。待同步修改、衝突及轉移復原均保留相應保護；連上網絡不代表紀錄已同步。
 
+電郵 OTP 會在同一瀏覽器／設定檔建立可記住的 Supabase 登入。之後啟動會恢復登入，驗證帳戶擁有者後開啟雲端帳戶；權杖更新後恢復同步，毋須資料庫密語。**切換至訪客**會鎖定及隔離帳戶，同時保留已記住的登入；**登出**則結束此瀏覽器的登入，下次須重新輸入 OTP。暫時未能驗證時，本機修改會保留並顯示「離線／尚待同步」。瀏覽器儲存政策、已撤銷或無法恢復的登入，以及瀏覽器／PWA 各自的儲存環境，仍可能需要重新登入。原有密語只用於明確選取的舊版資料庫解密／復原，正常雲端帳戶毋須密語。
+
 ### 資料儲存、私隱與備份
 
 **雲端帳戶資料為伺服器可讀，並非端對端加密（NOT E2EE）；本機離線快取為明文。** 舊版加密資料庫仍可獨立復原；解密及轉換須使用原有密語、知情同意新的安全模式並覆核。原有密文及復原保護保持不變。
@@ -140,7 +144,7 @@ React、TypeScript 及 Vite；以 Cloudflare Workers Static Assets 寄存；雲�
 
 ### 項目狀態與限制
 
-這是已部署的 **v0.9.3a 預發佈版**，並非官方操作服務。我仍會評估實體裝置、復原及接近容量上限的情況；自動／瀏覽器測試不能證明所有 iPhone 或寄存服務情況。獨立備份仍然重要。通行密鑰身份驗證及即時公開航機查詢仍在規劃中，尚未提供。不保證官方操作、安全、僱主政策合規或持續可用性。
+這是已部署的 **v0.9.4 預發佈版**，並非官方操作服務。我仍會評估實體裝置、復原及接近容量上限的情況；自動／瀏覽器測試不能證明所有 iPhone 或寄存服務情況。獨立備份仍然重要。通行密鑰身份驗證及即時公開航機查詢仍在規劃中，尚未提供。不保證官方操作、安全、僱主政策合規或持續可用性。
 
 ### 獨立項目免責聲明
 

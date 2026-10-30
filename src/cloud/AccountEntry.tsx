@@ -21,6 +21,7 @@ export default function AccountEntry({
   onLegacy,
   onGuest,
   onInvalid,
+  onRetry,
 }: {
   user: AccountIdentity;
   client: SupabaseClient;
@@ -30,6 +31,7 @@ export default function AccountEntry({
   onLegacy: () => void;
   onGuest: () => void;
   onInvalid: () => void;
+  onRetry?: () => void;
 }) {
   const t = useT(),
     mounted = useRef(true),
@@ -192,8 +194,8 @@ export default function AccountEntry({
                 '新帳戶後端尚未安裝，未建立空白替代工作區。',
               )
             : t(
-                'The account could not be opened safely. Saved data has not been deleted. Reconnect or use the legacy recovery path.',
-                '未能安全開啟帳戶；已儲存資料並未刪除。請重新連線或使用舊版復原途徑。',
+                'The account could not be opened safely. Saved data has not been deleted. Reconnect and retry account verification.',
+                '未能安全開啟帳戶；已儲存資料並未刪除。請重新連線並重試帳戶驗證。',
               )}
         </p>
       )}
@@ -252,7 +254,12 @@ export default function AccountEntry({
       ) : null}
       <div className="actions">
         <button onClick={onGuest}>{t('Continue as Guest', '以訪客身分繼續')}</button>
-        {error && <button onClick={onLegacy}>{t('Open legacy recovery', '開啟舊版復原')}</button>}
+        {error && onRetry && (
+          <button onClick={onRetry}>{t('Retry account verification', '重試帳戶驗證')}</button>
+        )}
+        {error && hasVault(user.id) && (
+          <button onClick={onLegacy}>{t('Open legacy recovery', '開啟舊版復原')}</button>
+        )}
       </div>
     </section>
   );

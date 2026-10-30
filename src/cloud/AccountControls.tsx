@@ -1,4 +1,5 @@
-import { useSyncExternalStore } from 'react';
+import { useContext, useSyncExternalStore } from 'react';
+import { SessionVerificationContext } from '../auth/sessionContext';
 import ArchiveControl from './ArchiveControl';
 import RecoveryControl from './RecoveryControl';
 import ConflictControl from './ConflictControl';
@@ -18,6 +19,7 @@ export default function AccountControls({
 }) {
   const t = useT(),
     status = useSyncExternalStore(engine.subscribe, engine.snapshot);
+  const verified = useContext(SessionVerificationContext);
   const recoveringMixed = !!engine.state().mixed && engine.state().mixed!.stage !== 'complete';
   const labels = {
     pending: t('Saved locally / Pending Sync', '已存本機／尚待同步'),
@@ -30,8 +32,12 @@ export default function AccountControls({
     <section className="cloud-controls" aria-label={t('Cloud Account storage', '雲端帳戶儲存')}>
       <h3>{t('Account synchronization', '帳戶同步')}</h3>
       <p role="status">
-        <strong>{labels[status.phase]}</strong> · {status.pending}{' '}
-        {t('pending changes', '項尚待同步')}
+        <strong>
+          {verified
+            ? labels[status.phase]
+            : t('Offline / Pending Sync · Session not verified', '離線／尚待同步 · 未驗證登入')}
+        </strong>{' '}
+        · {status.pending} {t('pending changes', '項尚待同步')}
       </p>
       {status.lastSuccess && (
         <p>

@@ -1,5 +1,21 @@
 # v0.9.0 production-hosted pre-release
 
+## v0.9.4 session lifecycle
+
+The existing Supabase SDK owns persistence and refresh credentials; no new credential store or server lifetime change is introduced. Startup waits for restoration and verifies identity through Auth. Actual access-token expiry triggers session recovery, not unconditional logout. Same-user storage rotations are verified asynchronously outside Auth callbacks; account changes and explicit sign-out fence and lock old workspaces immediately. Transient network/5xx verification failures retain local drafts/queues and show Offline / Pending Sync; focus, reconnect, pageshow and manual retry re-verify before synchronization resumes. SDK proactive refresh failures do not shorten a still-valid access-token lifetime. Irrecoverable expiry, revoked/invalid identity and ownership mismatches require authentication again.
+
+Switch to Guest preserves the SDK session and locks only the visible Account workspace. Returning verifies ownership before opening it; explicit Sign Out uses local scope, removes authenticated access and returns the OTP welcome screen. Normal Cloud Accounts are passphrase-free. Legacy Vault access remains a separately selected, passphrase-protected, read-only recovery/consented conversion path; no ciphertext or key is removed. Cloud records remain server-readable, NOT E2EE; the offline cache is plaintext.
+
+登入持續性沿用 Supabase SDK，不另存憑證或延長伺服器登入期限。啟動及恢復前景時須向 Auth 驗證帳戶；權杖到期會嘗試恢復登入，不直接登出。同帳戶跨分頁更新須重新驗證；不同帳戶及明確登出即時鎖定舊工作區。暫時網絡／伺服器故障保留草稿及佇列，顯示「離線／尚待同步」，重新連線、恢復前景或重試後再驗證。有效權杖不會因提早更新失敗而縮短可用期限；真正失效或撤銷的登入仍須重新驗證。
+
+切換訪客只鎖定及隔離帳戶，保留登入；返回帳戶須先驗證擁有者。明確登出使用 local scope，下次須 OTP。正常雲端帳戶毋須密語；舊版資料庫僅在獨立選取的唯讀復原／已同意的轉換流程使用原有密語，原有密文及金鑰保留。雲端資料仍為伺服器可讀、非 E2EE；離線快取為明文。
+
+Owner smoke test (no data clearing/reinstall): sign in once in a test browser/profile, reopen/reload and check the same Account; suspend past access-token expiry and reconnect; check Guest → Account without another OTP; explicitly Sign Out and check a new OTP is required. Save a fictional Draft offline, reconnect and verify its server acknowledgement. Repeat in physical iPhone Safari and the installed PWA separately, because their storage contexts may differ. Browser policies and revoked sessions can still require sign-in. Do not reset Production accounts or run synthetic hosted isolation tests there. Keep an independent JSON backup before changing browser storage.
+
+擁有者實機檢查（毋須清除資料／重裝）：測試瀏覽器登入一次後重新載入及重開；暫停至權杖到期再連線；切換訪客再返回帳戶；明確登出後確認須新 OTP。離線儲存虛構草稿，連線後核對伺服器確認。iPhone Safari 與主畫面 PWA 須分別驗收；儲存環境可能不同。請勿重設正式帳戶或在 Production 執行合成隔離測試；更改瀏覽器儲存前保留獨立 JSON 備份。
+
+Reference: [Supabase getSession](https://supabase.com/docs/reference/javascript/auth-getsession), [Auth events](https://supabase.com/docs/reference/javascript/auth-onauthstatechange), [refreshSession](https://supabase.com/docs/reference/javascript/auth-refreshsession). Local SDK/HTTP and isolated-browser checks are synthetic; they do not certify hosted Auth policies or physical iOS behavior.
+
 The owner authorized v0.9.0 release on 2026-10-29 HKT, confirming 10/10 disposable hosted isolation tests, successful installation of all three new Production migrations, unchanged SHA-256 hashes of retained encrypted records and an independent Production database backup. These results are owner-attested; the release agent does not repeat migrations or write synthetic records to Production. Physical-device and near-limit acceptance are explicitly deferred to v0.9.1+.
 
 Production target: `https://app.tcologbook.workers.dev/`, Cloudflare account `cb3e9b12efd37945a6c1497fe9d9fbd3`, Worker `app`. Previous active Worker version inspected before release: `b5f2df96-c6e6-45da-8f7b-67547c8dedd4`. Account Cloud is **server-readable, NOT E2EE**; its local cache and consented recovery plans are plaintext. Account consent and reviewed Legacy/Guest migration remain required.

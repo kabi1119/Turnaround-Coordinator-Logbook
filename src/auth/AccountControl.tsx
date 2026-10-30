@@ -9,6 +9,7 @@ export default function AccountControl({
   cloudAccount = false,
   onSignIn,
   onLeave,
+  onSignOut = onLeave,
 }: {
   user: AccountIdentity | null;
   onSettings: () => void;
@@ -16,6 +17,7 @@ export default function AccountControl({
   cloudAccount?: boolean;
   onSignIn: (language: 'en' | 'zh-HK') => void;
   onLeave: () => void;
+  onSignOut?: () => void;
 }) {
   const t = useT(),
     language = useContext(LanguageContext);
@@ -97,7 +99,9 @@ export default function AccountControl({
           <p>
             {t('Account workspace', '帳戶工作區')}
             <small>
-              {t('Manage encrypted sync in Account Settings', '在帳戶設定管理加密同步')}
+              {cloudAccount
+                ? t('Automatic Cloud Sync · Account Settings', '自動雲端同步 · 帳戶設定')
+                : t('Legacy Vault · Recovery settings', '舊版資料庫 · 復原設定')}
             </small>
           </p>
           <button
@@ -123,7 +127,7 @@ export default function AccountControl({
           <button role="menuitem" onClick={onLeave}>
             {t('Switch to Guest', '切換至訪客')}
           </button>
-          <button role="menuitem" onClick={onLeave}>
+          <button role="menuitem" onClick={onSignOut}>
             {t('Sign Out', '登出')}
           </button>
         </div>

@@ -15,7 +15,8 @@ const A = '70000000-0000-4000-8000-000000000001',
 const secret = 'a long unique local vault secret';
 function provider() {
   let id = A,
-    session: { user: ReturnType<typeof user>; expires_at: number } | null = null;
+    session: { user: ReturnType<typeof user>; expires_at: number; access_token: string } | null =
+      null;
   const user = () => ({
     id,
     email: id === A ? 'a@example.test' : 'b@example.test',
@@ -28,10 +29,22 @@ function provider() {
     verifyOtp: vi.fn(async (args: { token?: string; token_hash?: string }) => {
       if (args.token !== '654321' && !args.token_hash)
         return { data: { session: null }, error: { message: 'private provider detail' } };
-      session = { user: user(), expires_at: Math.floor(Date.now() / 1000) + 3600 };
+      session = {
+        user: user(),
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        access_token: 'synthetic-token',
+      };
       return { data: { session }, error: null };
     }),
     getSession: vi.fn(async () => ({ data: { session }, error: null })),
+    refreshSession: vi.fn(async () => {
+      session = {
+        user: user(),
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        access_token: 'synthetic-refreshed-token',
+      };
+      return { data: { session }, error: null };
+    }),
     getUser: vi.fn(async () => ({ data: { user: user() }, error: null })),
     signOut: vi.fn(async () => {
       session = null;
@@ -59,7 +72,11 @@ function provider() {
       id = B;
     },
     restore: () => {
-      session = { user: user(), expires_at: Math.floor(Date.now() / 1000) + 3600 };
+      session = {
+        user: user(),
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        access_token: 'synthetic-token',
+      };
     },
     emit: (event: string) => listeners.forEach((fn) => fn(event, session)),
   };
@@ -71,7 +88,7 @@ afterEach(() => {
   window.history.replaceState(null, '', '/');
 });
 async function otp(email = 'a@example.test') {
-  fireEvent.change(screen.getByLabelText('Email address'), { target: { value: email } });
+  fireEvent.change(await screen.findByLabelText('Email address'), { target: { value: email } });
   fireEvent.click(screen.getByRole('button', { name: 'Continue with Email OTP' }));
   const input = await screen.findByLabelText('Six-digit verification code');
   fireEvent.change(input, { target: { value: '654321' } });
@@ -171,7 +188,7 @@ describe('auth/workspace entry with simulated provider responses (not live Supab
     fireEvent.click(screen.getByRole('button', { name: 'Account' }));
     fireEvent.click(screen.getByRole('menuitem', { name: 'Switch to Guest' }));
     await screen.findByRole('button', { name: 'Sign in' });
-    expect(p.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(p.auth.signOut).not.toHaveBeenCalled();
     expect(localStorage.getItem(vaultKey(A))).toBe(encrypted);
     expect(localStorage.getItem(STORAGE_KEY)).toBe(guest);
     p.other();
@@ -184,7 +201,7 @@ describe('auth/workspace entry with simulated provider responses (not live Supab
     expect(p.from.mock.calls.every((args) => args[0] === 'profiles')).toBe(true);
     expect(localStorage.getItem(vaultKey(A))).toBe(encrypted);
   });
-  it('restores a server-verified account to a locked vault and hides it immediately on expiration', async () => {
+  it('restores a server-verified legacy account and refreshes expiry without closing its workspace', async () => {
     const vault = await openVault(A, secret, true);
     vault.lock();
     const p = provider();
@@ -198,8 +215,8 @@ describe('auth/workspace entry with simulated provider responses (not live Supab
     const raw = localStorage.getItem(vaultKey(A));
     vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 7200000);
     fireEvent(document, new Event('visibilitychange'));
-    await screen.findByRole('heading', { name: 'Welcome to TCO Logbook' });
-    expect(screen.queryByRole('navigation')).toBeNull();
+    await waitFor(() => expect(p.auth.refreshSession).toHaveBeenCalledOnce());
+    expect(screen.getByRole('navigation')).toBeVisible();
     expect(localStorage.getItem(vaultKey(A))).toBe(raw);
   });
   it('rejects a revoked session and lets Guest win over a late startup response', async () => {
@@ -222,6 +239,7 @@ describe('auth/workspace entry with simulated provider responses (not live Supab
       }) as never,
     );
     render(<AuthApp provider={late.client} />);
+    await waitFor(() => expect(late.auth.getSession).toHaveBeenCalled());
     fireEvent.click(screen.getByRole('button', { name: 'Continue as Guest' }));
     await act(async () => {
       release({

@@ -95,8 +95,8 @@ export default function SignIn({
       <p>
         {cloudAccountMode
           ? t(
-              'Sign in to your cloud-backed Account. New accounts review the storage model once; encrypted legacy data is never silently converted. Guest data stays separate.',
-              '登入雲端帳戶。新帳戶須先覆核儲存模式；舊版加密資料不會自動轉換，訪客資料保持獨立。',
+              'Sign in to your cloud-backed Account. This browser remembers your session; synchronization resumes after account verification. Guest data stays separate.',
+              '登入雲端帳戶。此瀏覽器會記住登入；驗證帳戶後恢復同步。訪客資料保持獨立。',
             )
           : t(
               'Sign in to access your encrypted Account Workspace. Cloud Sync is optional and requires separate consent.',

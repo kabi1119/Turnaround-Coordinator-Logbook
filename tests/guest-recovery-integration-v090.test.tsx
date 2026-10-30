@@ -95,6 +95,11 @@ async function fixture() {
         },
         error: null,
       }),
+      // These recovery cases simulate irrecoverable expiry, not a renewable access token.
+      refreshSession: async () => ({
+        data: { session: null },
+        error: { status: 400, code: 'refresh_token_not_found', name: 'AuthApiError' },
+      }),
     },
     rpc: (name: string, args: Record<string, unknown>) => ({
       setHeader(_key: string, value: string) {

@@ -5,9 +5,11 @@ import type { AccountStatus } from '../cloud/engine';
 import type { SyncStatus } from './engine';
 import { useWorkspaceStore } from '../workspaces/context';
 import { useT } from '../i18n';
+import { SessionVerificationContext } from '../auth/sessionContext';
 const noop = () => () => {};
 const absent = () => null;
 export function StorageLabel() {
+  const verified = useContext(SessionVerificationContext);
   const cloud = useContext(AccountCloudContext);
   const legacy = useContext(SyncContext);
   const engine = cloud || legacy,
@@ -17,6 +19,7 @@ export function StorageLabel() {
     engine?.subscribe || noop,
     engine?.snapshot || absent,
   );
+  if (cloud && !verified) return <>{t('Offline / Pending Sync', '離線／尚待同步')}</>;
   if (!status || status.phase === 'disabled')
     return (
       <>

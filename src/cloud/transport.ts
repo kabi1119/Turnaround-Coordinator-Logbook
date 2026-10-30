@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { verifiedIdentity } from '../auth/client';
+import { verifiedSession, rejectedSession } from '../auth/session';
 import { AccountError, type AccountTransport } from './types';
 export function accountTransport(
   client: SupabaseClient,
@@ -15,10 +15,10 @@ export function accountTransport(
     if (signal.aborted || !active()) throw new AccountError('locked');
     let token: string;
     try {
-      const user = await verifiedIdentity(client);
+      const { user } = await verifiedSession(client, userId);
       const { data, error } = await client.auth.getSession();
+      if (error) throw error;
       if (
-        error ||
         user.id !== userId ||
         data.session?.user.id !== userId ||
         !data.session.expires_at ||
@@ -29,7 +29,7 @@ export function accountTransport(
       token = data.session.access_token;
     } catch (error) {
       if (error instanceof AccountError) throw error;
-      throw new AccountError((error as { status?: number })?.status === 401 ? 'auth' : 'network');
+      throw new AccountError(rejectedSession(error) ? 'auth' : 'network');
     }
     if (signal.aborted || !active()) throw new AccountError('locked');
     // Bind this request to the token just verified. SDK session changes must not

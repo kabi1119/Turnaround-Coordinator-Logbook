@@ -1,4 +1,12 @@
-# TCO Logbook v0.9.3a Pre-release status
+# TCO Logbook v0.9.4 Pre-release status
+
+## v0.9.4 — Persistent login and passphrase-free Cloud Accounts
+
+Confirmed source defects: the expiry timer unconditionally invalidated the workspace, normal Auth storage rotation invalidated every Account, and Guest switching/returning Guest startup signed out and removed remembered credentials. Session restoration/verification now uses the existing SDK, distinguishes network failures from rejection, refreshes at expiry and handles a rotated token with bounded re-verification. Guest switching locks/fences workspace requests while preserving remembered login; explicit local-scope Sign Out is separate. Pending local records and caches are retained through failures and account transitions.
+
+Normal Cloud Account menu/settings describe automatic sync without encrypted-Vault instructions. Recovery errors offer account verification retry and expose Legacy recovery only when applicable; original encrypted Vaults, passphrases and consented conversion remain independently recoverable. A shared verification-status context prevents a stale Synced label during unverified/offline recovery; transport still verifies identity and captures the correct account token for every request. No SQL, production data, SDK dependencies, JWT lifetimes or storage formats change. The corrected v0.9.3b history is retained.
+
+Release verification: 710 tests across 64 files, lint, TypeScript/Production build, actual Account Cloud artifact verification, static checks and formatting passed. Dependency audit reports zero vulnerabilities; lockfile dependency metadata exactly matches the baseline and install dry-run succeeds. Installed SDK tests use synthetic HTTP for reload/client recreation, expiry/refresh, rotation races, cancellation and rejected credentials. An isolated Edge profile passed actual page reload, browser-process close/reopen, real cross-tab SDK rotation and Guest/Account/sign-out transitions at desktop/390px. The mobile standalone flag is simulated, not a physical iPhone test. No real hosted OTP/session-lifetime or Production data tests were executed. Owner Safari/PWA acceptance remains required; browser policies can still remove remembered sessions. Existing bundle-size advisory remains non-blocking.
 
 ## v0.9.3a — Compact Home cards and natural column balance
 

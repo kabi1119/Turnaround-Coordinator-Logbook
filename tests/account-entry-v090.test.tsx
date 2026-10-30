@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { webcrypto } from 'node:crypto';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import AuthApp from '../src/auth/AuthApp';
@@ -11,6 +11,7 @@ import { emptyAccountDatabase } from '../src/workspaces/vault';
 import { records } from '../src/sync/records';
 import { CHOICE_KEY } from '../src/workspaces/store';
 import { STORAGE_KEY } from '../src/lib/storage';
+import { AUTH_STORAGE_KEY } from '../src/auth/client';
 import { seedDatabase } from '../src/data/seed';
 import type { AccountEngine } from '../src/cloud/engine';
 import type { AccountStore } from '../src/cloud/cache';
@@ -18,11 +19,13 @@ const A = '90000000-0000-4000-8000-000000000001',
   B = '90000000-0000-4000-8000-000000000002',
   W = '90000000-0000-4000-8000-000000000003';
 const features = ['legacy-manifest-v1', 'manual-archive-v1'];
-function provider(existing = false) {
+function provider(existing = false, language: 'en' | 'zh-HK' = 'en') {
+  let signedIn = true,
+    expiry = Math.floor(Date.now() / 1000) + 3600;
   let userId = A,
     revision = existing ? 1 : 0,
     legacy: number | null = null,
-    rows = existing ? records(emptyAccountDatabase()) : [],
+    rows = existing ? records(emptyAccountDatabase(language)) : [],
     setup = true;
   const listeners = new Set<(event: string, session: unknown) => void>();
   const user = () => ({
@@ -33,7 +36,7 @@ function provider(existing = false) {
   });
   const session = () => ({
     user: user(),
-    expires_at: Math.floor(Date.now() / 1000) + 3600,
+    expires_at: expiry,
     access_token: 'synthetic-test-token-' + userId,
   });
   const pull = () => ({
@@ -80,10 +83,22 @@ function provider(existing = false) {
   });
   const auth = {
     getUser: vi.fn(async () => ({ data: { user: user() }, error: null })),
-    getSession: vi.fn(async () => ({ data: { session: session() }, error: null })),
+    getSession: vi.fn(async () => ({
+      data: { session: signedIn ? session() : null },
+      error: null,
+    })),
+    refreshSession: vi.fn(async () => {
+      expiry = Math.floor(Date.now() / 1000) + 3600;
+      listeners.forEach((fn) => fn('TOKEN_REFRESHED', session()));
+      return { data: { session: session() }, error: null };
+    }),
     startAutoRefresh: vi.fn(),
     stopAutoRefresh: vi.fn(),
-    signOut: vi.fn(async () => ({ error: null })),
+    signOut: vi.fn(async () => {
+      signedIn = false;
+      listeners.forEach((fn) => fn('SIGNED_OUT', null));
+      return { error: null };
+    }),
     onAuthStateChange: vi.fn((fn: (event: string, session: unknown) => void) => {
       listeners.add(fn);
       return { data: { subscription: { unsubscribe: () => listeners.delete(fn) } } };
@@ -102,6 +117,12 @@ function provider(existing = false) {
     rpc,
     auth,
     pull,
+    expire: () => {
+      expiry = Math.floor(Date.now() / 1000) - 1;
+    },
+    expireIn: (ms: number) => {
+      expiry = Date.now() / 1000 + ms / 1000;
+    },
     legacy: () => {
       legacy = 1;
     },
@@ -124,6 +145,192 @@ beforeEach(() => {
         typeof options === 'function' ? options({}) : fn!({}),
     },
   });
+});
+
+describe('v0.9.4 persistent session integration (synthetic Auth/RPC)', () => {
+  it('the actual expiry timer renews a short-lived session without closing the Cloud Account', async () => {
+    const p = provider(true);
+    p.expireIn(2000);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    expect(p.auth.refreshSession).not.toHaveBeenCalled();
+    await waitFor(() => expect(p.auth.refreshSession).toHaveBeenCalledOnce(), { timeout: 3500 });
+    expect(screen.getByRole('button', { name: 'Account' })).toBeVisible();
+    expect(screen.queryByLabelText('Email address')).toBeNull();
+  });
+  it('a late foreground verification cannot reopen Account A after switching to Guest', async () => {
+    const p = provider(true);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    let release!: (value: unknown) => void;
+    const pending = new Promise((resolve) => {
+      release = resolve;
+    });
+    p.auth.getUser.mockReturnValueOnce(pending as never);
+    fireEvent(window, new Event('focus'));
+    await act(async () => {});
+    fireEvent.click(screen.getByRole('button', { name: 'Account' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Switch to Guest' }));
+    await act(async () =>
+      release({
+        data: {
+          user: {
+            id: A,
+            email: 'synthetic@example.test',
+            email_confirmed_at: '2026-10-01',
+            is_anonymous: false,
+          },
+        },
+        error: null,
+      }),
+    );
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Account' })).toBeNull();
+    expect(p.auth.signOut).not.toHaveBeenCalled();
+  });
+  it('restores the same Cloud Account across remount/reload without OTP or a passphrase', async () => {
+    const p = provider(true);
+    localStorage.setItem(CHOICE_KEY, 'account:' + A);
+    const first = render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    await waitFor(() => expect(localStorage.getItem(accountCacheKey(A))).not.toBeNull());
+    first.unmount();
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    expect(screen.queryByLabelText('Email address')).toBeNull();
+    expect(screen.queryByLabelText(/passphrase/i)).toBeNull();
+    expect(p.auth.getUser).toHaveBeenCalled();
+    expect(p.rpc.mock.calls.some(([name]) => name === 'tco_account_initialize')).toBe(false);
+  });
+  it('refreshes an expired token and accepts same-account cross-tab rotation without closing the workspace', async () => {
+    const p = provider(true);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    p.expire();
+    fireEvent(document, new Event('visibilitychange'));
+    await waitFor(() => expect(p.auth.refreshSession).toHaveBeenCalledOnce());
+    expect(screen.getByRole('button', { name: 'Account' })).toBeVisible();
+    fireEvent(
+      window,
+      new StorageEvent('storage', {
+        key: AUTH_STORAGE_KEY,
+        newValue: JSON.stringify({ user: { id: A }, access_token: 'synthetic-rotated' }),
+      }),
+    );
+    await act(async () => {});
+    expect(screen.getByRole('navigation')).toBeVisible();
+    expect(screen.queryByLabelText('Email address')).toBeNull();
+    expect(p.auth.signOut).not.toHaveBeenCalled();
+  });
+  it('Switch to Guest preserves the remembered session; reopening verifies identity without OTP', async () => {
+    const p = provider(true),
+      guest = JSON.stringify(seedDatabase());
+    localStorage.setItem(STORAGE_KEY, guest);
+    localStorage.setItem(CHOICE_KEY, 'account:' + A);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    // This fixture has Guest records, so dismiss the separate reviewed-transfer prompt.
+    const dialog = screen.queryByRole('dialog');
+    if (dialog) fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Account' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Switch to Guest' }));
+    await screen.findByRole('button', { name: 'Sign in' });
+    expect(p.auth.signOut).not.toHaveBeenCalled();
+    const checked = p.auth.getUser.mock.calls.length;
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+    await screen.findByRole('button', { name: 'Account' });
+    expect(p.auth.getUser.mock.calls.length).toBeGreaterThan(checked);
+    expect(screen.queryByLabelText('Email address')).toBeNull();
+    expect(localStorage.getItem(STORAGE_KEY)).toBe(guest);
+  });
+  it('retains durable pending drafts during network failure and re-verifies on reconnect', async () => {
+    const p = provider(true);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    fireEvent.click(screen.getByRole('button', { name: 'Add a Handling Record' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save Draft' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm & Save' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    const raw = localStorage.getItem(accountCacheKey(A))!;
+    expect(JSON.parse(raw).db.aircraft).toHaveLength(1);
+    p.auth.getUser.mockRejectedValue(new TypeError('Synthetic network outage'));
+    fireEvent(window, new Event('focus'));
+    await screen.findByText(/Account session not verified/);
+    expect(localStorage.getItem(accountCacheKey(A))).toBe(raw);
+    expect(screen.queryByLabelText('Email address')).toBeNull();
+    expect(screen.getByRole('navigation')).toBeVisible();
+    p.auth.getUser.mockResolvedValue({
+      data: {
+        user: {
+          id: A,
+          email: 'synthetic@example.test',
+          email_confirmed_at: '2026-10-01',
+          is_anonymous: false,
+        },
+      },
+      error: null,
+    });
+    fireEvent(window, new Event('online'));
+    await waitFor(() => expect(screen.queryByText(/Account session not verified/)).toBeNull());
+    expect(JSON.parse(localStorage.getItem(accountCacheKey(A))!).db.aircraft).toHaveLength(1);
+  });
+  it('explicit Sign Out clears authenticated access, preserves the cache and requires fresh OTP', async () => {
+    const p = provider(true);
+    render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    const raw = localStorage.getItem(accountCacheKey(A));
+    fireEvent.click(screen.getByRole('button', { name: 'Account' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Sign Out' }));
+    await screen.findByRole('heading', { name: 'Welcome to TCO Logbook' });
+    expect(p.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(screen.getByLabelText('Email address')).toBeVisible();
+    expect(screen.queryByRole('navigation')).toBeNull();
+    expect(localStorage.getItem(accountCacheKey(A))).toBe(raw);
+  });
+  it('rejects genuinely invalid identity and different-account storage immediately, retaining original cache', async () => {
+    const p = provider(true);
+    const app = render(<AuthApp provider={p.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    const raw = localStorage.getItem(accountCacheKey(A));
+    p.auth.getUser.mockResolvedValue({ data: { user: null }, error: { status: 401 } } as never);
+    fireEvent(window, new Event('focus'));
+    await screen.findByRole('heading', { name: 'Welcome to TCO Logbook' });
+    expect(screen.queryByRole('navigation')).toBeNull();
+    expect(localStorage.getItem(accountCacheKey(A))).toBe(raw);
+    app.unmount();
+    const other = provider(true);
+    render(<AuthApp provider={other.client} cloudMode />);
+    await screen.findByRole('button', { name: 'Account' });
+    fireEvent(
+      window,
+      new StorageEvent('storage', {
+        key: AUTH_STORAGE_KEY,
+        newValue: JSON.stringify({ user: { id: B } }),
+      }),
+    );
+    await screen.findByRole('heading', { name: 'Welcome to TCO Logbook' });
+    expect(localStorage.getItem(accountCacheKey(B))).toBeNull();
+  });
+  it.each(['en', 'zh-HK'] as const)(
+    'normal Cloud Account menu/settings have no passphrase or encrypted-sync instruction in %s',
+    async (language) => {
+      const p = provider(true, language);
+      render(<AuthApp provider={p.client} cloudMode />);
+      const account = language === 'en' ? 'Account' : '帳戶',
+        settings = language === 'en' ? 'Account Settings' : '帳戶設定';
+      if (language === 'zh-HK') {
+        await screen.findByRole('button', { name: 'Account' });
+        fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+        fireEvent.change(screen.getByLabelText('Language'), { target: { value: 'zh-HK' } });
+      }
+      fireEvent.click(await screen.findByRole('button', { name: account }));
+      expect(screen.getByRole('menu')).not.toHaveTextContent(/encrypted|passphrase|加密同步|密語/i);
+      fireEvent.click(screen.getByRole('menuitem', { name: settings }));
+      expect(await screen.findByRole('dialog', { name: settings })).not.toHaveTextContent(
+        /passphrase|Local vault|Enable Cloud Sync|密語|啟用加密/,
+      );
+    },
+  );
 });
 afterEach(() => {
   engines.forEach((e) => e.stop());
