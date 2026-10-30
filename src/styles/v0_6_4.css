@@ -78,7 +78,9 @@
   margin-bottom: 0;
 }
 .home-recent-empty .empty {
+  border: 0;
   padding: 0;
+  margin: 0;
 }
 .home-recent-empty > p {
   margin: 8px 0 16px;
@@ -117,14 +119,54 @@
 }
 @media (min-width: 1200px) {
   .home-operations {
-    align-items: stretch;
-  }
-  .home-operations-four .home-left > .home-unfinished,
-  .home-right-four > .home-secondary {
-    margin-top: auto;
+    align-items: start;
   }
   .home-recent .aircraft-card {
     padding: 22px;
+    align-items: center;
+  }
+}
+.home-recent .home-aircraft-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 15px;
+  align-items: center;
+  padding: 22px;
+}
+.home-aircraft-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 155px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.home-aircraft-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  overflow-wrap: anywhere;
+}
+.home-aircraft-status > svg {
+  flex-shrink: 0;
+}
+@media (max-width: 1199px) {
+  .home-recent .home-aircraft-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 20px;
+  }
+  .home-aircraft-status {
+    grid-column: 2;
+    max-width: none;
+    justify-content: space-between;
+  }
+  .home-aircraft-badges {
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
   }
 }

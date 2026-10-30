@@ -8,7 +8,7 @@
 
 ### Live Application
 
-**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.3 Pre-release. Available as a browser application and installable PWA; Account access is invitation-only.
+**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.3a Pre-release. Available as a browser application and installable PWA; Account access is invitation-only.
 
 ### About the Project
 
@@ -56,7 +56,7 @@ For development and hosting instructions, see [deployment documentation](docs/CL
 
 ### Project Status & Limitations
 
-This is a deployed **v0.9.3 pre-release**, not an official operational service. I continue to evaluate physical-device behavior, recovery and near-capacity scenarios; automated/browser tests do not prove every iPhone or hosted-service condition. Independent backups remain essential. Passkey Authentication and Live Public Aircraft Lookup remain planned and unavailable. No official operational, safety, employer-policy compliance or uninterrupted-availability guarantee is made.
+This is a deployed **v0.9.3a pre-release**, not an official operational service. I continue to evaluate physical-device behavior, recovery and near-capacity scenarios; automated/browser tests do not prove every iPhone or hosted-service condition. Independent backups remain essential. Passkey Authentication and Live Public Aircraft Lookup remain planned and unavailable. No official operational, safety, employer-policy compliance or uninterrupted-availability guarantee is made.
 
 ### Independent Project Disclaimer
 
@@ -92,7 +92,7 @@ This README is provided in English and Traditional Chinese (Hong Kong) for acces
 
 ### 正式網站
 
-**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.3 預發佈版。支援瀏覽器及安裝為 PWA；帳戶只限受邀人士使用。
+**[app.tcologbook.workers.dev](https://app.tcologbook.workers.dev/)** — v0.9.3a 預發佈版。支援瀏覽器及安裝為 PWA；帳戶只限受邀人士使用。
 
 ### 關於這個項目
 
@@ -140,7 +140,7 @@ React、TypeScript 及 Vite；以 Cloudflare Workers Static Assets 寄存；雲�
 
 ### 項目狀態與限制
 
-這是已部署的 **v0.9.3 預發佈版**，並非官方操作服務。我仍會評估實體裝置、復原及接近容量上限的情況；自動／瀏覽器測試不能證明所有 iPhone 或寄存服務情況。獨立備份仍然重要。通行密鑰身份驗證及即時公開航機查詢仍在規劃中，尚未提供。不保證官方操作、安全、僱主政策合規或持續可用性。
+這是已部署的 **v0.9.3a 預發佈版**，並非官方操作服務。我仍會評估實體裝置、復原及接近容量上限的情況；自動／瀏覽器測試不能證明所有 iPhone 或寄存服務情況。獨立備份仍然重要。通行密鑰身份驗證及即時公開航機查詢仍在規劃中，尚未提供。不保證官方操作、安全、僱主政策合規或持續可用性。
 
 ### 獨立項目免責聲明
 

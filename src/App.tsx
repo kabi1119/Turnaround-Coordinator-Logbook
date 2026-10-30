@@ -32,6 +32,7 @@ import AircraftEditor from './features/AircraftEditor';
 import DutyEditor from './features/DutyEditor';
 import Logbook, { type LogbookView } from './features/Logbook';
 import HomeInsights from './features/HomeInsights';
+import HomeAircraftCard from './features/HomeAircraftCard';
 import Statistics from './features/Statistics';
 import { JournalEditor, JournalPage } from './features/Journal';
 import Settings, { ReportPreview } from './features/Settings';
@@ -335,7 +336,7 @@ function Workspace({
               onDuty={(d) => setOverlay({ type: 'dutyDetail', id: d.id })}
               onCalendar={() => setCalendarOpen(true)}
             />
-            <div className={`home-operations${recent.length === 4 ? ' home-operations-four' : ''}`}>
+            <div className="home-operations">
               <div className="home-left">
                 <HomeInsights
                   records={db.aircraft}
@@ -343,7 +344,7 @@ function Workspace({
                   onUnfinished={() => openLogbook(true)}
                 />
               </div>
-              <div className={`home-right${recent.length === 4 ? ' home-right-four' : ''}`}>
+              <div className="home-right">
                 <section className="home-recent">
                   <SectionTitle
                     title={t('Recent Aircraft', '最近航機紀錄')}
@@ -356,7 +357,7 @@ function Workspace({
                   />
                   <div className="panel records-panel surface-dark">
                     {recent.map((a) => (
-                      <AircraftCard
+                      <HomeAircraftCard
                         key={a.id}
                         a={a}
                         privacy={db.settings.privacy}
@@ -482,7 +483,7 @@ function Workspace({
         )}
         <footer className="page-footer">
           <span className="footer-brand">
-            TCO Logbook <small>v0.9.3 {t('Pre-release', '預發佈')}</small>
+            TCO Logbook <small>v0.9.3a {t('Pre-release', '預發佈')}</small>
           </span>
           <span className="footer-timezone">
             <MapPin size={16} aria-hidden="true" />
@@ -513,7 +514,7 @@ function Workspace({
         <div className="nav-context">
           <Plane size={20} />
           <strong>TCO Logbook</strong>
-          <span className="release-version">v0.9.3 {t('Pre-release', '預發佈')}</span>
+          <span className="release-version">v0.9.3a {t('Pre-release', '預發佈')}</span>
           <span>{storageDescription}</span>
           <small>Hong Kong · UTC+08</small>
         </div>

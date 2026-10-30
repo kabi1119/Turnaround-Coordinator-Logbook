@@ -1,4 +1,12 @@
-# TCO Logbook v0.9.3 Pre-release status
+# TCO Logbook v0.9.3a Pre-release status
+
+## v0.9.3a — Compact Home cards and natural column balance
+
+Home Recent Aircraft uses a dedicated compact summary with the existing logo component/size, complete flight identifiers, role/type, handling/date/Bay, recorded times and meaningful leg statuses. Unrecorded time/status placeholders are omitted only here; Draft/Pending and Unlinked remain visible, privacy rules and full Logbook/detail presentations remain unchanged. Empty-state dashed borders are removed only within Home; its solid panel, conditional copy and existing editor CTA remain.
+
+Both desktop columns now use natural 24px card gaps instead of pushing Unfinished/Reflection down with auto margins. Four seven-day results remain the limit. Synthetic desktop examples keep four complete entries with modest natural bottom differences; reducing the limit is not needed. Tablet/mobile status wrapping, navigation and alternating backgrounds are preserved. README content is retained with current-version references updated only. No authentication, synchronization, backup, storage or SQL changes.
+
+Verification: 694 tests / 64 files, lint, TypeScript/Production build and artifact verifier, static and formatting checks passed; dependency audit found zero vulnerabilities. Thirty-six isolated synthetic Edge layouts cover both languages, 1440/1024/390px and 0–5 source records (maximum four shown), long identifiers, visible privacy-controlled fields, meaningful times/statuses, alternating colors, border removal and unchanged storage. Separate real browser keyboard/emulated-touch checks open and dismiss compact-card details in both languages. Physical iPhone acceptance is not claimed. The existing non-blocking bundle-size advisory remains.
 
 ## v0.9.3 — Adaptive Recent Aircraft and bilingual README
 
