@@ -28,6 +28,10 @@
   align-items: center;
   flex-wrap: nowrap;
 }
+/* Main starts flush below the header; reserve clearance only while its first item is an update. */
+.app-shell main:has(> .update-notice:first-child) {
+  padding-top: 16px;
+}
 .update-notice > div {
   flex: 1;
   min-width: 0;

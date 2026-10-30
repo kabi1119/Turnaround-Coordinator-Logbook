@@ -1,4 +1,10 @@
-# TCO Logbook v0.9.4 Pre-release status
+# TCO Logbook v0.9.4a Pre-release status
+
+## v0.9.4a — Update notice top clearance
+
+When the Update ready notice is the first item in the application main container, apply 16px top padding to that existing container. Previously both main top padding and notice top margin were zero, leaving the notice against the header divider. No added wrappers, safe-area insets, notice internal styling or Service Worker behavior changes. Auth-card placement and the no-notice layout retain their existing spacing.
+
+Validation: 37 focused tests, lint, TypeScript/Production build, static and formatting checks passed. Isolated Edge measurements at 1440px and 390px, including simulated safe-area insets, confirm 0px before / 16px after clearance, unchanged banner dimensions/styling and successful mouse/touch Dismiss with padding restored to 0. The update component and Service Worker sources are unchanged. Physical iPhone Safari/installed-PWA verification remains manual; display-mode emulation was unavailable. Changes remain local and undeployed.
 
 ## v0.9.4 — Persistent login and passphrase-free Cloud Accounts
 

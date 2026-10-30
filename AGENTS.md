@@ -1,6 +1,6 @@
 # Agent Instructions — TCO Logbook
 
-This repo is **TCO Logbook v0.9.4 Pre-release**, an independent personal-tool PWA with owner-authorized production hosting, not an official aviation operational system.
+This repo is **TCO Logbook v0.9.4a Pre-release**, an independent personal-tool PWA with owner-authorized production hosting, not an official aviation operational system.
 
 ## Required reading
 
@@ -24,7 +24,7 @@ Document decisions in `PROTOTYPE_STATUS.md` and execute relevant tests before co
 
 ## Permanent version and release commits
 
-- Current agreed release: v0.9.4 Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
+- Current agreed release: v0.9.4a Pre-release. Work only in the current Turnaround-Coordinator-Logbook repository; the former TCO-Logbook directory is retired.
 - Session persistence: use the existing SDK-owned credentials. Guest switching locks/fences Account access without signing out; explicit local Sign Out is separate. Expiry and same-account rotation require server re-verification/SDK refresh, not unconditional logout. Preserve pending data on transient errors, and never treat cached IDs or a storage event as authenticated identity. Normal Cloud Accounts remain passphrase-free; retain separately selected Legacy recovery and reviewed conversion.
 - Follow [docs/VERSIONING.md](docs/VERSIONING.md): custom vMAJOR.MINOR.PATCH[letter], not strict SemVer; unrestricted numeric component widths; lowercase sequential suffixes for tiny fixes.
 - Propose future versions by scope; never silently change an agreed version. Stage 0 is prototype; stage 1 requires explicit project-owner production approval. Larger feature iterations increment MINOR and reset PATCH; smaller enhancements increment PATCH.
